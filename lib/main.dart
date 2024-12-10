@@ -278,6 +278,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       // '/': Tenders(),
       '/': Outsourcing(),
     },
+    4: {
+      // '/': Tenders(),
+      '/': Outsourcing(),
+    },
   };
 
   DateTime oldTime = DateTime.now();
@@ -316,6 +320,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           AppLocalizations.of(context)!.translate('tab_products')),
       NavbarItem(IconMedmap.distributors,
           AppLocalizations.of(context)!.translate('tab_distributors')),
+      NavbarItem(IconMedmap.tenders,
+          AppLocalizations.of(context)!.translate('tab_four')),
       NavbarItem(IconMedmap.tenders,
           AppLocalizations.of(context)!.translate('tab_four')),
     ];
