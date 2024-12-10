@@ -172,20 +172,39 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    String? userName = "Anna";
     return Consumer<AppLanguage>(
       builder: (context, appLanguage, child) {
         return Scaffold(
           appBar: AppBar(
-            // backgroundColor: Colors.blue[0],
-            // backgroundColor: Colors.white70,
-            // backgroundColor: Colors.white
-            //     .withOpacity(0.70), // Replace with your color and opacity
-            // centerTitle: true,
-            backgroundColor: Color(0xFF35C5CF),
-            toolbarHeight: 200,
+            toolbarHeight: 180,
             elevation: 2,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF8EF4E8),
+                    Color(0xFF35C5CF)
+                  ], // Gradasi warna dari kiri ke kanan
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                ),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(
+                      30), // Membuat border radius di bagian bawah
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2), // Warna shadow
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // Posisi shadow
+                  ),
+                ],
+              ),
+            ),
             title: Padding(
-              padding: const EdgeInsets.only(bottom: 40.0),
+              padding: const EdgeInsets.only(bottom: 25.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -198,44 +217,58 @@ class _DashboardState extends State<Dashboard> {
                         height: 25,
                       ),
                       Spacer(), // Menambahkan spacer untuk memisahkan logo dan CircleAvatar
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://example.com/path/to/image.jpg'), // Ganti dengan URL gambar Anda
-                        // radius: ,
-                      ),
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                              15), // Membuat sudut membulat
+                          image: DecorationImage(
+                            image: AssetImage(
+                                'assets/icons/ic_avatar.png'), // Ganti dengan path gambar Anda
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Live Longer & Live Healthier, Anna!",
+                      "Live Longer & Live Healthier, ${userName ?? 'Welcome User'}!",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                   SizedBox(height: 20), // Jarak di bawah teks
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.person, color: Color(0xFF35C5CF)),
+                        Image.asset(
+                          'assets/icons/ic_doctor.png',
+                          width: 24,
+                          height: 24,
+                          color: Color.fromARGB(255, 0, 0,
+                              0), // Menambahkan warna jika diperlukan
+                        ),
                         SizedBox(width: 10),
                         Expanded(
                           child: TextField(
                             decoration: InputDecoration(
                               hintText:
-                                  'Chat With AI doctor for all your health question',
+                                  "Chat With AI doctor for all your health questions",
+                              hintStyle: TextStyle(
+                                  color: Color(0xFF8A96BC), fontSize: 13),
                               border: InputBorder.none,
-                            ),
-                            style: TextStyle(
-                              color: Color(0xFF35C5CF),
                             ),
                           ),
                         ),
@@ -276,11 +309,6 @@ class _DashboardState extends State<Dashboard> {
               //   ),
               // )
             ],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(30),
-              ),
-            ),
           ),
           body: Container(
             margin: EdgeInsets.fromLTRB(0, 0, 0, 60),
@@ -289,13 +317,33 @@ class _DashboardState extends State<Dashboard> {
               controller: _scrollController,
               child: Column(
                 children: [
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 30.0, top: 16.0),
+                          child: Text(
+                            AppLocalizations.of(context)!.translate('services'),
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: Color(0xFF232F55),
+                              fontSize: 20,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   // SearchInputBox(),
                   // SizedBox(height: 20),
-                  SizedBox(height: 5),
+                  SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      CircularIconWithTitle(
+                      RectangularIconWithTitle(
                         onTap: () {
                           // selectTab(1);
                           Navigator.push(
@@ -305,32 +353,32 @@ class _DashboardState extends State<Dashboard> {
                         },
                         iconPath:
                             'assets/icons/ic_tenders.png', // Replace with your actual image path
-                        title:
-                            AppLocalizations.of(context)!.translate('tenders'),
+                        title: AppLocalizations.of(context)!
+                            .translate('pharmacist_services'),
                         backgroundColor: Color(0xFFDCE3FD),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
-                      CircularIconWithTitle(
+                      RectangularIconWithTitle(
                         onTap: () {
                           // selectTab(2);
                         },
                         iconPath:
                             'assets/icons/ic_distributors.png', // Replace with your actual image path
                         title: AppLocalizations.of(context)!
-                            .translate('distributors'),
+                            .translate('home_nursing'),
                         backgroundColor: Color(0xFFFFE7E7),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
-                      CircularIconWithTitle(
+                      RectangularIconWithTitle(
                         onTap: () {
                           // selectTab(1);
                         },
                         iconPath:
                             'assets/icons/ic_products.png', // Replace with your actual image path
-                        title:
-                            AppLocalizations.of(context)!.translate('products'),
+                        title: AppLocalizations.of(context)!
+                            .translate('diabetic_care'),
                         backgroundColor: Color(0xFFFCEEE1),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
@@ -342,58 +390,50 @@ class _DashboardState extends State<Dashboard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // CircularIconWithTitle(
-                      //   onTap: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(builder: (context) => Drugs()),
-                      //     );
-                      //   },
-                      //   iconPath: 'assets/icons/ic_pharmacy.png',
-                      //   title: AppLocalizations.of(context)!
-                      //       .translate('e_pharmacy'),
-                      //   backgroundColor: Color(0xFFF6EFC6),
-                      //   // iconColor: Colors.white,
-                      //   titleColor: Colors.black,
-                      // ),
-                      // CircularIconWithTitle(
-                      //   onTap: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(builder: (context) => PoCT()),
-                      //     );
-                      //     // Utils.openPDFFromAssets(
-                      //     //     context, 'assets/pdfs/content_service.pdf');
-                      //   },
-                      //   iconPath: 'assets/icons/ic_poct.png',
-                      //   title: AppLocalizations.of(context)!.translate('poct'),
-                      //   backgroundColor: Color(0xFFE3F3EA),
-                      //   // iconColor: Colors.white,
-                      //   titleColor: Colors.black,
-                      // ),
-                      // CircularIconWithTitle(
-                      //   onTap: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //           builder: (context) => listNews.News()),
-                      //     );
-                      //     // Navigator.push(
-                      //     //   context,
-                      //     //   MaterialPageRoute(
-                      //     //     builder: (context) => WebViewActivity(
-                      //     //         title: 'Events & News',
-                      //     //         url: Const.URL_WEB + '/all-news'),
-                      //     //   ),
-                      //     // );
-                      //   },
-                      //   iconPath: 'assets/icons/ic_events.png',
-                      //   title:
-                      //       AppLocalizations.of(context)!.translate('events'),
-                      //   backgroundColor: Color(0xFFD3F2FF),
-                      //   // iconColor: Colors.white,
-                      //   titleColor: Colors.black,
-                      // ),
+                      RectangularIconWithTitle(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                        },
+                        iconPath: 'assets/icons/ic_pharmacy.png',
+                        title: AppLocalizations.of(context)!
+                            .translate('home_screening'),
+                        backgroundColor: Color(0xFFF6EFC6),
+                        // iconColor: Colors.white,
+                        titleColor: Colors.black,
+                      ),
+                      RectangularIconWithTitle(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                          // Utils.openPDFFromAssets(
+                          //     context, 'assets/pdfs/content_service.pdf');
+                        },
+                        iconPath: 'assets/icons/ic_poct.png',
+                        title: AppLocalizations.of(context)!
+                            .translate('remote_monitoring'),
+                        backgroundColor: Color(0xFFE3F3EA),
+                        // iconColor: Colors.white,
+                        titleColor: Colors.black,
+                      ),
+                      RectangularIconWithTitle(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                        },
+                        iconPath: 'assets/icons/ic_events.png',
+                        title: AppLocalizations.of(context)!
+                            .translate('2nd_opinion'),
+                        backgroundColor: Color(0xFFD3F2FF),
+                        // iconColor: Colors.white,
+                        titleColor: Colors.black,
+                      ),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -419,187 +459,187 @@ class _DashboardState extends State<Dashboard> {
                   //   ],
                   // ),
                   SizedBox(height: 20),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 16.0),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .translate('marketing_services'),
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(right: 16.0, top: 16.0),
-                          child: InkWell(
-                            onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => listMarketingServices
-                              //           .MarketingServices()),
-                              // );
-                            },
-                            child: Text(
-                              'View All',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                // fontSize: 13,
-                                fontFamily: 'Inter',
-                                height: 0,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: <Widget>[
+                  //     Expanded(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+                  //         child: Text(
+                  //           AppLocalizations.of(context)!
+                  //               .translate('marketing_services'),
+                  //           textAlign: TextAlign.left,
+                  //           style: TextStyle(
+                  //             color: Colors.black,
+                  //             fontSize: 12,
+                  //             fontFamily: 'Inter',
+                  //             fontWeight: FontWeight.w700,
+                  //             height: 0,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     Expanded(
+                  //       child: Padding(
+                  //         padding:
+                  //             const EdgeInsets.only(right: 16.0, top: 16.0),
+                  //         child: InkWell(
+                  //           onTap: () {
+                  //             // Navigator.push(
+                  //             //   context,
+                  //             //   MaterialPageRoute(
+                  //             //       builder: (context) => listMarketingServices
+                  //             //           .MarketingServices()),
+                  //             // );
+                  //           },
+                  //           child: Text(
+                  //             'View All',
+                  //             textAlign: TextAlign.right,
+                  //             style: TextStyle(
+                  //               color: Colors.grey,
+                  //               // fontSize: 13,
+                  //               fontFamily: 'Inter',
+                  //               height: 0,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   SizedBox(height: 10),
-                  Container(
-                    height: 350,
-                    // child: ListView.separated(
-                    //   shrinkWrap: true,
-                    //   physics: NeverScrollableScrollPhysics(),
-                    //   itemCount: datum.length,
-                    //   itemBuilder: (context, index) {
-                    //     if (index == datum.length) {
-                    //       return Center(
-                    //         child: CircularProgressIndicator(),
-                    //       );
-                    //     }
-                    //     final item = datum[index];
-                    //     return Card(
-                    //       color: Colors.white,
-                    //       margin: EdgeInsets.all(8.0),
-                    //       child: InkWell(
-                    //         onTap: () {
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //                 builder: (context) => listMarketingServices
-                    //                     .MarketingServices()),
-                    //           );
-                    //         },
-                    //         child: Padding(
-                    //           padding: const EdgeInsets.all(16.0),
-                    //           child: Column(
-                    //             crossAxisAlignment: CrossAxisAlignment.start,
-                    //             children: [
-                    //               Row(
-                    //                 crossAxisAlignment: CrossAxisAlignment
-                    //                     .start, // Align items vertically at the start
-                    //                 children: [
-                    //                   Expanded(
-                    //                     child: Column(
-                    //                       crossAxisAlignment:
-                    //                           CrossAxisAlignment.start,
-                    //                       children: [
-                    //                         SizedBox(height: 10),
-                    //                         Text(
-                    //                           Utils.fmtToDMY(item.createdAt),
-                    //                           style: TextStyle(
-                    //                             color: Color(0xFF514A6B),
-                    //                             fontSize: 12,
-                    //                             fontFamily: 'Open Sans',
-                    //                             fontWeight: FontWeight.w400,
-                    //                             height: 0,
-                    //                           ),
-                    //                         ),
-                    //                         Text(
-                    //                           Utils.trimString(item.title),
-                    //                           overflow: TextOverflow.ellipsis,
-                    //                           maxLines: 1,
-                    //                           style: TextStyle(
-                    //                             color: Color(0xFF150A33),
-                    //                             fontSize: 14,
-                    //                             fontFamily: 'Inter',
-                    //                             fontWeight: FontWeight.w700,
-                    //                           ),
-                    //                         ),
-                    //                         SizedBox(height: 5),
-                    //                         Text(
-                    //                           'Read More',
-                    //                           style: TextStyle(
-                    //                             color: Colors.blue,
-                    //                             fontSize: 11,
-                    //                             fontFamily: 'Open Sans',
-                    //                             height: 0,
-                    //                           ),
-                    //                         ),
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    //   separatorBuilder: (context, index) => SizedBox(height: 0),
-                    // ),
-                  ),
+                  // Container(
+                  //   height: 350,
+                  //   // child: ListView.separated(
+                  //   //   shrinkWrap: true,
+                  //   //   physics: NeverScrollableScrollPhysics(),
+                  //   //   itemCount: datum.length,
+                  //   //   itemBuilder: (context, index) {
+                  //   //     if (index == datum.length) {
+                  //   //       return Center(
+                  //   //         child: CircularProgressIndicator(),
+                  //   //       );
+                  //   //     }
+                  //   //     final item = datum[index];
+                  //   //     return Card(
+                  //   //       color: Colors.white,
+                  //   //       margin: EdgeInsets.all(8.0),
+                  //   //       child: InkWell(
+                  //   //         onTap: () {
+                  //   //           Navigator.push(
+                  //   //             context,
+                  //   //             MaterialPageRoute(
+                  //   //                 builder: (context) => listMarketingServices
+                  //   //                     .MarketingServices()),
+                  //   //           );
+                  //   //         },
+                  //   //         child: Padding(
+                  //   //           padding: const EdgeInsets.all(16.0),
+                  //   //           child: Column(
+                  //   //             crossAxisAlignment: CrossAxisAlignment.start,
+                  //   //             children: [
+                  //   //               Row(
+                  //   //                 crossAxisAlignment: CrossAxisAlignment
+                  //   //                     .start, // Align items vertically at the start
+                  //   //                 children: [
+                  //   //                   Expanded(
+                  //   //                     child: Column(
+                  //   //                       crossAxisAlignment:
+                  //   //                           CrossAxisAlignment.start,
+                  //   //                       children: [
+                  //   //                         SizedBox(height: 10),
+                  //   //                         Text(
+                  //   //                           Utils.fmtToDMY(item.createdAt),
+                  //   //                           style: TextStyle(
+                  //   //                             color: Color(0xFF514A6B),
+                  //   //                             fontSize: 12,
+                  //   //                             fontFamily: 'Open Sans',
+                  //   //                             fontWeight: FontWeight.w400,
+                  //   //                             height: 0,
+                  //   //                           ),
+                  //   //                         ),
+                  //   //                         Text(
+                  //   //                           Utils.trimString(item.title),
+                  //   //                           overflow: TextOverflow.ellipsis,
+                  //   //                           maxLines: 1,
+                  //   //                           style: TextStyle(
+                  //   //                             color: Color(0xFF150A33),
+                  //   //                             fontSize: 14,
+                  //   //                             fontFamily: 'Inter',
+                  //   //                             fontWeight: FontWeight.w700,
+                  //   //                           ),
+                  //   //                         ),
+                  //   //                         SizedBox(height: 5),
+                  //   //                         Text(
+                  //   //                           'Read More',
+                  //   //                           style: TextStyle(
+                  //   //                             color: Colors.blue,
+                  //   //                             fontSize: 11,
+                  //   //                             fontFamily: 'Open Sans',
+                  //   //                             height: 0,
+                  //   //                           ),
+                  //   //                         ),
+                  //   //                       ],
+                  //   //                     ),
+                  //   //                   ),
+                  //   //                 ],
+                  //   //               ),
+                  //   //             ],
+                  //   //           ),
+                  //   //         ),
+                  //   //       ),
+                  //   //     );
+                  //   //   },
+                  //   //   separatorBuilder: (context, index) => SizedBox(height: 0),
+                  //   // ),
+                  // ),
                   SizedBox(height: 20),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 16.0),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .translate('breakthrough_case_studies'),
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding:
-                      //         const EdgeInsets.only(right: 16.0, top: 16.0),
-                      //     child: InkWell(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) =>
-                      //                   listAnalysis.Analysis()),
-                      //         );
-                      //       },
-                      //       child: Text(
-                      //         'View All',
-                      //         textAlign: TextAlign.right,
-                      //         style: TextStyle(
-                      //           color: Colors.grey,
-                      //           // fontSize: 13,
-                      //           fontFamily: 'Inter',
-                      //           height: 0,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: <Widget>[
+                  //     Expanded(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+                  //         child: Text(
+                  //           AppLocalizations.of(context)!
+                  //               .translate('breakthrough_case_studies'),
+                  //           textAlign: TextAlign.left,
+                  //           style: TextStyle(
+                  //             color: Colors.black,
+                  //             fontSize: 12,
+                  //             fontFamily: 'Inter',
+                  //             fontWeight: FontWeight.w700,
+                  //             height: 0,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     // Expanded(
+                  //     //   child: Padding(
+                  //     //     padding:
+                  //     //         const EdgeInsets.only(right: 16.0, top: 16.0),
+                  //     //     child: InkWell(
+                  //     //       onTap: () {
+                  //     //         Navigator.push(
+                  //     //           context,
+                  //     //           MaterialPageRoute(
+                  //     //               builder: (context) =>
+                  //     //                   listAnalysis.Analysis()),
+                  //     //         );
+                  //     //       },
+                  //     //       child: Text(
+                  //     //         'View All',
+                  //     //         textAlign: TextAlign.right,
+                  //     //         style: TextStyle(
+                  //     //           color: Colors.grey,
+                  //     //           // fontSize: 13,
+                  //     //           fontFamily: 'Inter',
+                  //     //           height: 0,
+                  //     //         ),
+                  //     //       ),
+                  //     //     ),
+                  //     //   ),
+                  //     // ),
+                  //   ],
+                  // ),
                   SizedBox(height: 10),
                   // Container(
                   //   height: 350,
@@ -712,51 +752,51 @@ class _DashboardState extends State<Dashboard> {
                   //   ),
                   // ),
                   SizedBox(height: 15),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .translate('medical_policy_affairs'),
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: Colors.black,
-                              // fontSize: 14,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(right: 16.0),
-                      //     child: InkWell(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) => listAffair.Affair()),
-                      //         );
-                      //       },
-                      //       child: Text(
-                      //         'View All',
-                      //         textAlign: TextAlign.right,
-                      //         style: TextStyle(
-                      //           color: Colors.grey,
-                      //           // fontSize: 13,
-                      //           fontFamily: 'Inter',
-                      //           height: 0,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: <Widget>[
+                  //     Expanded(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(left: 16.0),
+                  //         child: Text(
+                  //           AppLocalizations.of(context)!
+                  //               .translate('medical_policy_affairs'),
+                  //           textAlign: TextAlign.left,
+                  //           style: TextStyle(
+                  //             color: Colors.black,
+                  //             // fontSize: 14,
+                  //             fontFamily: 'Inter',
+                  //             fontWeight: FontWeight.w700,
+                  //             height: 0,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     // Expanded(
+                  //     //   child: Padding(
+                  //     //     padding: const EdgeInsets.only(right: 16.0),
+                  //     //     child: InkWell(
+                  //     //       onTap: () {
+                  //     //         Navigator.push(
+                  //     //           context,
+                  //     //           MaterialPageRoute(
+                  //     //               builder: (context) => listAffair.Affair()),
+                  //     //         );
+                  //     //       },
+                  //     //       child: Text(
+                  //     //         'View All',
+                  //     //         textAlign: TextAlign.right,
+                  //     //         style: TextStyle(
+                  //     //           color: Colors.grey,
+                  //     //           // fontSize: 13,
+                  //     //           fontFamily: 'Inter',
+                  //     //           height: 0,
+                  //     //         ),
+                  //     //       ),
+                  //     //     ),
+                  //     //   ),
+                  //     // ),
+                  //   ],
+                  // ),
                   SizedBox(height: 10),
                   // Container(
                   //   height: 350,
@@ -857,53 +897,53 @@ class _DashboardState extends State<Dashboard> {
                   //     separatorBuilder: (context, index) => SizedBox(height: 0),
                   //   ),
                   // ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 16.0),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .translate('dashboard_list_service'),
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding:
-                      //         const EdgeInsets.only(right: 16.0, top: 16.0),
-                      //     child: InkWell(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) =>
-                      //                   listServiceRequest.ServiceRequest()),
-                      //         );
-                      //       },
-                      //       child: Text(
-                      //         'View All',
-                      //         textAlign: TextAlign.right,
-                      //         style: TextStyle(
-                      //           color: Colors.grey,
-                      //           // fontSize: 13,
-                      //           fontFamily: 'Inter',
-                      //           height: 0,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: <Widget>[
+                  //     Expanded(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+                  //         child: Text(
+                  //           AppLocalizations.of(context)!
+                  //               .translate('dashboard_list_service'),
+                  //           textAlign: TextAlign.left,
+                  //           style: TextStyle(
+                  //             color: Colors.black,
+                  //             fontSize: 12,
+                  //             fontFamily: 'Inter',
+                  //             fontWeight: FontWeight.w700,
+                  //             height: 0,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     // Expanded(
+                  //     //   child: Padding(
+                  //     //     padding:
+                  //     //         const EdgeInsets.only(right: 16.0, top: 16.0),
+                  //     //     child: InkWell(
+                  //     //       onTap: () {
+                  //     //         Navigator.push(
+                  //     //           context,
+                  //     //           MaterialPageRoute(
+                  //     //               builder: (context) =>
+                  //     //                   listServiceRequest.ServiceRequest()),
+                  //     //         );
+                  //     //       },
+                  //     //       child: Text(
+                  //     //         'View All',
+                  //     //         textAlign: TextAlign.right,
+                  //     //         style: TextStyle(
+                  //     //           color: Colors.grey,
+                  //     //           // fontSize: 13,
+                  //     //           fontFamily: 'Inter',
+                  //     //           height: 0,
+                  //     //         ),
+                  //     //       ),
+                  //     //     ),
+                  //     //   ),
+                  //     // ),
+                  //   ],
+                  // ),
                   SizedBox(height: 10),
                   // Container(
                   //   height: 350,
@@ -994,33 +1034,33 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
           ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 60.0),
-            child: FloatingActionButton(
-              onPressed: () {
-                if (_isScrolledToEnd) {
-                  // Scroll to the top of the list
-                  _scrollController.animateTo(
-                    0,
-                    curve: Curves.easeOut,
-                    duration: const Duration(milliseconds: 500),
-                  );
-                } else {
-                  // Scroll to the end of the list
-                  _scrollController.animateTo(
-                    _scrollController.position.maxScrollExtent,
-                    curve: Curves.easeOut,
-                    duration: const Duration(milliseconds: 500),
-                  );
-                }
-              },
-              child: Icon(
-                  _isScrolledToEnd ? Icons.arrow_upward : Icons.arrow_downward),
-              tooltip: _isScrolledToEnd ? 'Scroll to Top' : 'Scroll to End',
-            ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation
-              .endFloat, // Set the location of the FAB
+          // floatingActionButton: Padding(
+          //   padding: const EdgeInsets.only(bottom: 60.0),
+          //   child: FloatingActionButton(
+          //     onPressed: () {
+          //       if (_isScrolledToEnd) {
+          //         // Scroll to the top of the list
+          //         _scrollController.animateTo(
+          //           0,
+          //           curve: Curves.easeOut,
+          //           duration: const Duration(milliseconds: 500),
+          //         );
+          //       } else {
+          //         // Scroll to the end of the list
+          //         _scrollController.animateTo(
+          //           _scrollController.position.maxScrollExtent,
+          //           curve: Curves.easeOut,
+          //           duration: const Duration(milliseconds: 500),
+          //         );
+          //       }
+          //     },
+          //     child: Icon(
+          //         _isScrolledToEnd ? Icons.arrow_upward : Icons.arrow_downward),
+          //     tooltip: _isScrolledToEnd ? 'Scroll to Top' : 'Scroll to End',
+          //   ),
+          // ),
+          // floatingActionButtonLocation: FloatingActionButtonLocation
+          //     .endFloat, // Set the location of the FAB
         );
       },
     );
@@ -1066,6 +1106,67 @@ class CircularIconWithTitle extends StatelessWidget {
                 height: 8), // Add some space between the avatar and the title
             Text(
               title,
+              style: TextStyle(
+                color: titleColor,
+                fontSize: 12,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class RectangularIconWithTitle extends StatelessWidget {
+  final String iconPath;
+  final String title;
+  final Color backgroundColor;
+  final Color titleColor;
+  final VoidCallback onTap;
+
+  RectangularIconWithTitle({
+    required this.iconPath,
+    required this.title,
+    required this.backgroundColor,
+    required this.titleColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80, // Adjust the width as needed
+              height: 80, // Adjust the height as needed
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius:
+                    BorderRadius.circular(15), // Membuat sudut membulat
+              ),
+              child: Center(
+                child: Image.asset(
+                  iconPath,
+                  width: 50, // Adjust the size as needed
+                  height: 50, // Adjust the size as needed
+                ),
+              ),
+            ),
+            SizedBox(
+                height: 8), // Add some space between the avatar and the title
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2, // Membatasi teks menjadi 2 baris
+              overflow: TextOverflow
+                  .ellipsis, // Menambahkan elipsis jika teks terlalu panjang
               style: TextStyle(
                 color: titleColor,
                 fontSize: 12,
