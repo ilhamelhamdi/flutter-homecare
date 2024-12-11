@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_homecare/views/tenders.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:flutter_homecare/route/app_routes.dart';
 // import 'package:flutter_homecare/views/details/detail_products.dart';
@@ -348,14 +349,15 @@ class _DashboardState extends State<Dashboard> {
                           // selectTab(1);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
+                            MaterialPageRoute(
+                                builder: (context) => pharmaServices()),
                           );
                         },
                         iconPath:
-                            'assets/icons/ic_tenders.png', // Replace with your actual image path
+                            'assets/icons/ic_pharma_service.png', // Replace with your actual image path
                         title: AppLocalizations.of(context)!
                             .translate('pharmacist_services'),
-                        backgroundColor: Color(0xFFDCE3FD),
+                        backgroundColor: Color(0x559AE1FF),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -364,10 +366,10 @@ class _DashboardState extends State<Dashboard> {
                           // selectTab(2);
                         },
                         iconPath:
-                            'assets/icons/ic_distributors.png', // Replace with your actual image path
+                            'assets/icons/ic_nurse.png', // Replace with your actual image path
                         title: AppLocalizations.of(context)!
                             .translate('home_nursing'),
-                        backgroundColor: Color(0xFFFFE7E7),
+                        backgroundColor: Color(0x33B28CFF),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -376,10 +378,10 @@ class _DashboardState extends State<Dashboard> {
                           // selectTab(1);
                         },
                         iconPath:
-                            'assets/icons/ic_products.png', // Replace with your actual image path
+                            'assets/icons/ic_diabetic.png', // Replace with your actual image path
                         title: AppLocalizations.of(context)!
                             .translate('diabetic_care'),
-                        backgroundColor: Color(0xFFFCEEE1),
+                        backgroundColor: Color(0x33B28CFF),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -397,10 +399,10 @@ class _DashboardState extends State<Dashboard> {
                             MaterialPageRoute(builder: (context) => HomePage()),
                           );
                         },
-                        iconPath: 'assets/icons/ic_pharmacy.png',
+                        iconPath: 'assets/icons/ic_report.png',
                         title: AppLocalizations.of(context)!
                             .translate('home_screening'),
-                        backgroundColor: Color(0xFFF6EFC6),
+                        backgroundColor: Color(0x6B8EF4DC),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -413,10 +415,10 @@ class _DashboardState extends State<Dashboard> {
                           // Utils.openPDFFromAssets(
                           //     context, 'assets/pdfs/content_service.pdf');
                         },
-                        iconPath: 'assets/icons/ic_poct.png',
+                        iconPath: 'assets/icons/ic_drug.png',
                         title: AppLocalizations.of(context)!
                             .translate('remote_monitoring'),
-                        backgroundColor: Color(0xFFE3F3EA),
+                        backgroundColor: Color(0xFFD3F2FF),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -427,10 +429,10 @@ class _DashboardState extends State<Dashboard> {
                             MaterialPageRoute(builder: (context) => HomePage()),
                           );
                         },
-                        iconPath: 'assets/icons/ic_events.png',
+                        iconPath: 'assets/icons/ic_lung.png',
                         title: AppLocalizations.of(context)!
                             .translate('2nd_opinion'),
-                        backgroundColor: Color(0xFFD3F2FF),
+                        backgroundColor: Color(0x6B8EF4DC),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),

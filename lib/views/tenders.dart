@@ -9,15 +9,15 @@ import '../api.dart';
 import '../utils.dart';
 import 'package:share_plus/share_plus.dart';
 
-class Tenders extends StatefulWidget {
+class pharmaServices extends StatefulWidget {
   @override
-  _TenderState createState() => _TenderState();
+  _pharmaServicestate createState() => _pharmaServicestate();
 }
 
-class _TenderState extends State<Tenders> {
+class _pharmaServicestate extends State<pharmaServices> {
   final api = Api();
   late TenderResponse tenderResponse;
-  List<TenderData> tenders = [];
+  List<TenderData> pharmaServices = [];
   int currentPage = 1;
   int limitItem = 10;
   String keyword = "";
@@ -63,8 +63,8 @@ class _TenderState extends State<Tenders> {
     });
 
     try {
-      final response = await api.fetchData(
-          context, 'tenders?page=$page&limit=$limitItem&keyword=$keyword');
+      final response = await api.fetchData(context,
+          'pharmaServices?page=$page&limit=$limitItem&keyword=$keyword');
 
       if (response != null) {
         // final Map<String, dynamic> jsonResponse = response.body;
@@ -72,9 +72,9 @@ class _TenderState extends State<Tenders> {
 
         setState(() {
           if (page == 1) {
-            tenders = newTenderResponse.data;
+            pharmaServices = newTenderResponse.data;
           } else {
-            tenders.addAll(newTenderResponse.data);
+            pharmaServices.addAll(newTenderResponse.data);
           }
           currentPage = page;
           hasMore = newTenderResponse.data.isNotEmpty;
@@ -92,7 +92,7 @@ class _TenderState extends State<Tenders> {
 
     // try {
     //   final response = await http.get(Uri.parse(
-    //       '${Const.URL_API}/tenders?page=$page&limit=$limitItem&keyword=$keyword'));
+    //       '${Const.URL_API}/pharmaServices?page=$page&limit=$limitItem&keyword=$keyword'));
 
     //   // print('cekResponse: $response');
 
@@ -104,9 +104,9 @@ class _TenderState extends State<Tenders> {
 
     //     setState(() {
     //       if (page == 1) {
-    //         tenders = newTenderResponse.data;
+    //         pharmaServices = newTenderResponse.data;
     //       } else {
-    //         tenders.addAll(newTenderResponse.data);
+    //         pharmaServices.addAll(newTenderResponse.data);
     //       }
     //       currentPage = page;
     //       // hasMore = newTenderResponse.data.isNotEmpty;
@@ -129,7 +129,7 @@ class _TenderState extends State<Tenders> {
     setState(() {
       keyword = newKeyword;
       currentPage = 1;
-      tenders = [];
+      pharmaServices = [];
       hasMore = true;
     });
     fetchData();
@@ -152,27 +152,27 @@ class _TenderState extends State<Tenders> {
                 },
               )
             : Text(AppLocalizations.of(context)!.translate('search_tender')),
-        actions: [
-          isSearching
-              ? IconButton(
-                  icon: Icon(Icons.clear),
-                  onPressed: () {
-                    setState(() {
-                      isSearching = false;
-                      _searchController.clear();
-                      _updateSearchKeyword('');
-                    });
-                  },
-                )
-              : IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    setState(() {
-                      isSearching = true;
-                    });
-                  },
-                ),
-        ],
+        // actions: [
+        //   isSearching
+        //       ? IconButton(
+        //           icon: Icon(Icons.clear),
+        //           onPressed: () {
+        //             setState(() {
+        //               isSearching = false;
+        //               _searchController.clear();
+        //               _updateSearchKeyword('');
+        //             });
+        //           },
+        //         )
+        //       : IconButton(
+        //           icon: Icon(Icons.search),
+        //           onPressed: () {
+        //             setState(() {
+        //               isSearching = true;
+        //             });
+        //           },
+        //         ),
+        // ],
       ),
       body: isInitialLoad
           ? Center(child: CircularProgressIndicator())
@@ -200,14 +200,14 @@ class _TenderState extends State<Tenders> {
                     Expanded(
                       child: ListView.separated(
                         controller: _scrollController,
-                        itemCount: tenders.length + (hasMore ? 1 : 0),
+                        itemCount: pharmaServices.length + (hasMore ? 1 : 0),
                         itemBuilder: (context, index) {
-                          if (index == tenders.length) {
+                          if (index == pharmaServices.length) {
                             return Center(
                               child: CircularProgressIndicator(),
                             );
                           }
-                          final tender = tenders[index];
+                          final tender = pharmaServices[index];
                           return ListTile(
                             title: Text(
                               tender.title,
