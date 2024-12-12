@@ -1,263 +1,170 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter_homecare/app_localzations.dart';
-// import 'dart:convert';
-// import 'package:http/http.dart' as http;
-import '../models/tender_response.dart';
 import '../const.dart';
-import '../api.dart';
 import '../utils.dart';
 import 'package:share_plus/share_plus.dart';
 
-class pharmaServices extends StatefulWidget {
+class Tenders extends StatefulWidget {
   @override
-  _pharmaServicestate createState() => _pharmaServicestate();
+  _TenderState createState() => _TenderState();
 }
 
-class _pharmaServicestate extends State<pharmaServices> {
-  final api = Api();
-  late TenderResponse tenderResponse;
-  List<TenderData> pharmaServices = [];
-  int currentPage = 1;
-  int limitItem = 10;
-  String keyword = "";
-  bool hasMore = true;
-  bool isLoading = false;
-  bool isInitialLoad = true;
-  final ScrollController _scrollController = ScrollController();
-  final TextEditingController _searchController = TextEditingController();
-  bool isSearching = false;
+class TenderCard extends StatelessWidget {
+  final Map<String, String> tender;
+  final VoidCallback onTap;
+  final Color color;
+
+  const TenderCard(
+      {required this.tender, required this.onTap, required this.color});
 
   @override
-  void initState() {
-    super.initState();
-    fetchData();
-    _scrollController.addListener(_onScroll);
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Container(
+        width: 357,
+        height: 243,
+        padding: const EdgeInsets.all(16.0),
+        color:
+            color.withOpacity(0.1), // Set the background color with 10% opacity
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${tender['title']}',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  '${tender['description']}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300, // Light font weight
+                  ),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: onTap,
+                  child: Text('Book Now'),
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: -25,
+              right: -15,
+              child: ClipRect(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10.0), // Adjust the padding as needed
+                  child: Image.asset(
+                    tender['imagePath']!,
+                    width: 185,
+                    height: 139,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
+}
 
-  @override
-  void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent &&
-        hasMore &&
-        !isLoading) {
-      fetchData(page: currentPage + 1);
-    }
-  }
-
-  Future<void> fetchData({int page = 1}) async {
-    if (!hasMore || isLoading) return;
-
-    setState(() {
-      isLoading = true;
-      if (page == 1) {
-        isInitialLoad = true;
-      }
-    });
-
-    try {
-      final response = await api.fetchData(context,
-          'pharmaServices?page=$page&limit=$limitItem&keyword=$keyword');
-
-      if (response != null) {
-        // final Map<String, dynamic> jsonResponse = response.body;
-        TenderResponse newTenderResponse = TenderResponse.fromJson(response);
-
-        setState(() {
-          if (page == 1) {
-            pharmaServices = newTenderResponse.data;
-          } else {
-            pharmaServices.addAll(newTenderResponse.data);
-          }
-          currentPage = page;
-          hasMore = newTenderResponse.data.isNotEmpty;
-          hasMore = newTenderResponse.data.length == limitItem;
-          isInitialLoad = false;
-        });
-      }
-    } catch (e) {
-      Utils.showSnackBar(context, e.toString());
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-
-    // try {
-    //   final response = await http.get(Uri.parse(
-    //       '${Const.URL_API}/pharmaServices?page=$page&limit=$limitItem&keyword=$keyword'));
-
-    //   // print('cekResponse: $response');
-
-    //   if (response.statusCode == 200) {
-    //     final Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-    //     TenderResponse newTenderResponse =
-    //         TenderResponse.fromJson(jsonResponse);
-
-    //     setState(() {
-    //       if (page == 1) {
-    //         pharmaServices = newTenderResponse.data;
-    //       } else {
-    //         pharmaServices.addAll(newTenderResponse.data);
-    //       }
-    //       currentPage = page;
-    //       // hasMore = newTenderResponse.data.isNotEmpty;
-    //       hasMore = newTenderResponse.data.length == limitItem;
-    //       isInitialLoad = false;
-    //     });
-    //   } else {
-    //     Utils.showSnackBar(context, 'Failed to load data');
-    //   }
-    // } catch (e) {
-    //   Utils.showSnackBar(context, e.toString());
-    // } finally {
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    // }
-  }
-
-  void _updateSearchKeyword(String newKeyword) {
-    setState(() {
-      keyword = newKeyword;
-      currentPage = 1;
-      pharmaServices = [];
-      hasMore = true;
-    });
-    fetchData();
-  }
+class _TenderState extends State<Tenders> {
+  final List<Map<String, String>> dummyTenders = [
+    {
+      'title': 'Medication Counseling\nand Education',
+      'description':
+          'Medication counseling and education guide\npatients on proper use, side effects, and\nadherence to prescriptions,\nenhancing safety and\nimproving health outcomes.',
+      'imagePath': 'assets/icons/ilu_pharmacist.png',
+      'color': 'F79E1B',
+      'opacity': '0.1',
+    },
+    {
+      'title': 'Compehensive Therapy\nReview',
+      'description':
+          'Comprehensive review of your medication\nand lifestyle to optimize treatment\noutcomes and minimize potential side\neffects',
+      'imagePath': 'assets/icons/ilu_therapy.png',
+      'color': 'B28CFF',
+      'opacity': '0.2',
+    },
+    {
+      'title': 'Health Coaching',
+      'description':
+          'Personalized guidance and support to help\nindividuals achieve their health goals, manage\nchronic conditions, and improve overall well-\nbeing, with specialized programs for weight\nmanagement, diabetes management, high\nblood pressure management, and high\ncholesterol management',
+      'imagePath': 'assets/icons/ilu_coach.png',
+      'color': '9AE1FF',
+      'opacity': '0.33',
+    },
+    {
+      'title': 'Smoking Cessation',
+      'description':
+          'Smoking cessation involves quitting\nsmoking through strategies like\ncounseling, medications, and support\nprograms to improve health and\nreduce the risk of smoking-related\ndiseases.',
+      'imagePath': 'assets/icons/ilu_lung.png',
+      'color': 'FF9A9A',
+      'opacity': '0.19',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: isSearching
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'Enter keyword ...',
-                  border: InputBorder.none,
-                ),
-                onSubmitted: (value) {
-                  _updateSearchKeyword(value);
-                },
-              )
-            : Text(AppLocalizations.of(context)!.translate('search_tender')),
-        // actions: [
-        //   isSearching
-        //       ? IconButton(
-        //           icon: Icon(Icons.clear),
-        //           onPressed: () {
-        //             setState(() {
-        //               isSearching = false;
-        //               _searchController.clear();
-        //               _updateSearchKeyword('');
-        //             });
-        //           },
-        //         )
-        //       : IconButton(
-        //           icon: Icon(Icons.search),
-        //           onPressed: () {
-        //             setState(() {
-        //               isSearching = true;
-        //             });
-        //           },
-        //         ),
-        // ],
+        title: Text(
+            AppLocalizations.of(context)!.translate('pharmacist_services')),
       ),
-      body: isInitialLoad
-          ? Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: () => fetchData(page: 1),
-              child: Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 0, 60.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        AppLocalizations.of(context)!
-                            .translate('latest_tender'),
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w700,
-                          height: 0,
+      body: Container(
+        margin: EdgeInsets.fromLTRB(0, 0, 0, 60.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ListView.separated(
+                itemCount: dummyTenders.length,
+                itemBuilder: (context, index) {
+                  final tender = dummyTenders[index];
+                  return TenderCard(
+                    tender: tender,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TenderDetailPage(item: tender),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                        controller: _scrollController,
-                        itemCount: pharmaServices.length + (hasMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == pharmaServices.length) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          final tender = pharmaServices[index];
-                          return ListTile(
-                            title: Text(
-                              tender.title,
-                              style: TextStyle(
-                                color: Color(0xFF22212E),
-                                fontSize: 16,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            subtitle: Text(
-                              'Start  : ${Utils.formatDateToDMY(tender.openDate)}\nClose : ${Utils.formatDateToDMY(tender.closeDate)}\nCountry : ${tender.state.country.name}',
-                              style: TextStyle(
-                                color: Color(0xFF797979),
-                                fontSize: 14,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            trailing: Icon(Icons.arrow_forward_ios),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      TenderDetailPage(item: tender),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        separatorBuilder: (context, index) =>
-                            Divider(height: 1),
-                      ),
-                    ),
-                  ],
-                ),
+                      );
+                    },
+                    color: Color(int.parse('0xFF${tender['color']}'))
+                        .withOpacity(tender['opacity'] != null
+                            ? double.parse(tender['opacity']!)
+                            : 1.0),
+                  );
+                },
+                separatorBuilder: (context, index) => Divider(height: 1),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }
 
 class TenderDetailPage extends StatelessWidget {
-  final TenderData item;
+  final Map<String, String> item;
 
   TenderDetailPage({Key? key, required this.item});
 
   void _shareProduct() {
-    final String productUrl = Const.URL_WEB + '/tender/detail/${item.id}';
+    final String productUrl = Const.URL_WEB + '/tender/detail/${item['title']}';
     Share.share(productUrl, subject: '');
   }
 
@@ -279,7 +186,7 @@ class TenderDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              item.title,
+              item['title']!,
               style: TextStyle(
                   fontSize: 13,
                   fontFamily: 'Avenir',
@@ -290,126 +197,15 @@ class TenderDetailPage extends StatelessWidget {
             const Divider(
               color: Colors.black38,
             ),
-            Table(
-              columnWidths: const {
-                0: FractionColumnWidth(0.3), // 30% of the table width for keys
-                1: FractionColumnWidth(
-                    0.7), // 70% of the table width for values
-              },
-              children: [
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.all(0),
-                        child: Text('Tender Type'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.all(0),
-                        child: Text(item.tenderType.name,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text('TDR NO'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(item.refNo,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text('Tender Brief'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(item.brief,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text('Competition Type'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(item.state.country.name,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text('State'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(item.state.name,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text('Open Date'),
-                      ),
-                    ),
-                    TableCell(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(Utils.formatDateToDMY(item.openDate),
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+            Text(
+              item['description']!,
+              style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'Avenir',
+                  color: Const.primaryTextColor,
+                  fontWeight: FontWeight.w300),
+              textAlign: TextAlign.left,
             ),
-            // Text(
-            //   item.brief,
-            //   style: TextStyle(
-            //       fontSize: 15,
-            //       fontFamily: 'Avenir',
-            //       color: Const.primaryTextColor,
-            //       fontWeight: FontWeight.w300),
-            //   textAlign: TextAlign.left,
-            // ),
             const Divider(
               color: Colors.black38,
             ),
@@ -435,56 +231,14 @@ class TenderDetailPage extends StatelessWidget {
               height: 10,
             ),
             HtmlWidget(
-              item.detail,
+              item['description']!,
             ),
-            // SizedBox(
-            //   height: 140,
-            //   width: MediaQuery.of(context).size.width * 0.95,
-            //   child: SingleChildScrollView(
-            //     physics: const BouncingScrollPhysics(),
-            //     scrollDirection: Axis.vertical,
-            //     child: Html(
-            //       data: item.detail,
-            //       // Optionally set styles for different HTML elements
-            //       style: {
-            //         "div": Style(
-            //           textAlign: TextAlign.center,
-            //           color: Colors.black, // Replace with your color constant
-            //           fontFamily: 'Avenir',
-            //           fontSize: FontSize(20),
-            //           fontWeight: FontWeight.w300,
-            //         ),
-            //         // Add more styles for other tags if needed
-            //       },
-            //     ),
-            //     // child: Text(
-            //     //   item.detail,
-            //     //   style: TextStyle(
-            //     //       fontSize: 20,
-            //     //       overflow: TextOverflow.ellipsis,
-            //     //       fontFamily: 'Avenir',
-            //     //       color: Const.contentTextColor,
-            //     //       fontWeight: FontWeight.w400),
-            //     //   textAlign: TextAlign.left,
-            //     //   maxLines: 60,
-            //     // ),
-            //   ),
-            // ),
             const SizedBox(
               height: 15,
             ),
             const Divider(
               color: Colors.black38,
             ),
-            if (item.documentFee?.url != null &&
-                item.documentFee!.url!.isNotEmpty)
-              ElevatedButton(
-                onPressed: () {
-                  // Utils.launchURL(context, item.documentFee!.url.toString());
-                  Utils.openPDF(context, item.documentFee!.url.toString());
-                },
-                child: Text('View Document Fee'),
-              ),
           ],
         ),
       ),

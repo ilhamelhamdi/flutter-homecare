@@ -349,8 +349,7 @@ class _DashboardState extends State<Dashboard> {
                           // selectTab(1);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => pharmaServices()),
+                            MaterialPageRoute(builder: (context) => Tenders()),
                           );
                         },
                         iconPath:
