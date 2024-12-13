@@ -10,6 +10,7 @@ import 'package:flutter_homecare/cubit/submenu/submenu_page.dart';
 import 'package:flutter_homecare/cubit/partnership/list/partnership_list_page.dart';
 import 'package:flutter_homecare/main.dart';
 import 'package:flutter_homecare/views/dashboard.dart';
+import 'package:flutter_homecare/views/tenders.dart';
 import 'app_routes.dart';
 
 final GoRouter router = GoRouter(
@@ -32,6 +33,7 @@ final GoRouter router = GoRouter(
         return RequestPage(itemId: itemId);
       },
     ),
+
     // GoRoute(
     //   path: AppRoutes.partnership,
     //   builder: (context, state) => RequestPage(),

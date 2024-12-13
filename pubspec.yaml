@@ -65,6 +65,7 @@ dependencies:
   flutter_speed_dial: ^5.0.0+1
   equatable: ^2.0.0
   flutter_floating_bottom_bar: ^1.2.1+1
+  gradient_borders: ^1.0.1
 
 
 
