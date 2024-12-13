@@ -4,6 +4,9 @@ import 'package:flutter_homecare/app_localzations.dart';
 import '../const.dart';
 import '../utils.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_homecare/route/app_routes.dart';
+import 'package:gradient_borders/gradient_borders.dart';
+import 'package:flutter_homecare/main.dart';
 
 class Tenders extends StatefulWidget {
   @override
@@ -50,10 +53,29 @@ class TenderCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10),
-                ElevatedButton(
+                TextButton(
                   onPressed: onTap,
-                  child: Text('Book Now'),
-                ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(width: 5),
+                      Text(
+                        'Book Now',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Color(0xFF35C5CF),
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                      Image.asset(
+                        'assets/icons/ic_play.png',
+                        width: 20,
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
             Positioned(
@@ -135,12 +157,36 @@ class _TenderState extends State<Tenders> {
                   return TenderCard(
                     tender: tender,
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TenderDetailPage(item: tender),
-                        ),
-                      );
+                      String route;
+                      switch (index) {
+                        case 0:
+                          navbarVisibility(true);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TenderDetailPage(
+                                item: tender,
+                              ),
+                            ),
+                          ).then((_) {
+                            // Show the bottom navigation bar when returning
+                            navbarVisibility(false);
+                          });
+                          return;
+                        case 1:
+                          route = AppRoutes.home;
+                          break;
+                        case 2:
+                          route = AppRoutes.home;
+                          break;
+                        case 3:
+                          route = AppRoutes.home;
+                          break;
+                        default:
+                          route = AppRoutes.home;
+                      }
+                      Navigator.pushNamed(context, route);
                     },
                     color: Color(int.parse('0xFF${tender['color']}'))
                         .withOpacity(tender['opacity'] != null
@@ -163,6 +209,10 @@ class TenderDetailPage extends StatelessWidget {
 
   TenderDetailPage({Key? key, required this.item});
 
+  final TextEditingController _chatController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  List<Map<String, dynamic>> _chatHistory = [];
+
   void _shareProduct() {
     final String productUrl = Const.URL_WEB + '/tender/detail/${item['title']}';
     Share.share(productUrl, subject: '');
@@ -172,75 +222,134 @@ class TenderDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tender Details'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: _shareProduct,
-          ),
-        ],
+        title: const Text(
+          "Chat",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(8, 0, 8, 60),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              item['title']!,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontFamily: 'Avenir',
-                  color: Const.primaryTextColor,
-                  fontWeight: FontWeight.w900),
-              textAlign: TextAlign.left,
-            ),
-            const Divider(
-              color: Colors.black38,
-            ),
-            Text(
-              item['description']!,
-              style: TextStyle(
-                  fontSize: 15,
-                  fontFamily: 'Avenir',
-                  color: Const.primaryTextColor,
-                  fontWeight: FontWeight.w300),
-              textAlign: TextAlign.left,
-            ),
-            const Divider(
-              color: Colors.black38,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Tender Detail',
-                    style: TextStyle(
-                      color: Color(0xFF22212E),
-                      fontSize: 16,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w800,
+      body: Stack(
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height - 160,
+            child: ListView.builder(
+              itemCount: _chatHistory.length,
+              shrinkWrap: false,
+              controller: _scrollController,
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Container(
+                  padding:
+                      EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
+                  child: Align(
+                    alignment: (_chatHistory[index]["isSender"]
+                        ? Alignment.topRight
+                        : Alignment.topLeft),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                        color: (_chatHistory[index]["isSender"]
+                            ? Color(0xFFF69170)
+                            : Colors.white),
+                      ),
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        _chatHistory[index]["message"],
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: _chatHistory[index]["isSender"]
+                                ? Colors.white
+                                : Colors.black),
+                      ),
                     ),
                   ),
+                );
+              },
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              height: 60,
+              width: double.infinity,
+              color: Colors.white,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        border: GradientBoxBorder(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFFF69170),
+                                Color(0xFF7D96E6),
+                              ]),
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: "Type a message",
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(8.0),
+                          ),
+                          controller: _chatController,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 4.0,
+                  ),
+                  MaterialButton(
+                    onPressed: () {
+                      // Add your send message logic here
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(80.0)),
+                    padding: const EdgeInsets.all(0.0),
+                    child: Ink(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFFF69170),
+                              Color(0xFF7D96E6),
+                            ]),
+                        borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                      ),
+                      child: Container(
+                          constraints: const BoxConstraints(
+                              minWidth: 88.0,
+                              minHeight:
+                                  36.0), // min sizes for Material buttons
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.send,
+                            color: Colors.white,
+                          )),
+                    ),
+                  )
                 ],
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            HtmlWidget(
-              item['description']!,
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const Divider(
-              color: Colors.black38,
-            ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
