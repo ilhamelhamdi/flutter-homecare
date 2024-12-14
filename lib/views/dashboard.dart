@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/views/tenders.dart';
+import 'package:flutter_homecare/views/pharma.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:flutter_homecare/route/app_routes.dart';
 // import 'package:flutter_homecare/views/details/detail_products.dart';
@@ -346,10 +346,11 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       RectangularIconWithTitle(
                         onTap: () {
-                          // selectTab(1);
+                          navbarVisibility(true);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Tenders()),
+                            MaterialPageRoute(
+                                builder: (context) => PharmaServices()),
                           );
                         },
                         iconPath:

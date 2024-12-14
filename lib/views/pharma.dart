@@ -8,18 +8,18 @@ import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:flutter_homecare/main.dart';
 
-class Tenders extends StatefulWidget {
+class PharmaServices extends StatefulWidget {
   @override
-  _TenderState createState() => _TenderState();
+  _PharmaState createState() => _PharmaState();
 }
 
-class TenderCard extends StatelessWidget {
-  final Map<String, String> tender;
+class PharmaCard extends StatelessWidget {
+  final Map<String, String> pharma;
   final VoidCallback onTap;
   final Color color;
 
-  const TenderCard(
-      {required this.tender, required this.onTap, required this.color});
+  const PharmaCard(
+      {required this.pharma, required this.onTap, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class TenderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${tender['title']}',
+                  '${pharma['title']}',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -46,10 +46,10 @@ class TenderCard extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  '${tender['description']}',
+                  '${pharma['description']}',
                   style: TextStyle(
                     fontSize: 12,
-                    fontWeight: FontWeight.w300, // Light font weight
+                    fontWeight: FontWeight.w400, // Light font weight
                   ),
                 ),
                 SizedBox(height: 10),
@@ -63,7 +63,7 @@ class TenderCard extends StatelessWidget {
                         'Book Now',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: 16,
                           color: Color(0xFF35C5CF),
                         ),
                       ),
@@ -80,13 +80,13 @@ class TenderCard extends StatelessWidget {
             ),
             Positioned(
               bottom: -25,
-              right: -15,
+              right: -20,
               child: ClipRect(
                 child: Padding(
                   padding: const EdgeInsets.only(
                       left: 10.0), // Adjust the padding as needed
                   child: Image.asset(
-                    tender['imagePath']!,
+                    pharma['imagePath']!,
                     width: 185,
                     height: 139,
                     fit: BoxFit.contain,
@@ -101,7 +101,7 @@ class TenderCard extends StatelessWidget {
   }
 }
 
-class _TenderState extends State<Tenders> {
+class _PharmaState extends State<PharmaServices> {
   final List<Map<String, String>> dummyTenders = [
     {
       'title': 'Medication Counseling\nand Education',
@@ -142,7 +142,8 @@ class _TenderState extends State<Tenders> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            AppLocalizations.of(context)!.translate('pharmacist_services')),
+            AppLocalizations.of(context)!.translate('pharmacist_services2'),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
       body: Container(
         margin: EdgeInsets.fromLTRB(0, 0, 0, 60.0),
@@ -154,8 +155,8 @@ class _TenderState extends State<Tenders> {
                 itemCount: dummyTenders.length,
                 itemBuilder: (context, index) {
                   final tender = dummyTenders[index];
-                  return TenderCard(
-                    tender: tender,
+                  return PharmaCard(
+                    pharma: tender,
                     onTap: () {
                       String route;
                       switch (index) {
@@ -165,7 +166,7 @@ class _TenderState extends State<Tenders> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => TenderDetailPage(
+                              builder: (context) => PharmaDetailPage(
                                 item: tender,
                               ),
                             ),
@@ -204,10 +205,10 @@ class _TenderState extends State<Tenders> {
   }
 }
 
-class TenderDetailPage extends StatelessWidget {
+class PharmaDetailPage extends StatelessWidget {
   final Map<String, String> item;
 
-  TenderDetailPage({Key? key, required this.item});
+  PharmaDetailPage({Key? key, required this.item});
 
   final TextEditingController _chatController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
