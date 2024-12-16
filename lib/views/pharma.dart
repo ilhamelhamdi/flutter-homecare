@@ -8,6 +8,8 @@ import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:flutter_homecare/main.dart';
 
+import '../views/details/detail_pharma.dart';
+
 class PharmaServices extends StatefulWidget {
   @override
   _PharmaState createState() => _PharmaState();
@@ -396,10 +398,27 @@ class _PharmaDetailPageState extends State<PharmaDetailPage> {
                             width:
                                 5), // Add some spacing between the icon and text
                         Text(
-                          "Need Help? Request help from the Pharmacist",
+                          "Need Help? ",
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 12,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DetailPersonalPage()),
+                            );
+                          },
+                          child: Text(
+                            "Request help from the Pharmacist",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 12,
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
                       ],
