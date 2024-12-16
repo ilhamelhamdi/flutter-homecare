@@ -205,27 +205,90 @@ class _PharmaState extends State<PharmaServices> {
   }
 }
 
-class PharmaDetailPage extends StatelessWidget {
+class PharmaDetailPage extends StatefulWidget {
   final Map<String, String> item;
 
-  PharmaDetailPage({Key? key, required this.item});
+  PharmaDetailPage({Key? key, required this.item}) : super(key: key);
 
+  @override
+  _PharmaDetailPageState createState() => _PharmaDetailPageState();
+}
+
+class _PharmaDetailPageState extends State<PharmaDetailPage> {
   final TextEditingController _chatController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   List<Map<String, dynamic>> _chatHistory = [];
 
-  void _shareProduct() {
-    final String productUrl = Const.URL_WEB + '/tender/detail/${item['title']}';
-    Share.share(productUrl, subject: '');
+  // void _shareProduct() {
+  //   final String productUrl = Const.URL_WEB + '/tender/detail/${item['title']}';
+  //   Share.share(productUrl, subject: '');
+  // }
+
+  void _sendMessage() {
+    if (_chatController.text.isNotEmpty) {
+      setState(() {
+        _chatHistory.add({
+          "message": _chatController.text,
+          "isSender": true,
+        });
+        _chatController.clear();
+      });
+
+      // Simulate a response from the other side
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          _chatHistory.add({
+            "message": "This is a dummy response",
+            "isSender": false,
+          });
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        });
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Chat",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Icon(Icons.supervised_user_circle), // Replace with your custom icon
+            SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "AI Pharmacist",
+                  style: TextStyle(
+                    color: Color(0xFF35C5CF),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      color: Colors.green,
+                      size: 12,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      "Online",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
       body: Stack(
@@ -239,39 +302,75 @@ class PharmaDetailPage extends StatelessWidget {
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                return Container(
-                  padding:
-                      EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-                  child: Align(
-                    alignment: (_chatHistory[index]["isSender"]
-                        ? Alignment.topRight
-                        : Alignment.topLeft),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (index == 0)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 130.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.lock, color: Colors.grey),
+                            Text(
+                              "(HIPAA Privacy)",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    SizedBox(height: 5),
+                    Container(
+                      padding: EdgeInsets.only(
+                          left: 14, right: 14, top: 10, bottom: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (!_chatHistory[index]["isSender"])
+                            CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              child: Icon(Icons.person, color: Colors.white),
+                            ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Align(
+                              alignment: (_chatHistory[index]["isSender"]
+                                  ? Alignment.topRight
+                                  : Alignment.topLeft),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                  color: (_chatHistory[index]["isSender"]
+                                      ? Color(0xFF35C5CF)
+                                      : Colors.white),
+                                ),
+                                padding: EdgeInsets.all(16),
+                                child: Text(
+                                  _chatHistory[index]["message"],
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: _chatHistory[index]["isSender"]
+                                          ? Colors.white
+                                          : Colors.black),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
-                        color: (_chatHistory[index]["isSender"]
-                            ? Color(0xFFF69170)
-                            : Colors.white),
-                      ),
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        _chatHistory[index]["message"],
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: _chatHistory[index]["isSender"]
-                                ? Colors.white
-                                : Colors.black),
                       ),
                     ),
-                  ),
+                  ],
                 );
               },
             ),
@@ -281,71 +380,87 @@ class PharmaDetailPage extends StatelessWidget {
             child: Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              height: 60,
+              height: 150,
               width: double.infinity,
               color: Colors.white,
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        border: GradientBoxBorder(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFFF69170),
-                                Color(0xFF7D96E6),
-                              ]),
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            hintText: "Type a message",
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.all(8.0),
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info, color: Colors.grey),
+                        SizedBox(
+                            width:
+                                5), // Add some spacing between the icon and text
+                        Text(
+                          "Need Help? Request help from the Pharmacist",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
                           ),
-                          controller: _chatController,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 10,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    hintText: 'Write your message',
+                                    hintStyle: TextStyle(
+                                      color: Color(0xFFA1A1A1),
+                                    ),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 10.0,
+                                        horizontal:
+                                            20.0), // Adjust these values as needed
+                                  ),
+                                  controller: _chatController,
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.mic, color: Colors.grey),
+                                onPressed: () {
+                                  // Add your mic button logic here
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.send, color: Colors.blue),
+                                onPressed: () {
+                                  _sendMessage();
+                                  // Add your send message logic here
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 4.0,
-                  ),
-                  MaterialButton(
-                    onPressed: () {
-                      // Add your send message logic here
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(80.0)),
-                    padding: const EdgeInsets.all(0.0),
-                    child: Ink(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFFF69170),
-                              Color(0xFF7D96E6),
-                            ]),
-                        borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                      const SizedBox(
+                        width: 4.0,
                       ),
-                      child: Container(
-                          constraints: const BoxConstraints(
-                              minWidth: 88.0,
-                              minHeight:
-                                  36.0), // min sizes for Material buttons
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.send,
-                            color: Colors.white,
-                          )),
-                    ),
-                  )
+                    ],
+                  ),
                 ],
               ),
             ),

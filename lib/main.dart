@@ -313,17 +313,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initializeNavbarItems() {
     // final localizations = AppLocalizations.of(context);
     items = [
-      NavbarItem(
-          IconMedmap.home, AppLocalizations.of(context)!.translate('tab_home')),
+      NavbarItem(IconMedmap.home, ''),
       // NavbarItem(Iconflutter_homecare.home, 'Home'),
-      NavbarItem(IconMedmap.products,
-          AppLocalizations.of(context)!.translate('tab_products')),
-      NavbarItem(IconMedmap.distributors,
-          AppLocalizations.of(context)!.translate('tab_distributors')),
-      NavbarItem(IconMedmap.tenders,
-          AppLocalizations.of(context)!.translate('tab_four')),
-      NavbarItem(IconMedmap.tenders,
-          AppLocalizations.of(context)!.translate('tab_four')),
+      NavbarItem(IconMedmap.products, ''),
+      NavbarItem(IconMedmap.distributors, ''),
+      NavbarItem(IconMedmap.tenders, ''),
+      NavbarItem(IconMedmap.tenders, ''),
     ];
   }
 

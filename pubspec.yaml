@@ -119,6 +119,19 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
+  fonts:
+    - family: IconMedmapHome
+      fonts:
+        - asset: assets/fonts/IconMedmapHome.ttf
+    - family: IconMedmapTenders
+      fonts:
+        - asset: assets/fonts/IconMedmapTenders.ttf
+    - family: IconMedmapProducts
+      fonts:
+        - asset: assets/fonts/IconMedmapProducts.ttf
+    - family: IconMedmapDistributors
+      fonts:
+        - asset: assets/fonts/IconMedmapDistributors.ttf
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
