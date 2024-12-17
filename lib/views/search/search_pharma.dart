@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_homecare/views/appointment.dart';
 
 class SearchPharmacistPage extends StatelessWidget {
   @override
@@ -337,7 +338,10 @@ class PharmacistProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            // Handle Book Appointment click
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BookAppointmentPage()),
+            );
           },
           child: Text('Book Appointment'),
         ),

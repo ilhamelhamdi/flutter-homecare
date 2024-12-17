@@ -9,6 +9,7 @@ class AppRoutes {
   static const String service_request = '/service-request';
   static const String profile = '/profile';
   static const String chat = '/chat';
+  static const String pharma_profile = '/pharma-profile';
 
   // static const String home = '/';
   // static const String submenu = 'submenu';
