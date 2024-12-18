@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:time_slot/time_slot.dart';
+import 'details/detail_appointment.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   @override
@@ -130,6 +131,13 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    DetailAppointmentPage(pharmacistName: 'Khanza Deliva'),
+              ),
+            );
             // Handle the next button press
           },
           child: Text('Next'),
