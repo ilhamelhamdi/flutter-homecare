@@ -13,30 +13,72 @@ class DetailPersonalPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'There are no issues added yet. Please add one or more issues so you can proceed to the next step.',
-              style: TextStyle(fontSize: 16),
+            Column(
+              children: [
+                Center(
+                  child: Text(
+                    'Tell Us Your Concern',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF35C5CF),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Center(
+                  child: Text(
+                    'There are no issues added yet. Please add one or more issues so you can proceed to the next step.',
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddConcernPage(),
-                      ),
-                    );
-                  },
-                  child: Text('Add an Issue'),
+                SizedBox(
+                  width: 352,
+                  height: 58,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddConcernPage(),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Color(0xFF35C5CF)),
+                    ),
+                    child: Text(
+                      'Add an Issue',
+                      style: TextStyle(color: Color(0xFF35C5CF)),
+                    ),
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Next'),
+                SizedBox(height: 10),
+                SizedBox(
+                  width: 352,
+                  height: 58,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Handle next button press
+                    },
+                    style: ElevatedButton.styleFrom(
+                      // primary: Colors.white,
+                      side: BorderSide(color: Color(0xFF35C5CF)),
+                    ),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(color: Color(0xFFB2B9C4)),
+                    ),
+                  ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -125,9 +167,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
                   ),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF35C5CF),
-              ),
+              style: ElevatedButton.styleFrom(),
               child: Center(
                 child: Text('Add'),
               ),
@@ -211,10 +251,9 @@ class AddSummaryPage extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    // primary: Colors.transparent,
-                    // onPrimary: Color(0xFF35C5CF),
-                    shadowColor: Colors.transparent,
-                  ),
+                      // primary: Colors.transparent,
+                      // onPrimary: Color(0xFF35C5CF),
+                      ),
                   child: Text('Add an Issue'),
                 ),
                 ElevatedButton(
@@ -226,8 +265,9 @@ class AddSummaryPage extends StatelessWidget {
                     // Add your next step logic here
                   },
                   style: ElevatedButton.styleFrom(
-                      // primary: Color(0xFF35C5CF),
-                      ),
+                    // primary: Color(0xFF35C5CF),
+                    backgroundColor: Color(0xFF35C5CF),
+                  ),
                   child: Text('Next'),
                 ),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'details/detail_appointment.dart';
 
 class PaymentPage extends StatefulWidget {
   @override
@@ -360,7 +361,10 @@ class FeedbackForm extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Handle submit button press
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FeedbackDetails()),
+                  );
                 },
                 child: Text('Submit'),
               ),
@@ -376,6 +380,57 @@ class FeedbackForm extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(amount),
+      ),
+    );
+  }
+}
+
+class FeedbackDetails extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        // title: Text('Feedback'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 100),
+            SizedBox(height: 20),
+            Text(
+              'Thank you for your feedback',
+              style: TextStyle(color: Colors.green, fontSize: 20),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'This appointment has been completed and can be viewed in the completed orders menu',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailAppointmentPage(
+                      pharmacistName: 'Angela XIan xian',
+                      // isCompleted: true,
+                    ),
+                  ),
+                );
+              },
+              child: Text('View Detail'),
+            ),
+          ],
+        ),
       ),
     );
   }
