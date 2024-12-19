@@ -13,6 +13,7 @@ class DetailPersonalPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            SizedBox(height: 0.0),
             Column(
               children: [
                 Center(
@@ -68,12 +69,11 @@ class DetailPersonalPage extends StatelessWidget {
                       // Handle next button press
                     },
                     style: ElevatedButton.styleFrom(
-                      // primary: Colors.white,
-                      side: BorderSide(color: Color(0xFF35C5CF)),
+                      backgroundColor: Color(0xFFB2B9C4),
                     ),
                     child: Text(
                       'Next',
-                      style: TextStyle(color: Color(0xFFB2B9C4)),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -157,19 +157,84 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 ),
               ],
             ),
-            Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddSummaryPage(),
+            SizedBox(height: 10.0),
+            Row(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.grey.shade200,
+                  child: Center(
+                    child: Text('Preview'),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(),
-              child: Center(
-                child: Text('Add'),
+                ),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Choose File',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add your choose file logic here
+                      },
+                      child: Text('Choose File'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 10.0),
+            Row(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.grey.shade200,
+                  child: Center(
+                    child: Text('Preview'),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Choose File',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add your choose file logic here
+                      },
+                      child: Text('Choose File'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Spacer(),
+            SizedBox(
+              width: 352,
+              height: 58,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddSummaryPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF35C5CF),
+                ),
+                child: Text(
+                  'Add',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],
