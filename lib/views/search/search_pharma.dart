@@ -6,7 +6,8 @@ class SearchPharmacistPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Pharmacist'),
+        title: Text('Search Pharmacist',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -17,7 +18,7 @@ class SearchPharmacistPage extends StatelessWidget {
                 prefixIcon: Icon(Icons.search),
                 hintText: 'Search Pharmacist',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
             ),
@@ -70,7 +71,7 @@ class SearchPharmacistPage extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text('Role: Pharmacist'),
+                                Text('Pharmacist'),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.push(

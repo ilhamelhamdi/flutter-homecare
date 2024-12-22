@@ -211,7 +211,10 @@ class AddSummaryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Summary'),
+        title: Text(
+          'Summary',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -273,7 +276,7 @@ class AddSummaryPage extends StatelessWidget {
                 SizedBox(
                   width: 352,
                   height: 58,
-                  child: ElevatedButton(
+                  child: OutlinedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -282,17 +285,20 @@ class AddSummaryPage extends StatelessWidget {
                         ),
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF35C5CF),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Color(0xFF35C5CF)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                     child: Text(
                       'Add an Issue',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Color(0xFF35C5CF), fontSize: 20),
                     ),
                   ),
                 ),
-                SizedBox(height: 10.0),
-                Container(
+                SizedBox(height: 10),
+                SizedBox(
                   width: 352,
                   height: 58,
                   child: ElevatedButton(
@@ -306,10 +312,13 @@ class AddSummaryPage extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF35C5CF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                     child: Text(
                       'Next',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                 ),
@@ -335,7 +344,10 @@ class _AddIssuePageState extends State<AddIssuePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Personal Case Detail'),
+        title: Text(
+          'Personal Case Detail',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -371,8 +383,8 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   activeColor: Color(0xFF35C5CF),
                 ),
                 RadioListTile<String>(
-                  title: const Text('Ambulatory'),
-                  value: 'ambulatory',
+                  title: const Text('Walking Aid'),
+                  value: 'Walking Aid',
                   groupValue: _mobilityStatus,
                   onChanged: (value) {
                     setState(() {
@@ -382,8 +394,8 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   activeColor: Color(0xFF35C5CF),
                 ),
                 RadioListTile<String>(
-                  title: const Text('Independent'),
-                  value: 'independent',
+                  title: const Text('Mobile Without Aid'),
+                  value: 'Mobile Without Aid',
                   groupValue: _mobilityStatus,
                   onChanged: (value) {
                     setState(() {
@@ -438,20 +450,28 @@ class _AddIssuePageState extends State<AddIssuePage> {
               ),
             ),
             Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                // Add your add logic here
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PaymentPharma()),
-                );
-                // Add your next step logic here
-              },
-              style: ElevatedButton.styleFrom(
-                  // primary: Color(0xFF35C5CF),
+            SizedBox(
+              width: 352,
+              height: 58,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PaymentPharma(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF35C5CF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-              child: Center(
-                child: Text('Add'),
+                ),
+                child: Text(
+                  'Next',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
               ),
             ),
           ],
@@ -469,17 +489,26 @@ class PaymentPharma extends StatefulWidget {
 class _PaymentPharmaState extends State<PaymentPharma> {
   List<bool> _selectedServices = List<bool>.generate(5, (index) => false);
 
+  List<String> serviceTitles = [
+    'Analyze patient physiological data,\ninitial drug treatment plan, and patient treatment response',
+    'Analyze specific treatment problems:\npoor response to treatment;poor\npatient medication compliance;\ndrug side effect; drug interactions',
+    'Drug therapy adjustment made to\nphysicians by the pharmacist when\napropriate',
+    'Diet History & Evaluations',
+    'Follow-up the therapy and ensure\npositive outcomes and reduces adverse effects',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pharmacist Services'),
+        title: Text('Pharmacist Services',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < serviceTitles.length; i++)
               Card(
                 child: ListTile(
                   leading: GestureDetector(
@@ -488,52 +517,84 @@ class _PaymentPharmaState extends State<PaymentPharma> {
                         _selectedServices[i] = !_selectedServices[i];
                       });
                     },
-                    child: Icon(
-                      _selectedServices[i]
-                          ? Icons.check_circle
-                          : Icons.radio_button_unchecked,
-                      color: _selectedServices[i] ? Colors.green : Colors.grey,
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: _selectedServices[i]
+                            ? Color(0xFF35C5CF)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Color(0xFF35C5CF)),
+                      ),
+                      child: _selectedServices[i]
+                          ? Icon(Icons.check, color: Colors.white, size: 16)
+                          : null,
                     ),
                   ),
-                  title: Text('Service ${i + 1}'),
-                  trailing: Icon(Icons.info, color: Colors.blue),
+                  title: Text(
+                    serviceTitles[i],
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold), // Set the font size
+                    overflow:
+                        TextOverflow.visible, // Ensure the text is fully shown
+                  ),
+                  trailing:
+                      Icon(Icons.info_outline_rounded, color: Colors.grey),
                 ),
               ),
             Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Estimated Budget',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Estimated Budget',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 5),
+                    Icon(Icons.info_outline_rounded, color: Colors.grey),
+                  ],
                 ),
                 Row(
                   children: [
                     Text(
                       '\$145',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                     ),
                     SizedBox(width: 5),
-                    Icon(Icons.attach_money, color: Colors.green),
                   ],
                 ),
               ],
             ),
             SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SearchPharmacistPage()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                  // primary: Color(0xFF35C5CF),
+            SizedBox(
+              width: 352,
+              height: 58,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchPharmacistPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF35C5CF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-              child: Center(
-                child: Text('Book Appointment'),
+                ),
+                child: Text(
+                  'Book Appointment',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
               ),
             ),
           ],
