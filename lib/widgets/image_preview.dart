@@ -28,7 +28,10 @@ class _ImagePreviewState extends State<ImagePreview> {
         Container(
           width: 100,
           height: 100,
-          color: Colors.grey.shade200,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(5),
+          ),
           child: _image == null
               ? Center(child: Image.asset('assets/icons/ic_preview.png'))
               : Image.file(_image!, fit: BoxFit.cover),

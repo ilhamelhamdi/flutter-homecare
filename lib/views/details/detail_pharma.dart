@@ -8,8 +8,10 @@ class DetailPersonalPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Personal Case Detail'),
-      ),
+          title: Text(
+        'Personal Case Detail',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      )),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -31,7 +33,7 @@ class DetailPersonalPage extends StatelessWidget {
                 SizedBox(height: 20),
                 Center(
                   child: Text(
-                    'There are no issues added yet. Please add one or more issues so you can proceed to the next step.',
+                    'There are no issues added yet.\n Please add one or more issues so\nyou can proceed to the next step.',
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -55,10 +57,13 @@ class DetailPersonalPage extends StatelessWidget {
                     },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: Color(0xFF35C5CF)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                     child: Text(
                       'Add an Issue',
-                      style: TextStyle(color: Color(0xFF35C5CF)),
+                      style: TextStyle(color: Color(0xFF35C5CF), fontSize: 20),
                     ),
                   ),
                 ),
@@ -72,10 +77,13 @@ class DetailPersonalPage extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFB2B9C4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                     child: Text(
                       'Next',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                 ),
@@ -98,18 +106,27 @@ class _AddConcernPageState extends State<AddConcernPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add an Issue'),
+        title: Text(
+          'Add an Issue',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Tell us your concern',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Tell us your concern',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             SizedBox(height: 10),
@@ -119,7 +136,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Issue Title',
-                  hintStyle: TextStyle(color: Color(0xFFD0D0D0)),
+                  hintStyle: TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -134,7 +151,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 decoration: InputDecoration(
                   hintText:
                       'Please enter questions, concerns, relevant symptoms related to your case along with related keywords.',
-                  hintStyle: TextStyle(color: Color(0xFFD0D0D0)),
+                  hintStyle: TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -146,13 +163,20 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 expands: true,
               ),
             ),
-            SizedBox(height: 20.0),
-            ImagePreview(),
-            SizedBox(height: 20.0),
-            ImagePreview(),
-            SizedBox(height: 20.0),
-            ImagePreview(),
-            SizedBox(height: 20.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: Column(
+                children: [
+                  SizedBox(height: 30),
+                  ImagePreview(),
+                  SizedBox(height: 30),
+                  ImagePreview(),
+                  SizedBox(height: 30),
+                  ImagePreview(),
+                  SizedBox(height: 30),
+                ],
+              ),
+            ),
             Spacer(),
             SizedBox(
               width: 352,
@@ -268,7 +292,7 @@ class AddSummaryPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10.0),
-                SizedBox(
+                Container(
                   width: 352,
                   height: 58,
                   child: ElevatedButton(
