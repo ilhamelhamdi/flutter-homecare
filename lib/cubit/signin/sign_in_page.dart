@@ -135,36 +135,116 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               );
 
-              final btnSignUp = Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    elevation: 5.0,
-                    side: BorderSide.none,
-                    padding: EdgeInsets.all(12.0),
-                  ),
-                  onPressed: () {
+              final createAccountText = Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: GestureDetector(
+                  onTap: () {
                     context.push(AppRoutes.signUp);
                   },
-                  child: Text('Sign Up',
-                      style: TextStyle(fontSize: 18, color: Colors.blue)),
+                  child: Text(
+                    'Create new account',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF35C5CF), // Turquoise green color
+                      decoration: TextDecoration.underline,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               );
+
+              final continueWithText = Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  'Or continue with',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              );
+
+              final socialIcons = Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Image.asset('assets/icons/ic_fb.png'),
+                      iconSize: 40,
+                      onPressed: () {
+                        // Handle Facebook login
+                      },
+                    ),
+                    SizedBox(width: 16),
+                    IconButton(
+                      icon: Image.asset('assets/icons/ic_google.png'),
+                      iconSize: 40,
+                      onPressed: () {
+                        // Handle Google login
+                      },
+                    ),
+                    SizedBox(width: 16),
+                    IconButton(
+                      icon: Image.asset('assets/icons/ic_wechat.png'),
+                      iconSize: 40,
+                      onPressed: () {
+                        // Handle WeChat login
+                      },
+                    ),
+                  ],
+                ),
+              );
+
+              // final btnSignUp = Padding(
+              //   padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.white,
+              //       foregroundColor: Colors.blue,
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(30.0),
+              //       ),
+              //       elevation: 5.0,
+              //       side: BorderSide.none,
+              //       padding: EdgeInsets.all(12.0),
+              //     ),
+              //     onPressed: () {
+              //       context.push(AppRoutes.signUp);
+              //     },
+              //     child: Text('Sign Up',
+              //         style: TextStyle(fontSize: 18, color: Colors.blue)),
+              //   ),
+              // );
 
               return Center(
                 child: ListView(
                   shrinkWrap: true,
                   padding: EdgeInsets.only(left: 24.0, right: 24.0),
                   children: <Widget>[
-                    if (state is SignInLoading)
-                      CircularProgressIndicator()
-                    else
-                      logo,
+                    Text(
+                      'Login Here',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF35C5CF), // Turquoise green color
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      "Welcome Back you've\nbeen missed",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    // if (state is SignInLoading)
+                    //   CircularProgressIndicator()
+                    // else
+                    //   logo,
                     SizedBox(height: 48.0),
                     email,
                     SizedBox(height: 8.0),
@@ -172,7 +252,10 @@ class _SignInPageState extends State<SignInPage> {
                     SizedBox(height: 24.0),
                     loginButton,
                     SizedBox(height: 11.0),
-                    btnSignUp
+                    createAccountText,
+                    continueWithText,
+                    socialIcons,
+                    // btnSignUp
                   ],
                 ),
               );

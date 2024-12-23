@@ -72,25 +72,34 @@ class SearchPharmacistPage extends StatelessWidget {
                                   ),
                                 ),
                                 Text('Pharmacist'),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              PharmacistProfilePage()),
-                                    );
-                                  },
-                                  child: Text('Appointment'),
+                                Row(
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PharmacistProfilePage()),
+                                        );
+                                      },
+                                      child: Text('Appointment',
+                                          style:
+                                              TextStyle(color: Colors.black)),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.favorite_border,
+                                      ),
+                                      color: Color(0xFF35C5CF),
+                                      onPressed: () {
+                                        // Handle favorite click
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.favorite_border),
-                            onPressed: () {
-                              // Handle favorite click
-                            },
                           ),
                         ],
                       ),
