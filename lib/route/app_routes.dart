@@ -10,6 +10,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String chat = '/chat';
   static const String pharma_profile = '/pharma-profile';
+  static const String personal = '/personal';
 
   // static const String home = '/';
   // static const String submenu = 'submenu';

@@ -146,7 +146,6 @@ class _SignInPageState extends State<SignInPage> {
                     style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFF35C5CF), // Turquoise green color
-                      decoration: TextDecoration.underline,
                     ),
                     textAlign: TextAlign.center,
                   ),

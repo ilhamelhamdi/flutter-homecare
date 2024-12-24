@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_homecare/route/app_router.dart';
@@ -16,6 +17,7 @@ import 'package:provider/provider.dart';
 
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 
 class NavigationHistory {
   static List<BuildContext> _history = [];
@@ -33,23 +35,10 @@ class NavigationHistory {
   }
 }
 
-// void main() {
-//   runApp(MyApp());
-// }
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
-  // runApp(MyApp(
-  //   appLanguage: appLanguage,
-  // ));
-  // runApp(
-  //   ChangeNotifierProvider(
-  //     create: (context) => AppLanguage(),
-  //     child: MyApp(appLanguage: appLanguage),
-  //   ),
-  // );
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppLanguage(),
@@ -72,28 +61,27 @@ void routeTab(String route, int index) {
 
 void navbarVisibility(bool status) {
   NavbarNotifier.hideBottomNavBar = status;
-  // if (status == true) {
-  //   NavbarNotifier.hideBottomNavBar = false;
-  //   if (NavbarNotifier.isNavbarHidden) {
-  //     NavbarNotifier.hideBottomNavBar = false;
-  //   }
-  // } else {
-  //   NavbarNotifier.hideBottomNavBar = true;
-  //   if (NavbarNotifier.isNavbarHidden) {
-  //     NavbarNotifier.hideBottomNavBar = true;
-  //   }
-  // }
+  if (status == true) {
+    NavbarNotifier.hideBottomNavBar = false;
+    if (NavbarNotifier.isNavbarHidden) {
+      NavbarNotifier.hideBottomNavBar = false;
+    }
+  } else {
+    NavbarNotifier.hideBottomNavBar = true;
+    if (NavbarNotifier.isNavbarHidden) {
+      NavbarNotifier.hideBottomNavBar = true;
+    }
+  }
 }
 
 void changeLang(BuildContext context, String lang) {
-  var appLanguage = Provider.of<AppLanguage>(context);
+  var appLanguage = Provider.of<AppLanguage>(context, listen: false);
   appLanguage.changeLanguage(Locale(lang));
 }
 
 class MyApp extends StatefulWidget {
   final AppLanguage appLanguage;
   MyApp({required this.appLanguage});
-  // MyApp({Key? key}) : super(key: key);
   final List<Color> colors = [Colors.white];
 
   @override
@@ -118,94 +106,40 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // debug lang
     _locale = WidgetsBinding.instance.window.locale;
     localizations = AppLocalizations(_locale);
     localizations.load();
   }
 
-// class MyApp extends StatelessWidget {
-//   MyApp({Key? key}) : super(key: key);
-//   final List<Color> colors = [Colors.white];
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: appSetting,
-        builder: (BuildContext context, Widget? child) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            title: 'flutter_homecare',
-            theme: ThemeData(
-              colorScheme:
-                  ColorScheme.fromSeed(seedColor: Const.colorDashboard),
-              useMaterial3: true,
-            ),
-            locale: DevicePreview.locale(context),
-            builder: DevicePreview.appBuilder,
-            // locale: _locale,
-            localizationsDelegates: [
-              AppLocalizations
-                  .delegate, // Add this line to use AppLocalizations
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: [
-              const Locale('en', 'US'), // English
-              const Locale('id', 'ID'), // Indo
-              const Locale('zh', ''), // Chinese
-              // Add other supported locales here
-            ],
-            routerConfig: router,
-          );
-          // return MaterialApp(
-          //     debugShowCheckedModeBanner:
-          //         false, // Set to false to remove the debug banner
-          //     title: 'flutter_homecare',
-          //     // routes: {
-          //     //   // ProfileEdit.route: (context) => const ProfileEdit(),
-          //     //   Dashboard.route: (context) => Dashboard(),
-          //     //   Products.route: (context) => Products(),
-          //     //   // BrowseProducts.route: (context) => BrowseProducts(),
-          //     //   // '/products/browse-products': (context) => BrowseProducts(),
-          //     // },
-          //     theme: ThemeData(
-          //       colorScheme:
-          //           ColorScheme.fromSeed(seedColor: Const.colorDashboard),
-          //       useMaterial3: true,
-          //     ),
-          //     // themeMode:
-          //     //     appSetting.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          //     // darkTheme: ThemeData.dark(
-          //     //   useMaterial3: true,
-          //     // ).copyWith(
-          //     //     colorScheme: ColorScheme.fromSeed(
-          //     //         seedColor: appSetting.themeSeed,
-          //     //         brightness: Brightness.dark)),
-          //     // theme: ThemeData(
-          //     //     useMaterial3: true,
-          //     //     primaryColorDark: appSetting.themeSeed,
-          //     //     colorScheme:
-          //     //         ColorScheme.fromSeed(seedColor: appSetting.themeSeed)),
-          //     // home: con◊st HomePage());
-          //     locale: _locale,
-          //     localizationsDelegates: [
-          //       AppLocalizations
-          //           .delegate, // Add this line to use AppLocalizations
-          //       GlobalMaterialLocalizations.delegate,
-          //       GlobalWidgetsLocalizations.delegate,
-          //       GlobalCupertinoLocalizations.delegate,
-          //     ],
-          //     supportedLocales: [
-          //       const Locale('en', 'US'), // English
-          //       const Locale('id', 'ID'), // Indo
-          //       const Locale('zh', ''), // Chinese
-          //       // Add other supported locales here
-          //     ],
-          //     home: HomePage());
-        });
-    // home: const NavbarSample(title: 'BottomNavbar Demo'));
+      animation: appSetting,
+      builder: (BuildContext context, Widget? child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'flutter_homecare',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Const.colorDashboard),
+            useMaterial3: true,
+          ),
+          locale: DevicePreview.locale(context),
+          builder: DevicePreview.appBuilder,
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            const Locale('en', 'US'), // English
+            const Locale('id', 'ID'), // Indo
+            const Locale('zh', ''), // Chinese
+          ],
+          routerConfig: router,
+        );
+      },
+    );
   }
 }
 
@@ -255,77 +189,63 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _HomePageState extends State<HomePage>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   bool _resumedFromBackground = false;
 
   List<NavbarItem> items = [];
 
-  final Map<int, Map<String, Widget>> _routes = {
-    0: {
-      '/': Dashboard(),
-      // '/dashboard': DashboardPage(),
-      // BrowseProducts.route: BrowseProducts(),
-    },
-    1: {
-      '/': Products(),
-      // '/products/browse-products': BrowseProducts(),
-      // BrowseProducts.route: BrowseProducts(),
-    },
-    2: {
-      '/': Distributors(),
-    },
-    3: {
-      // '/': Tenders(),
-      '/': Outsourcing(),
-    },
-    4: {
-      // '/': Tenders(),
-      '/': Outsourcing(),
-    },
-  };
+  // final Map<int, Map<String, Widget>> _routes = {
+  //   0: {
+  //     '/': Dashboard(),
+  //   },
+  //   1: {
+  //     '/': Products(),
+  //   },
+  //   2: {
+  //     '/': Distributors(),
+  //   },
+  //   3: {
+  //     '/': Outsourcing(),
+  //   },
+  //   4: {
+  //     '/': Outsourcing(),
+  //   },
+  // };
 
   DateTime oldTime = DateTime.now();
   DateTime newTime = DateTime.now();
 
-  /// This is only for demo purposes
-  void simulateTabChange() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      for (int i = 0; i < items.length * 2; i++) {
-        NavbarNotifier.index = i % items.length;
-        await Future.delayed(const Duration(milliseconds: 1000));
-      }
-    });
-  }
+  late TabController tabController;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // simulateTabChange();
+    tabController = TabController(length: 5, vsync: this);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    initializeNavbarItems();
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   initializeNavbarItems();
+  // }
 
-  void initializeNavbarItems() {
-    // final localizations = AppLocalizations.of(context);
-    items = [
-      NavbarItem(IconMedmap.home, ''),
-      // NavbarItem(Iconflutter_homecare.home, 'Home'),
-      NavbarItem(IconMedmap.products, ''),
-      NavbarItem(IconMedmap.distributors, ''),
-      NavbarItem(IconMedmap.tenders, ''),
-      NavbarItem(IconMedmap.tenders, ''),
-    ];
-  }
+  // void initializeNavbarItems() {
+  //   items = [
+  //     NavbarItem(IconMedmap.home, 'Home'),
+  //     NavbarItem(IconMedmap.products, 'Products'),
+  //     NavbarItem(IconMedmap.distributors, 'Distributors'),
+  //     NavbarItem(IconMedmap.tenders, 'Tenders'),
+  //     NavbarItem(IconMedmap.tenders, 'More'),
+  //   ];
+  // }
 
   @override
   void dispose() {
     NavbarNotifier.clear();
     WidgetsBinding.instance.removeObserver(this);
+    tabController.dispose();
     super.dispose();
   }
 
@@ -333,7 +253,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _resumedFromBackground = true;
-      // Add your logic here for what needs to happen when the app resumes.
       print("onResume");
     }
   }
@@ -343,141 +262,79 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        // print("onBack");
         if (_resumedFromBackground) {
           _resumedFromBackground = false;
-          // Add your logic here for handling back after app resumes
-          return false; // Return true to allow normal back button behavior, return false to prevent it
+          return false; // Prevent default back button behavior
         } else {
-          // Normal back button behavior
-          return true;
+          return true; // Allow default back button behavior
         }
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        floatingActionButton: AnimatedBuilder(
-            animation: NavbarNotifier(),
-            builder: (context, child) {
-              if (NavbarNotifier.currentIndex < 1) {
-                return Padding(
-                  padding: EdgeInsets.only(bottom: kNavbarHeight),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(
-                        width: 100,
-                      ),
-                      // FloatingActionButton.extended(
-                      //   heroTag: 'showSnackBar',
-                      //   onPressed: () {
-                      //     final state = Scaffold.of(context);
-                      //     NavbarNotifier.showSnackBar(
-                      //       context,
-                      //       "This is shown on top of the Floating Action Button",
-                      //       bottom:
-                      //           state.hasFloatingActionButton ? 0 : kNavbarHeight,
-                      //     );
-                      //   },
-                      //   label: const Text("Show SnackBar"),
-                      // ),
-                      // FloatingActionButton(
-                      //   heroTag: 'navbar',
-                      //   child: Icon(NavbarNotifier.isNavbarHidden
-                      //       ? Icons.toggle_off
-                      //       : Icons.toggle_on),
-                      //   onPressed: () {
-                      //     // Programmatically toggle the Navbar visibility
-                      //     if (NavbarNotifier.isNavbarHidden) {
-                      //       NavbarNotifier.hideBottomNavBar = false;
-                      //     } else {
-                      //       NavbarNotifier.hideBottomNavBar = true;
-                      //     }
-                      //     setState(() {});
-                      //   },
-                      // ),
-                      // FloatingActionButton(
-                      //   heroTag: 'darkmode',
-                      //   child: Icon(appSetting.isDarkMode
-                      //       ? Icons.wb_sunny
-                      //       : Icons.nightlight_round),
-                      //   onPressed: () {
-                      //     appSetting.toggleTheme();
-                      //     setState(() {});
-                      //   },
-                      // ),
-                    ],
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            }),
-        body: NavbarRouter(
-          errorBuilder: (context) {
-            return const Center(child: Text('Error 404'));
-          },
-          isDesktop: size.width > 600 ? true : false,
-          onBackButtonPressed: (isExitingApp) {
-            if (isExitingApp) {
-              newTime = DateTime.now();
-              int difference = newTime.difference(oldTime).inMilliseconds;
-              oldTime = newTime;
-              if (difference < 1000) {
-                NavbarNotifier.hideSnackBar(context);
-                return isExitingApp;
-              } else {
-                final state = Scaffold.of(context);
-                NavbarNotifier.showSnackBar(
-                  context,
-                  "Tap back button again to exit",
-                  bottom: state.hasFloatingActionButton ? 0 : kNavbarHeight,
-                );
-                return false;
-              }
-            } else {
-              return isExitingApp;
-            }
-          },
-          initialIndex: 0,
-          // type: NavbarType.floating,
-          destinationAnimationCurve: Curves.fastOutSlowIn,
-          destinationAnimationDuration: 600,
-          decoration: NavbarDecoration(
-            navbarType: BottomNavigationBarType.fixed,
-            indicatorColor: Const.colorSelect,
-            backgroundColor: Colors.white,
-            selectedIconColor: Const.colorSelect,
-            unselectedItemColor: Const.colorUnselect,
-          ),
-          // decoration: M3NavbarDecoration(
-          //   height: 80,
-          //   isExtended: size.width > 800 ? true : false,
-          //   // labelTextStyle: const TextStyle(
-          //   //     color: Color.fromARGB(255, 176, 207, 233), fontSize: 14),
-          //   elevation: 3.0,
-          //   // indicatorShape: const RoundedRectangleBorder(
-          //   //   borderRadius: BorderRadius.all(Radius.circular(20)),
-          //   // ),
-          //   // indicatorColor: const Color.fromARGB(255, 176, 207, 233),
-          //   // // iconTheme: const IconThemeData(color: Colors.indigo),
-          //   // /// labelTextStyle: const TextStyle(color: Colors.white, fontSize: 14),
-          //   // labelBehavior: NavigationDestinationLabelBehavior.alwaysShow
-          // ),
-          onChanged: (x) {},
-          backButtonBehavior: BackButtonBehavior.rememberHistory,
-          destinations: [
-            for (int i = 0; i < items.length; i++)
-              DestinationRouter(
-                navbarItem: items[i],
-                destinations: [
-                  for (int j = 0; j < _routes[i]!.keys.length; j++)
-                    Destination(
-                      route: _routes[i]!.keys.elementAt(j),
-                      widget: _routes[i]!.values.elementAt(j),
-                    ),
-                ],
-                initialRoute: _routes[i]!.keys.first,
+      child: Padding(
+        padding: const EdgeInsets.only(
+            top: .0), // Adjust the bottom padding as needed
+        child: BottomBar(
+          child: TabBar(
+            controller: tabController,
+            tabs: [
+              Tab(icon: Icon(Icons.home_outlined)),
+              Tab(icon: Icon(Icons.schedule_outlined)),
+              Tab(icon: Icon(Icons.add_shopping_cart_outlined)),
+              Tab(icon: Icon(Icons.favorite_border_outlined)),
+              Tab(icon: Icon(Icons.person_outline)),
+            ],
+          ), // A floating tab bar
+          fit: StackFit.expand,
+          icon: (width, height) => Center(
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: null,
+              icon: Icon(
+                Icons.arrow_upward_rounded,
+                color: Colors.grey, // Replace with your unselected color
+                size: width,
               ),
-          ],
+            ),
+          ),
+          borderRadius:
+              BorderRadius.circular(20), // Adjust the border radius as needed
+          duration: Duration(seconds: 1),
+          curve: Curves.decelerate,
+          showIcon: true,
+          width: MediaQuery.of(context).size.width * 0.8,
+          barColor: Colors.white, // Replace with your bar color
+          start: 2,
+          end: 0,
+          offset: 10,
+          barAlignment: Alignment.bottomCenter,
+          iconHeight: 35,
+          iconWidth: 35,
+          reverse: false,
+          barDecoration: BoxDecoration(
+            color: Colors.blue, // Replace with your current page color
+            borderRadius:
+                BorderRadius.circular(20), // Adjust the border radius as needed
+          ),
+          iconDecoration: BoxDecoration(
+            color: Colors.blue, // Replace with your current page color
+            borderRadius:
+                BorderRadius.circular(20), // Adjust the border radius as needed
+          ),
+          hideOnScroll: true,
+          scrollOpposite: false,
+          onBottomBarHidden: () {},
+          onBottomBarShown: () {},
+          body: (context, controller) => TabBarView(
+            controller: tabController,
+            dragStartBehavior: DragStartBehavior.down,
+            physics: const BouncingScrollPhysics(),
+            children: [
+              Dashboard(),
+              Products(),
+              Distributors(),
+              Outsourcing(),
+              Outsourcing(), // Add your pages here
+            ],
+          ),
         ),
       ),
     );

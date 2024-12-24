@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_homecare/app_localzations.dart';
+import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/main.dart';
 
-import 'package:flutter_homecare/widgets/chat_pharma.dart';
-
-class PharmaServices extends StatefulWidget {
+class NursingService extends StatefulWidget {
   @override
-  _PharmaState createState() => _PharmaState();
+  _NursingState createState() => _NursingState();
 }
 
-class PharmaCard extends StatelessWidget {
+class NursingCard extends StatelessWidget {
   final Map<String, String> pharma;
   final VoidCallback onTap;
   final Color color;
 
-  const PharmaCard(
+  const NursingCard(
       {required this.pharma, required this.onTap, required this.color});
 
   @override
@@ -98,39 +97,23 @@ class PharmaCard extends StatelessWidget {
   }
 }
 
-class _PharmaState extends State<PharmaServices> {
+class _NursingState extends State<NursingService> {
   final List<Map<String, String>> dummyTenders = [
     {
-      'title': 'Medication Counseling\nand Education',
+      'title': 'Primary Nursing',
       'description':
-          'Medication counseling and education guide\npatients on proper use, side effects, and\nadherence to prescriptions,\nenhancing safety and\nimproving health outcomes.',
-      'imagePath': 'assets/icons/ilu_pharmacist.png',
-      'color': 'F79E1B',
-      'opacity': '0.1',
+          'Monitor and administer\nnursing procedures from\nbody checking, Medication,\ntube feed and suctioning to\ninjections and wound care.',
+      'imagePath': 'assets/icons/ilu_nurse.png',
+      'color': '9AE1FF',
+      'opacity': '0.3',
     },
     {
-      'title': 'Compehensive Therapy\nReview',
+      'title': 'Specialized Nursing Services',
       'description':
-          'Comprehensive review of your medication\nand lifestyle to optimize treatment\noutcomes and minimize potential side\neffects',
-      'imagePath': 'assets/icons/ilu_therapy.png',
+          'Focus on recovery and leave\nthe complex nursing care in\nthe hands of our experienced\nnurse Care Pros',
+      'imagePath': 'assets/icons/ilu_nurse_special.png',
       'color': 'B28CFF',
       'opacity': '0.2',
-    },
-    {
-      'title': 'Health Coaching',
-      'description':
-          'Personalized guidance and support to help\nindividuals achieve their health goals, manage\nchronic conditions, and improve overall well-\nbeing, with specialized programs for weight\nmanagement, diabetes management, high\nblood pressure management, and high\ncholesterol management',
-      'imagePath': 'assets/icons/ilu_coach.png',
-      'color': '9AE1FF',
-      'opacity': '0.33',
-    },
-    {
-      'title': 'Smoking Cessation',
-      'description':
-          'Smoking cessation involves quitting\nsmoking through strategies like\ncounseling, medications, and support\nprograms to improve health and\nreduce the risk of smoking-related\ndiseases.',
-      'imagePath': 'assets/icons/ilu_lung.png',
-      'color': 'FF9A9A',
-      'opacity': '0.19',
     },
   ];
 
@@ -138,8 +121,7 @@ class _PharmaState extends State<PharmaServices> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            AppLocalizations.of(context)!.translate('pharmacist_services2'),
+        title: Text(AppLocalizations.of(context)!.translate('nursing'),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
       body: Container(
@@ -152,20 +134,19 @@ class _PharmaState extends State<PharmaServices> {
                 itemCount: dummyTenders.length,
                 itemBuilder: (context, index) {
                   final tender = dummyTenders[index];
-                  return PharmaCard(
+                  return NursingCard(
                     pharma: tender,
                     onTap: () {
                       String route;
                       switch (index) {
                         case 0:
                           navbarVisibility(true);
-
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PharmaDetailPage(
-                                item: tender,
-                              ),
+                              builder: (context) => PersonalPage(
+                                  // item: tender,
+                                  ),
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
@@ -173,14 +154,19 @@ class _PharmaState extends State<PharmaServices> {
                           });
                           return;
                         case 1:
-                          route = AppRoutes.home;
-                          break;
-                        case 2:
-                          route = AppRoutes.home;
-                          break;
-                        case 3:
-                          route = AppRoutes.home;
-                          break;
+                          navbarVisibility(true);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PersonalPage(
+                                  // item: tender,
+                                  ),
+                            ),
+                          ).then((_) {
+                            // Show the bottom navigation bar when returning
+                            navbarVisibility(false);
+                          });
+                          return;
                         default:
                           route = AppRoutes.home;
                       }
@@ -198,63 +184,6 @@ class _PharmaState extends State<PharmaServices> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class PharmaDetailPage extends StatefulWidget {
-  final Map<String, String> item;
-
-  PharmaDetailPage({Key? key, required this.item}) : super(key: key);
-
-  @override
-  _PharmaDetailPageState createState() => _PharmaDetailPageState();
-}
-
-class _PharmaDetailPageState extends State<PharmaDetailPage> {
-  final TextEditingController _chatController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  List<Map<String, dynamic>> _chatHistory = [];
-
-  // void _shareProduct() {
-  //   final String productUrl = Const.URL_WEB + '/tender/detail/${item['title']}';
-  //   Share.share(productUrl, subject: '');
-  // }
-
-  void _sendMessage() {
-    if (_chatController.text.isNotEmpty) {
-      setState(() {
-        _chatHistory.add({
-          "message": _chatController.text,
-          "isSender": true,
-        });
-        _chatController.clear();
-      });
-
-      // Simulate a response from the other side
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          _chatHistory.add({
-            "message": "This is a dummy response",
-            "isSender": false,
-          });
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        });
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ChatPharma(
-      chatHistory: _chatHistory,
-      chatController: _chatController,
-      scrollController: _scrollController,
-      sendMessage: _sendMessage,
     );
   }
 }

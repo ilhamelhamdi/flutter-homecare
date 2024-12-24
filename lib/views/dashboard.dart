@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
+import 'package:flutter_homecare/views/nursing.dart';
 import 'package:flutter_homecare/views/pharma.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/route/app_router.dart';
+import 'package:navbar_router/navbar_router.dart';
 // import 'package:flutter_homecare/views/details/detail_products.dart';
 // import 'package:flutter_homecare/views/poct.dart';
 // import 'package:flutter_homecare/views/tenders.dart';
@@ -172,6 +174,17 @@ class _DashboardState extends State<Dashboard> {
   //     // isLoading = false;
   //   }
   // }
+  final List<Map<String, String>> services = [
+    {'image': 'assets/icons/ilu_physio.png', 'name': 'Physiotherapy'},
+    {
+      'image': 'assets/icons/ilu_ocuTherapy.png',
+      'name': 'Occupational\nTherapy'
+    },
+    {'image': 'assets/icons/ilu_sleep.png', 'name': 'Sleep & Mental\nHealth'},
+    {'image': 'assets/icons/ilu_health.png', 'name': 'Health Risk\nAssessment'},
+    {'image': 'assets/icons/ilu_dietitian.png', 'name': 'Dietitian Services'},
+    {'image': 'assets/icons/ilu_precision.png', 'name': 'Precision\nNutrition'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -365,7 +378,12 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          // selectTab(2);
+                          navbarVisibility(true);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => NursingService()),
+                          );
                         },
                         iconPath:
                             'assets/icons/ic_nurse.png', // Replace with your actual image path
@@ -439,11 +457,14 @@ class _DashboardState extends State<Dashboard> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 30),
                   Card(
+                    color: Colors.white,
                     margin: EdgeInsets.symmetric(horizontal: 16.0),
                     child: ListTile(
-                      title: Text('Health Profile'),
+                      title: Text('Health Profile',
+                          style: TextStyle(
+                              fontSize: 18, color: Color(0xFF35C5CF))),
                       subtitle: Text('Anna Bella.'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -456,7 +477,9 @@ class _DashboardState extends State<Dashboard> {
                                     builder: (context) => ProfilePage()),
                               );
                             },
-                            child: Text('View all'),
+                            child: Text('View all',
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black)),
                           ),
                           IconButton(
                             icon: Icon(Icons.more_vert),
@@ -469,9 +492,26 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text(
-                    'Allied Health',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 30.0, top: 16.0),
+                          child: Text(
+                            AppLocalizations.of(context)!
+                                .translate('allied_services'),
+                            textAlign: TextAlign.left,
+                            style: const TextStyle(
+                              color: Color(0xFF232F55),
+                              fontSize: 20,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 10),
                   GridView.builder(
@@ -483,32 +523,38 @@ class _DashboardState extends State<Dashboard> {
                       mainAxisSpacing: 10,
                       childAspectRatio: 2 / 3,
                     ),
-                    itemCount: 6,
+                    itemCount: services.length,
                     itemBuilder: (context, index) {
-                      return Card(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/icons/ilu_lung.png', // Replace with your image paths
-                              height: 80,
-                              width: 80,
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Match the container's border radius
+                              child: Image.asset(
+                                services[index][
+                                    'image']!, // Use the image path from the list
+                                height: 72,
+                                width: 111,
+                                fit: BoxFit
+                                    .cover, // Ensure the image fills the box
+                              ),
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Service ${index + 1}', // Replace with your text
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            services[index]
+                                ['name']!, // Use the name from the list
+                            style: TextStyle(
+                              fontSize: 14,
                             ),
-                            Text(
-                              'Description for service ${index + 1}', // Replace with your text
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       );
                     },
-                  ),
+                  )
                 ],
               ),
             ),

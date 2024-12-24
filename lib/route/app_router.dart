@@ -9,6 +9,7 @@ import 'package:flutter_homecare/cubit/signin/sign_in_page.dart';
 import 'package:flutter_homecare/cubit/submenu/submenu_page.dart';
 import 'package:flutter_homecare/cubit/partnership/list/partnership_list_page.dart';
 import 'package:flutter_homecare/cubit/pharmacist_profile/pharmacist_profile_page.dart';
+import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 import 'package:flutter_homecare/main.dart';
 import 'package:flutter_homecare/views/dashboard.dart';
 import 'package:flutter_homecare/views/pharma.dart';
@@ -77,6 +78,12 @@ final GoRouter router = GoRouter(
       path: AppRoutes.pharma_profile,
       builder: (context, state) {
         return PharmacistProfilePage();
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.personal,
+      builder: (context, state) {
+        return PersonalPage();
       },
     ),
   ],

@@ -55,6 +55,8 @@
   "diabetic_care": "Diabetic\nCare",
   "home_screening": "Home\nHealth Screening",
   "remote_monitoring": "Remote Patient\nMonitoring",
-  "2nd_opinion": "2nd Opinion for\nMedical Image"
+  "2nd_opinion": "2nd Opinion for\nMedical Image",
+  "nursing": "Home Nursing",
+  "allied_services" : "Allied Services"
 
 }
