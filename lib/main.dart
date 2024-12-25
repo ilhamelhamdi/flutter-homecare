@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_homecare/route/app_router.dart';
 import 'package:flutter_homecare/views/dashboard.dart';
@@ -9,8 +10,8 @@ import 'dart:async';
 
 import 'presentation/icon_medmap_home_icons.dart';
 import 'const.dart';
-import 'views/products.dart';
-import 'views/distributors.dart';
+import 'views/appointment.dart';
+import 'views/medical_store.dart';
 import './AppLanguage.dart';
 import './app_localzations.dart';
 import 'package:provider/provider.dart';
@@ -329,10 +330,10 @@ class _HomePageState extends State<HomePage>
             physics: const BouncingScrollPhysics(),
             children: [
               Dashboard(),
-              Products(),
-              Distributors(),
-              Outsourcing(),
-              Outsourcing(), // Add your pages here
+              AppointmentPage(),
+              MedicalStorePage(),
+              FavouritesPage(),
+              ProfilePage(), // Add your pages here
             ],
           ),
         ),

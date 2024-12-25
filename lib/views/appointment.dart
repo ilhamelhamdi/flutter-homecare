@@ -1,148 +1,153 @@
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:time_slot/time_slot.dart';
-import 'details/detail_appointment.dart';
 
-class BookAppointmentPage extends StatefulWidget {
+class AppointmentPage extends StatefulWidget {
+  static const String route = '/appointment';
+  AppointmentPage({Key? key}) : super(key: key);
+
   @override
-  _BookAppointmentPageState createState() => _BookAppointmentPageState();
+  _AppointmentPageState createState() => _AppointmentPageState();
 }
 
-class _BookAppointmentPageState extends State<BookAppointmentPage> {
-  DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
-  DateTime selectTime = DateTime.now(); // Add this line
+class _AppointmentPageState extends State<AppointmentPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Book Appointment'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
+            Text(
+              'My Appointment',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    // Handle search action
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: () {
+                    // Handle filter action
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: 'Upcoming'),
+              Tab(text: 'Completed'),
+              Tab(text: 'Cancelled'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                buildAppointmentList('Upcoming'),
+                buildAppointmentList('Completed'),
+                buildAppointmentList('Cancelled'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAppointmentList(String status) {
+    return ListView.builder(
+      itemCount: 10, // Dummy data count
+      itemBuilder: (context, index) {
+        return Card(
+          margin: EdgeInsets.all(10),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: Colors.grey,
-                      ),
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(
+                          'https://via.placeholder.com/150'), // Dummy avatar image
+                      radius: 30,
                     ),
-                    SizedBox(width: 16),
+                    SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Khanza Deliva',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        Text('Dr. Budi',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text('Radiologist'),
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.circular(4),
                           ),
-                        ),
-                        Text('Pharmacist'),
-                        Row(
-                          children: [
-                            Icon(Icons.location_on, color: Colors.blue),
-                            SizedBox(width: 4),
-                            Text('Caterpillar Hospital, Singapore'),
-                          ],
+                          child: Text(status,
+                              style: TextStyle(color: Colors.black)),
                         ),
                       ],
                     ),
                   ],
                 ),
-              ),
-            ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Select Date',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    OutlinedButton(
+                      onPressed: () {
+                        // Handle cancel booking
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.red),
+                      ),
+                      child: Text('Cancel Booking',
+                          style: TextStyle(color: Colors.red)),
+                    ),
+                    OutlinedButton(
+                      onPressed: () {
+                        // Handle reschedule
+                      },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                      ),
+                      child: Text('Reschedule',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            SizedBox(height: 8),
-            TableCalendar(
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: _focusedDay,
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
-              },
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              calendarFormat: CalendarFormat.month,
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              headerStyle: HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-              ),
-            ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Select Hour',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            SizedBox(height: 8),
-            TimesSlotGridViewFromList(
-              locale: "en",
-              initTime: selectTime,
-              crossAxisCount: 4,
-              listDates: [
-                DateTime(2023, 1, 1, 2, 0),
-                DateTime(2023, 1, 1, 4, 0),
-                DateTime(2023, 1, 1, 6, 30),
-                DateTime(2023, 1, 1, 8, 30),
-                DateTime(2023, 1, 1, 10, 0),
-                DateTime(2023, 1, 1, 14, 0),
-                DateTime(2023, 1, 1, 15, 30),
               ],
-              onChange: (value) {
-                setState(() {
-                  selectTime = value;
-                });
-              },
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    DetailAppointmentPage(pharmacistName: 'Khanza Deliva'),
-              ),
-            );
-            // Handle the next button press
-          },
-          child: Text('Next'),
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
