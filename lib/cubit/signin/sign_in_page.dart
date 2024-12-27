@@ -95,10 +95,9 @@ class _SignInPageState extends State<SignInPage> {
                   hintText: 'Email',
                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
+                      borderRadius: BorderRadius.circular(10.0)),
                 ),
               );
-
               final password = TextFormField(
                 controller: passwordController,
                 autofocus: false,
@@ -107,7 +106,7 @@ class _SignInPageState extends State<SignInPage> {
                   hintText: 'Password',
                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
+                      borderRadius: BorderRadius.circular(10.0)),
                 ),
               );
 
@@ -115,10 +114,10 @@ class _SignInPageState extends State<SignInPage> {
                 padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Color(0xFF35C5CF),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     elevation: 5.0,
                     side: BorderSide.none,

@@ -94,7 +94,7 @@ class SignUpPage extends StatelessWidget {
                       contentPadding:
                           EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32.0)),
+                          borderRadius: BorderRadius.circular(10.0)),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -118,7 +118,7 @@ class SignUpPage extends StatelessWidget {
                       contentPadding:
                           EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32.0)),
+                          borderRadius: BorderRadius.circular(10.0)),
                     ),
                     obscureText: true,
                   ),
@@ -127,7 +127,7 @@ class SignUpPage extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'Select User Type',
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(22.0)),
+                          borderRadius: BorderRadius.circular(10.0)),
                     ),
                     items: <String>['Manufacturer', 'Distributor', 'Healthcare']
                         .map<DropdownMenuItem<String>>((String value) {
@@ -142,13 +142,13 @@ class SignUpPage extends StatelessWidget {
                   ),
                   SizedBox(height: 30),
                   SizedBox(
-                    width: 200,
+                    width: 300,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue,
+                        backgroundColor: Color(0xFF35C5CF),
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(15.0),
                         ),
                         elevation: 5.0,
                         side: BorderSide.none,
@@ -172,7 +172,10 @@ class SignUpPage extends StatelessWidget {
                     onPressed: () {
                       context.go(AppRoutes.signIn);
                     },
-                    child: Text('Already have an account'),
+                    child: Text(
+                      'Already have an account',
+                      style: TextStyle(color: Color(0xFF35C5CF)),
+                    ),
                   ),
                   SizedBox(height: 20),
                   Text(

@@ -15,7 +15,7 @@ class _AppointmentPageState extends State<AppointmentPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -62,6 +62,7 @@ class _AppointmentPageState extends State<AppointmentPage>
               Tab(text: 'Upcoming'),
               Tab(text: 'Completed'),
               Tab(text: 'Cancelled'),
+              Tab(text: 'Missed'),
             ],
           ),
           Expanded(
@@ -71,6 +72,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                 buildAppointmentList('Upcoming'),
                 buildAppointmentList('Completed'),
                 buildAppointmentList('Cancelled'),
+                buildAppointmentList('Missed'),
               ],
             ),
           ),
@@ -92,27 +94,35 @@ class _AppointmentPageState extends State<AppointmentPage>
                 Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          'https://via.placeholder.com/150'), // Dummy avatar image
+                      backgroundImage: AssetImage(
+                          'assets/images/images_budi.png'), // Dummy avatar image
                       radius: 30,
                     ),
                     SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Dr. Budi',
+                        Text('Dr. Budi Sanjaya',
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text('Radiologist'),
-                        Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.yellow,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(status,
-                              style: TextStyle(color: Colors.black)),
+                        Row(
+                          children: [
+                            Text('Radiologist |'),
+                            SizedBox(width: 5),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.yellow,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(status,
+                                  style: TextStyle(
+                                    color: Color(0xFFE59500),
+                                  )),
+                            ),
+                          ],
                         ),
+                        Text('Monday, 12 July 2021 | 11:00 AM'),
                       ],
                     ),
                   ],
@@ -127,19 +137,37 @@ class _AppointmentPageState extends State<AppointmentPage>
                       },
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Colors.red),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       child: Text('Cancel Booking',
-                          style: TextStyle(color: Colors.red)),
+                          style: const TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold)),
                     ),
-                    OutlinedButton(
-                      onPressed: () {
-                        // Handle reschedule
-                      },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.teal,
+                    Container(
+                      width: 160,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF35C5CF), Color(0xFF9DCEFF)],
+                          begin: Alignment.bottomRight,
+                          end: Alignment.topLeft,
+                        ),
                       ),
-                      child: Text('Reschedule',
-                          style: TextStyle(color: Colors.white)),
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // Handle reschedule
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text('Reschedule',
+                            style: TextStyle(color: Colors.white)),
+                      ),
                     ),
                   ],
                 ),

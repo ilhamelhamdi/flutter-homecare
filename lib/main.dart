@@ -341,3 +341,30 @@ class _HomePageState extends State<HomePage>
     );
   }
 }
+
+class ComingSoonDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Coming Soon'),
+      content: Text('This feature is coming soon.'),
+      actions: <Widget>[
+        TextButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+void showComingSoonDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ComingSoonDialog();
+    },
+  );
+}
