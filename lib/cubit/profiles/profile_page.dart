@@ -205,13 +205,35 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
     'COVID-19'
   ];
 
+  int? _editingIndex;
+  TextEditingController _diseaseNameController = TextEditingController();
+  TextEditingController _diseaseHistoryController = TextEditingController();
+  List<bool> _specialConsiderations = List.generate(6, (_) => false);
+
   void _modifyRecord(int index) {
-    // Handle modify record
+    setState(() {
+      _editingIndex = index;
+      _diseaseNameController.text = records[index];
+      _diseaseHistoryController.clear();
+      _specialConsiderations = List.generate(6, (_) => false);
+    });
   }
 
   void _removeRecord(int index) {
     setState(() {
       records.removeAt(index);
+      if (_editingIndex == index) {
+        _editingIndex = null;
+      }
+    });
+  }
+
+  void _submitModification() {
+    setState(() {
+      if (_editingIndex != null) {
+        records[_editingIndex!] = _diseaseNameController.text;
+        _editingIndex = null;
+      }
     });
   }
 
@@ -232,21 +254,27 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemCount: records.length,
+        itemCount: records.length + (_editingIndex != null ? 1 : 0),
         itemBuilder: (context, index) {
+          if (_editingIndex != null && index == _editingIndex! + 1) {
+            return _buildModifyForm();
+          }
+          int recordIndex = _editingIndex != null && index > _editingIndex!
+              ? index - 1
+              : index;
           return Card(
             elevation: 4,
             shadowColor: Colors.grey,
             margin: const EdgeInsets.symmetric(vertical: 8.0),
             child: ListTile(
-              title: Text(records[index]),
+              title: Text(records[recordIndex]),
               subtitle: Text('Last updated: 08-09-2024'),
               trailing: PopupMenuButton<String>(
                 onSelected: (String value) {
                   if (value == 'Modify') {
-                    _modifyRecord(index);
+                    _modifyRecord(recordIndex);
                   } else if (value == 'Remove') {
-                    _removeRecord(index);
+                    _removeRecord(recordIndex);
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -267,6 +295,73 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
           // Handle add new record
         },
         child: Icon(Icons.add),
+      ),
+      bottomNavigationBar: _editingIndex != null
+          ? BottomAppBar(
+              child: ElevatedButton(
+                onPressed: _submitModification,
+                child: Text('Submit'),
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildModifyForm() {
+    return Card(
+      elevation: 4,
+      shadowColor: Colors.grey,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Patient Information',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            Divider(),
+            TextField(
+              controller: _diseaseNameController,
+              decoration: InputDecoration(labelText: 'Disease Name'),
+            ),
+            SizedBox(height: 8),
+            Text('Disease History Description'),
+            TextField(
+              controller: _diseaseHistoryController,
+              maxLines: 4,
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            ),
+            SizedBox(height: 8),
+            Text('Patient with Special Consideration'),
+            Wrap(
+              spacing: 8.0,
+              children: List.generate(6, (index) {
+                return FilterChip(
+                  label: Text('Consideration ${index + 1}'),
+                  selected: _specialConsiderations[index],
+                  onSelected: (bool selected) {
+                    setState(() {
+                      _specialConsiderations[index] = selected;
+                    });
+                  },
+                );
+              }),
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Treatment Information'),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle add treatment information
+                  },
+                  child: Text('+ Add'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
