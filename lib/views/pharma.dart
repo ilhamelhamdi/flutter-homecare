@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_homecare/app_localzations.dart';
+import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/main.dart';
 
@@ -163,9 +164,7 @@ class _PharmaState extends State<PharmaServices> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PharmaDetailPage(
-                                item: tender,
-                              ),
+                              builder: (context) => PersonalPage(),
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning

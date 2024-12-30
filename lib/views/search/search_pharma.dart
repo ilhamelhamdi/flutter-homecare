@@ -1,7 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_homecare/views/book_appointment.dart';
 
-class SearchPharmacistPage extends StatelessWidget {
+class SearchPharmacistPage extends StatefulWidget {
+  @override
+  _SearchPharmacistPageState createState() => _SearchPharmacistPageState();
+}
+
+class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
+  final List<Map<String, dynamic>> pharmacists = [
+    {
+      'name': 'Olla Olivia',
+      'image': 'assets/images/images_olla.png',
+      'rating': 4.5,
+      'isFavorite': false,
+    },
+    {
+      'name': 'Tisa Erlangga',
+      'image': 'assets/images/images_tisa.png',
+      'rating': 4.0,
+      'isFavorite': false,
+    },
+    {
+      'name': 'Arieska Budiono',
+      'image': 'assets/images/images_arieska.png',
+      'rating': 4.8,
+      'isFavorite': false,
+    },
+    {
+      'name': 'Peter Xu',
+      'image': 'assets/images/images_peter.png',
+      'rating': 4.3,
+      'isFavorite': false,
+    },
+    {
+      'name': 'Dr. Rianda Tan',
+      'image': 'assets/images/images_rianda.png',
+      'rating': 4.7,
+      'isFavorite': false,
+    },
+  ];
+
+  void _toggleFavorite(int index) {
+    setState(() {
+      pharmacists[index]['isFavorite'] = !pharmacists[index]['isFavorite'];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,8 +69,9 @@ class SearchPharmacistPage extends StatelessWidget {
             SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
-                itemCount: 10, // Replace with your dynamic item count
+                itemCount: pharmacists.length,
                 itemBuilder: (context, index) {
+                  final pharmacist = pharmacists[index];
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 8.0),
                     child: Padding(
@@ -42,12 +87,15 @@ class SearchPharmacistPage extends StatelessWidget {
                                     height: 50,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8.0),
-                                      color: Colors.grey,
+                                      image: DecorationImage(
+                                        image: AssetImage(pharmacist['image']),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                   Positioned(
-                                    bottom: 0,
-                                    right: 0,
+                                    bottom: 36,
+                                    right: 3,
                                     child: Icon(
                                       Icons.circle,
                                       color: Colors.green,
@@ -56,8 +104,15 @@ class SearchPharmacistPage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 4),
-                              Text('4.5'), // Rating
+                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  StarRating(rating: pharmacist['rating']),
+                                  SizedBox(width: 4),
+                                  Text(pharmacist['rating']
+                                      .toString()), // Rating
+                                ],
+                              ),
                             ],
                           ),
                           SizedBox(width: 16),
@@ -66,7 +121,7 @@ class SearchPharmacistPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Dr. John Doe',
+                                  pharmacist['name'],
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -89,11 +144,13 @@ class SearchPharmacistPage extends StatelessWidget {
                                     ),
                                     IconButton(
                                       icon: Icon(
-                                        Icons.favorite_border,
+                                        pharmacist['isFavorite']
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
                                       ),
                                       color: Color(0xFF35C5CF),
                                       onPressed: () {
-                                        // Handle favorite click
+                                        _toggleFavorite(index);
                                       },
                                     ),
                                   ],
@@ -111,6 +168,48 @@ class SearchPharmacistPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class StarRating extends StatelessWidget {
+  final double rating;
+  final int starCount;
+  final double size;
+  final Color color;
+
+  StarRating({
+    required this.rating,
+    this.starCount = 1,
+    this.size = 20.0,
+    this.color = Colors.amber,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(starCount, (index) {
+        if (index >= rating) {
+          return Icon(
+            Icons.star_border,
+            size: size,
+            color: color,
+          );
+        } else if (index > rating - 1 && index < rating) {
+          return Icon(
+            Icons.star_half,
+            size: size,
+            color: color,
+          );
+        } else {
+          return Icon(
+            Icons.star,
+            size: size,
+            color: color,
+          );
+        }
+      }),
     );
   }
 }
@@ -135,7 +234,10 @@ class PharmacistProfilePage extends StatelessWidget {
                       height: 100,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        color: Colors.grey,
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/images_olla.png'),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     Positioned(
@@ -158,7 +260,7 @@ class PharmacistProfilePage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Role: Pharmacist',
+                  'Pharmacist',
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -252,36 +354,61 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
               ),
             ),
+            Row(
+              children: [
+                Icon(Icons.calendar_today, color: Colors.grey),
+                SizedBox(width: 8),
+                Text('Monday - Friday, 08.00 AM - 21.00 PM'),
+              ],
+            ),
             SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.location_on, color: Colors.blue),
+                SizedBox(width: 8),
+                Text(
+                  'Caterpillar Hospital, Jack Road, Singapore 89191',
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Professional Certification',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
             Column(
               children: List.generate(3, (index) {
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          color: Colors.grey,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Certificate Title $index',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text('ID Number: 12345$index'),
+                            Text('Issued: 2021'),
+                          ],
                         ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Certificate Title $index',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text('ID Number: 12345$index'),
-                              Text('Issued: 2021'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               }),
@@ -307,36 +434,36 @@ class PharmacistProfilePage extends StatelessWidget {
             ),
             Column(
               children: List.generate(3, (index) {
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.grey,
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Reviewer $index',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text('Incremental review text...'),
-                            ],
-                          ),
-                        ),
-                        Column(
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.grey,
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.star, color: Colors.yellow),
-                            Text('4.5'),
+                            Text(
+                              'Reviewer $index',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'This is a detailed review comment that can be seen in full. '
+                              'It provides insights and feedback about the pharmacist\'s services.',
+                            ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Column(
+                        children: [
+                          Icon(Icons.star, color: Colors.yellow),
+                          Text('4.5'),
+                        ],
+                      ),
+                    ],
                   ),
                 );
               }),
