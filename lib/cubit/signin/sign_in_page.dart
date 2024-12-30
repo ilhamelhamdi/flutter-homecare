@@ -78,7 +78,7 @@ class _SignInPageState extends State<SignInPage> {
               }
             },
             builder: (context, state) {
-              final logo = Hero(
+              Hero(
                 tag: 'logo',
                 child: CircleAvatar(
                   backgroundColor: Colors.transparent,

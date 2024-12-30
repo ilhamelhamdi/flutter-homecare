@@ -4,6 +4,7 @@ import 'package:flutter_homecare/main.dart';
 import 'personal_cubit.dart';
 import 'personal_state.dart';
 import 'package:flutter_homecare/widgets/image_preview.dart';
+import 'dart:io';
 
 class PersonalPage extends StatelessWidget {
   @override
@@ -114,6 +115,16 @@ class AddConcernPage extends StatefulWidget {
 }
 
 class _AddConcernPageState extends State<AddConcernPage> {
+  TextEditingController _issueTitleController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  List<File> _images = [];
+
+  void _addImage(File image) {
+    setState(() {
+      _images.add(image);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,6 +156,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
               width: 338,
               height: 50,
               child: TextField(
+                controller: _issueTitleController,
                 decoration: InputDecoration(
                   hintText: 'Issue Title',
                   hintStyle: TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
@@ -159,6 +171,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
               width: 338,
               height: 129,
               child: TextField(
+                controller: _descriptionController,
                 decoration: InputDecoration(
                   hintText:
                       'Please enter questions, concerns, relevant symptoms related to your case along with related keywords.',
@@ -166,8 +179,9 @@ class _AddConcernPageState extends State<AddConcernPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10), // Adjust the vertical padding as needed
                 ),
                 maxLines: null,
                 expands: true,
@@ -178,11 +192,11 @@ class _AddConcernPageState extends State<AddConcernPage> {
               child: Column(
                 children: [
                   SizedBox(height: 30),
-                  ImagePreview(),
+                  ImagePreview(onImageSelected: _addImage),
                   SizedBox(height: 30),
-                  ImagePreview(),
+                  ImagePreview(onImageSelected: _addImage),
                   SizedBox(height: 30),
-                  ImagePreview(),
+                  ImagePreview(onImageSelected: _addImage),
                   SizedBox(height: 30),
                 ],
               ),
@@ -196,7 +210,11 @@ class _AddConcernPageState extends State<AddConcernPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddSummaryPage(),
+                      builder: (context) => AddSummaryPage(
+                        issueTitle: _issueTitleController.text,
+                        description: _descriptionController.text,
+                        images: _images,
+                      ),
                     ),
                   );
                 },
@@ -217,6 +235,16 @@ class _AddConcernPageState extends State<AddConcernPage> {
 }
 
 class AddSummaryPage extends StatelessWidget {
+  final String issueTitle;
+  final String description;
+  final List<File> images;
+
+  AddSummaryPage({
+    required this.issueTitle,
+    required this.description,
+    required this.images,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -240,44 +268,27 @@ class AddSummaryPage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Issue Title: [Your Issue Title]',
+              'Issue Title: $issueTitle',
               style: TextStyle(fontSize: 14),
             ),
             SizedBox(height: 10),
             Text(
-              'Description: [Your Question]',
+              'Description: $description',
               style: TextStyle(fontSize: 14),
             ),
             SizedBox(height: 20),
             Row(
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.grey.shade200,
-                  child: Center(
-                    child: Text('Image 1'),
+              children: images.map((image) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.grey.shade200,
+                    child: Image.file(image, fit: BoxFit.cover),
                   ),
-                ),
-                SizedBox(width: 10),
-                Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.grey.shade200,
-                  child: Center(
-                    child: Text('Image 2'),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.grey.shade200,
-                  child: Center(
-                    child: Text('Image 3'),
-                  ),
-                ),
-              ],
+                );
+              }).toList(),
             ),
             Spacer(),
             Column(
@@ -313,12 +324,7 @@ class AddSummaryPage extends StatelessWidget {
                   height: 58,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddIssuePage(),
-                        ),
-                      );
+                      // Handle next action
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF35C5CF),

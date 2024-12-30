@@ -25,9 +25,16 @@ class SignUpCubit extends Cubit<SignUpState> {
   final RegExp emailRegex =
       RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)?$');
 
-  Future<void> signUp(String email, String password, String username, String role) async {
-    print(email + " " + password + " " + username + " " + role);
-    if (email.isEmpty || !emailRegex.hasMatch(email) || password.isEmpty || username.isEmpty || role.isEmpty) {
+  Future<void> signUp(
+    String email,
+    String password,
+    String username,
+  ) async {
+    print(email + " " + password + " " + username + " ");
+    if (email.isEmpty ||
+        !emailRegex.hasMatch(email) ||
+        password.isEmpty ||
+        username.isEmpty) {
       emit(SignUpFailure('Please fill in all fields correctly.'));
       return;
     }
@@ -35,11 +42,11 @@ class SignUpCubit extends Cubit<SignUpState> {
 
     var dio = Dio();
     dio.interceptors.add(const OmegaDioLogger());
-    var mUrl = Const.API_REGISTER + role; 
+    var mUrl = Const.API_REGISTER;
     try {
-      var response = await dio
-          .post(mUrl, data: {"email": email, "password": password, "username": username},
-              options: Options(validateStatus: (status) {
+      var response = await dio.post(mUrl,
+          data: {"email": email, "password": password, "username": username},
+          options: Options(validateStatus: (status) {
         return true;
       }));
 
@@ -47,7 +54,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
       if (response.statusCode != 200) {
         var mError = response.data['errors'][0]['message'] ?? "";
-        emit(SignUpFailure(response.data['message'] + " " + mError ));
+        emit(SignUpFailure(response.data['message'] + " " + mError));
         return;
       }
       emit(SignUpSuccess());

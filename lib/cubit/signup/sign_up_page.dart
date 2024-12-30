@@ -8,7 +8,7 @@ class SignUpPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String? role;
+  // String? role;
 
   @override
   Widget build(BuildContext context) {
@@ -123,23 +123,23 @@ class SignUpPage extends StatelessWidget {
                     obscureText: true,
                   ),
                   SizedBox(height: 10),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      hintText: 'Select User Type',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
-                    ),
-                    items: <String>['Manufacturer', 'Distributor', 'Healthcare']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      role = newValue!;
-                    },
-                  ),
+                  // DropdownButtonFormField<String>(
+                  //   decoration: InputDecoration(
+                  //     hintText: 'Select User Type',
+                  //     border: OutlineInputBorder(
+                  //         borderRadius: BorderRadius.circular(10.0)),
+                  //   ),
+                  //   items: <String>['Manufacturer', 'Distributor', 'Healthcare']
+                  //       .map<DropdownMenuItem<String>>((String value) {
+                  //     return DropdownMenuItem<String>(
+                  //       value: value,
+                  //       child: Text(value),
+                  //     );
+                  //   }).toList(),
+                  //   onChanged: (String? newValue) {
+                  //     role = newValue!;
+                  //   },
+                  // ),
                   SizedBox(height: 30),
                   SizedBox(
                     width: 300,
@@ -159,7 +159,7 @@ class SignUpPage extends StatelessWidget {
                               _emailController.text,
                               _passwordController.text,
                               _usernameController.text,
-                              role?.toLowerCase() ?? 'manufacturer',
+                              // role?.toLowerCase() ?? 'manufacturer',
                             );
                       },
                       child: Text('Sign Up'),

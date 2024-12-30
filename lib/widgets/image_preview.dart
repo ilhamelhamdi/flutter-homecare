@@ -3,6 +3,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class ImagePreview extends StatefulWidget {
+  final Function(File) onImageSelected;
+
+  ImagePreview({required this.onImageSelected});
+
   @override
   _ImagePreviewState createState() => _ImagePreviewState();
 }
@@ -18,6 +22,7 @@ class _ImagePreviewState extends State<ImagePreview> {
       setState(() {
         _image = File(pickedFile.path);
       });
+      widget.onImageSelected(_image!);
     }
   }
 
