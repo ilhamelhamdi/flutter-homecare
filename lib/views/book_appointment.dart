@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:time_slot/time_slot.dart';
 import 'details/detail_appointment.dart';
+import 'package:flutter_homecare/const.dart';
+import 'package:flutter_homecare/widgets/time_slot_grid_view.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   @override
@@ -17,13 +19,28 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Book Appointment'),
+        title: const Text(
+          'Book Appointment',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Card(
+                child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF9AE1FF).withOpacity(0.33),
+                    Color(0xFF9DCEFF).withOpacity(0.33),
+                  ],
+                  end: Alignment.topLeft,
+                  begin: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -33,11 +50,14 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        color: Colors.grey,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/images_olla.png'),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     SizedBox(width: 16),
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -50,7 +70,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                         Text('Pharmacist'),
                         Row(
                           children: [
-                            Icon(Icons.location_on, color: Colors.blue),
+                            Icon(Icons.location_on, color: Colors.teal),
                             SizedBox(width: 4),
                             Text('Caterpillar Hospital, Singapore'),
                           ],
@@ -60,7 +80,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   ],
                 ),
               ),
-            ),
+            )),
             SizedBox(height: 16),
             Align(
               alignment: Alignment.centerLeft,
@@ -72,25 +92,58 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                 ),
               ),
             ),
-            SizedBox(height: 8),
-            TableCalendar(
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: _focusedDay,
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
-              },
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              calendarFormat: CalendarFormat.month,
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              headerStyle: HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
+            SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFF9AE1FF)
+                    .withOpacity(0.3), // Set the background color to #9AE1FF
+                borderRadius:
+                    BorderRadius.circular(16), // Set the border radius to 16
+              ),
+              child: TableCalendar(
+                firstDay: DateTime.utc(2020, 1, 1),
+                lastDay: DateTime.utc(2030, 12, 31),
+                focusedDay: _focusedDay,
+                selectedDayPredicate: (day) {
+                  return isSameDay(_selectedDay, day);
+                },
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
+                },
+                calendarFormat: CalendarFormat.month,
+                startingDayOfWeek: StartingDayOfWeek.monday,
+                headerStyle: const HeaderStyle(
+                  formatButtonVisible: false,
+                  titleCentered: true,
+                  titleTextStyle: TextStyle(color: Colors.black),
+                  leftChevronIcon: Icon(
+                    Icons.chevron_left,
+                    color: Colors.grey,
+                  ),
+                  rightChevronIcon: Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey,
+                  ),
+                ),
+                calendarStyle: CalendarStyle(
+                  selectedDecoration: const BoxDecoration(
+                    color: Const.tosca,
+                    shape: BoxShape.circle,
+                  ),
+                  todayDecoration: BoxDecoration(
+                    color: Const.tosca.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  markerDecoration: const BoxDecoration(
+                    color: Const.tosca,
+                    shape: BoxShape.circle,
+                  ),
+                  weekendTextStyle: TextStyle(color: Colors.black),
+                  defaultTextStyle: TextStyle(color: Colors.black),
+                ),
               ),
             ),
             SizedBox(height: 16),
@@ -105,25 +158,22 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
               ),
             ),
             SizedBox(height: 8),
-            TimesSlotGridViewFromList(
-              locale: "en",
-              initTime: selectTime,
-              crossAxisCount: 4,
-              listDates: [
-                DateTime(2023, 1, 1, 2, 0),
-                DateTime(2023, 1, 1, 4, 0),
-                DateTime(2023, 1, 1, 6, 30),
-                DateTime(2023, 1, 1, 8, 30),
-                DateTime(2023, 1, 1, 10, 0),
-                DateTime(2023, 1, 1, 14, 0),
-                DateTime(2023, 1, 1, 15, 30),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TimeSlot(
+                  startTime: DateTime(2023, 1, 1, 9, 0),
+                  endTime: DateTime(2023, 1, 1, 18, 0),
+                  selectedTime: selectTime,
+                  onTimeSelected: (time) {
+                    setState(() {
+                      selectTime = time;
+                    });
+                  },
+                ),
+                SizedBox(height: 16),
               ],
-              onChange: (value) {
-                setState(() {
-                  selectTime = value;
-                });
-              },
-            ),
+            )
           ],
         ),
       ),
@@ -140,7 +190,16 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
             );
             // Handle the next button press
           },
-          child: Text('Next'),
+          child: Text(
+            'Next',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF35C5CF),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
         ),
       ),
     );

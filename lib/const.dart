@@ -33,6 +33,7 @@ class Const {
   static const String NAME = 'name';
   static const String OBJ_PROFILE = 'obj_profile';
 
+  static const Color tosca = Color(0xFF00B0A7);
   static const Color primaryBlue = Color(0xFF4894FE);
   static const Color primaryTextColor = Color(0xFF414C6B);
   static const Color secondaryTextColor = Color(0xFFE4979E);

@@ -480,7 +480,16 @@ class PharmacistProfilePage extends StatelessWidget {
               MaterialPageRoute(builder: (context) => BookAppointmentPage()),
             );
           },
-          child: Text('Book Appointment'),
+          child: Text(
+            'Book Appointment',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF35C5CF),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
         ),
       ),
     );

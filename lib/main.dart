@@ -4,7 +4,7 @@ import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_homecare/route/app_router.dart';
 import 'package:flutter_homecare/views/dashboard.dart';
-import 'package:flutter_homecare/views/outsourcing.dart';
+import 'package:flutter_homecare/views/favourites.dart';
 import 'package:navbar_router/navbar_router.dart';
 
 import 'const.dart';
