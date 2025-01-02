@@ -97,7 +97,7 @@ class SignUpPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0)),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 20),
                   // TextField(
                   //   controller: _emailController,
                   //   keyboardType: TextInputType.emailAddress,
@@ -110,7 +110,6 @@ class SignUpPage extends StatelessWidget {
                   //         borderRadius: BorderRadius.circular(32.0)),
                   //   ),
                   // ),
-                  SizedBox(height: 10),
                   TextField(
                     controller: _passwordController,
                     decoration: InputDecoration(
@@ -122,24 +121,37 @@ class SignUpPage extends StatelessWidget {
                     ),
                     obscureText: true,
                   ),
-                  SizedBox(height: 10),
-                  // DropdownButtonFormField<String>(
-                  //   decoration: InputDecoration(
-                  //     hintText: 'Select User Type',
-                  //     border: OutlineInputBorder(
-                  //         borderRadius: BorderRadius.circular(10.0)),
-                  //   ),
-                  //   items: <String>['Manufacturer', 'Distributor', 'Healthcare']
-                  //       .map<DropdownMenuItem<String>>((String value) {
-                  //     return DropdownMenuItem<String>(
-                  //       value: value,
-                  //       child: Text(value),
-                  //     );
-                  //   }).toList(),
-                  //   onChanged: (String? newValue) {
-                  //     role = newValue!;
-                  //   },
-                  // ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      hintText: 'Confirm Password',
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                    ),
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 20),
+
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      hintText: 'Select User Type',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                    ),
+                    items: <String>['Manufacturer', 'Distributor', 'Healthcare']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      // role = newValue!;
+                    },
+                  ),
                   SizedBox(height: 30),
                   SizedBox(
                     width: 300,

@@ -1,5 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_homecare/const.dart';
+import 'package:flutter_homecare/route/app_routes.dart';
+import 'package:flutter_homecare/views/appointment.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -134,11 +138,14 @@ class ProfilePage extends StatelessWidget {
                       leading:
                           Icon(Icons.calendar_today, color: Color(0xFF35C5CF)),
                       title: Text('All My Appointments'),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                      ),
+                      trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
-                        // Handle All My Appointments tap
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AppointmentPage(),
+                          ),
+                        );
                       },
                     ),
                   ],
@@ -156,7 +163,11 @@ class ProfilePage extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () {
-                    // Handle edit profile information
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfilePage()),
+                    );
                   },
                 ),
               ],
@@ -171,7 +182,8 @@ class ProfilePage extends StatelessWidget {
             SizedBox(height: 16),
             OutlinedButton.icon(
               onPressed: () {
-                // Handle logout
+                // Perform logout logic here (e.g., clearing user session)
+                GoRouter.of(context).go(AppRoutes.signIn);
               },
               icon: Icon(Icons.logout, color: Colors.red),
               label: Text('Logout', style: TextStyle(color: Colors.red)),
@@ -361,6 +373,118 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class EditProfilePage extends StatefulWidget {
+  @override
+  _EditProfilePageState createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  final _formKey = GlobalKey<FormState>();
+  String _gender = 'Male';
+  int _age = 0;
+  double _weight = 0.0;
+  double _height = 0.0;
+  String _contactNumber = '';
+  String _homeAddress = '';
+  String _drugAllergy = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit Profile'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Age'),
+                keyboardType: TextInputType.number,
+                onSaved: (value) {
+                  _age = int.parse(value!);
+                },
+              ),
+              DropdownButtonFormField<String>(
+                value: _gender,
+                decoration: InputDecoration(labelText: 'Gender'),
+                items: ['Male', 'Female'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _gender = newValue!;
+                  });
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Weight (KG)'),
+                keyboardType: TextInputType.number,
+                onSaved: (value) {
+                  _weight = double.parse(value!);
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Height (CM)'),
+                keyboardType: TextInputType.number,
+                onSaved: (value) {
+                  _height = double.parse(value!);
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Contact Number'),
+                keyboardType: TextInputType.phone,
+                onSaved: (value) {
+                  _contactNumber = value!;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Home Address'),
+                onSaved: (value) {
+                  _homeAddress = value!;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Drug Allergy Statuses'),
+                onSaved: (value) {
+                  _drugAllergy = value!;
+                },
+              ),
+              SizedBox(height: 16),
+              Center(
+                child: SizedBox(
+                  width: 300,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        // Handle save profile information
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Const.tosca, // Set the button color to Const.tosca
+                    ),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

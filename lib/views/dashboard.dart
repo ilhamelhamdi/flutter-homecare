@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
+import 'package:flutter_homecare/views/appointment.dart';
 import 'package:flutter_homecare/views/nursing.dart';
 import 'package:flutter_homecare/views/pharma.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_homecare/route/app_routes.dart';
-import 'package:flutter_homecare/route/app_router.dart';
-import 'package:navbar_router/navbar_router.dart';
+
 // import 'package:flutter_homecare/views/details/detail_products.dart';
 // import 'package:flutter_homecare/views/poct.dart';
 // import 'package:flutter_homecare/views/tenders.dart';
@@ -233,19 +231,29 @@ class _DashboardState extends State<Dashboard> {
                         height: 25,
                       ),
                       Spacer(), // Menambahkan spacer untuk memisahkan logo dan CircleAvatar
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              15), // Membuat sudut membulat
-                          image: DecorationImage(
-                            image: AssetImage(
-                                'assets/icons/ic_avatar.png'), // Ganti dengan path gambar Anda
-                            fit: BoxFit.cover,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AppointmentPage(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                15), // Membuat sudut membulat
+                            image: DecorationImage(
+                              image: AssetImage(
+                                  'assets/icons/ic_avatar.png'), // Ganti dengan path gambar Anda
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -559,33 +567,6 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
           ),
-          // floatingActionButton: Padding(
-          //   padding: const EdgeInsets.only(bottom: 60.0),
-          //   child: FloatingActionButton(
-          //     onPressed: () {
-          //       if (_isScrolledToEnd) {
-          //         // Scroll to the top of the list
-          //         _scrollController.animateTo(
-          //           0,
-          //           curve: Curves.easeOut,
-          //           duration: const Duration(milliseconds: 500),
-          //         );
-          //       } else {
-          //         // Scroll to the end of the list
-          //         _scrollController.animateTo(
-          //           _scrollController.position.maxScrollExtent,
-          //           curve: Curves.easeOut,
-          //           duration: const Duration(milliseconds: 500),
-          //         );
-          //       }
-          //     },
-          //     child: Icon(
-          //         _isScrolledToEnd ? Icons.arrow_upward : Icons.arrow_downward),
-          //     tooltip: _isScrolledToEnd ? 'Scroll to Top' : 'Scroll to End',
-          //   ),
-          // ),
-          // floatingActionButtonLocation: FloatingActionButtonLocation
-          //     .endFloat, // Set the location of the FAB
         );
       },
     );
@@ -739,15 +720,7 @@ class _SearchInputBoxState extends State<SearchInputBox> {
         ),
         child: TextField(
           controller: _controller, // Assign the controller to the TextField
-          // onSubmitted: (value) {
-          //   // Handle search action here
-          //   // print('Search submitted: $value');
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => BrowseProducts(keyword: value)),
-          //   );
-          // },
+
           decoration: InputDecoration(
             filled: true, // Enable filling the TextField with a color
             fillColor: Colors.grey[100], // Set the background color to grey
@@ -766,12 +739,6 @@ class _SearchInputBoxState extends State<SearchInputBox> {
             errorBorder:
                 InputBorder.none, // Remove border when there's an error
             disabledBorder: InputBorder.none, // Remove border when disabled
-            // suffixIcon: IconButton(
-            //   icon: Icon(Icons.clear),
-            //   onPressed: () {
-            //     _controller.clear();
-            //   },
-            // ),
           ),
         ),
       ),

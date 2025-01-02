@@ -44,7 +44,7 @@ class _TimeSlotState extends State<TimeSlot> {
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        childAspectRatio: 2,
+        childAspectRatio: 105 / 42,
       ),
       itemCount: timeSlots.length,
       itemBuilder: (context, index) {
@@ -58,7 +58,14 @@ class _TimeSlotState extends State<TimeSlot> {
           child: Container(
             margin: EdgeInsets.all(4.0),
             decoration: BoxDecoration(
-              color: isSelected ? Const.tosca : Colors.transparent,
+              gradient: isSelected
+                  ? LinearGradient(
+                      colors: [Const.tosca.withOpacity(0.5), Const.tosca],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : null,
+              color: isSelected ? null : Colors.transparent,
               border: Border.all(
                 color: Const.tosca,
               ),

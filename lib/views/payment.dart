@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_homecare/const.dart';
+import 'package:flutter_homecare/views/appointment.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'details/detail_appointment.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -18,7 +21,7 @@ class _PaymentPageState extends State<PaymentPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,13 +33,10 @@ class _PaymentPageState extends State<PaymentPage> {
                   children: [
                     Stack(
                       children: [
-                        Container(
+                        Image.asset(
+                          'assets/images/images_olla.png', // Replace with your actual image path
                           width: 50,
                           height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            color: Colors.grey,
-                          ),
                         ),
                         Positioned(
                           bottom: 0,
@@ -129,11 +129,14 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
             SizedBox(height: 8),
-            _buildPaymentMethodCard(
-                'Visa', '**** **** **** 1234', '12/26', Icons.credit_card),
+            _buildPaymentMethodCard('Visa', '**** **** **** 1234', '12/26',
+                'assets/icons/ic_visa.png'),
             _buildPaymentMethodCard('MasterCard', '**** **** **** 5678',
-                '11/25', Icons.credit_card),
-            _buildPaymentMethodCard('Cash', '', '', Icons.money),
+                '11/25', 'assets/icons/mastercard.png'),
+            _buildPaymentMethodCard('PayPal', '**** **** **** 9012', '10/24',
+                'assets/icons/paypal.png'),
+            _buildPaymentMethodCard(
+                'Cash', ' ', '12/26', 'assets/icons/cash.png'),
           ],
         ),
       ),
@@ -148,14 +151,20 @@ class _PaymentPageState extends State<PaymentPage> {
               },
             );
           },
-          child: Text('Confirm'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Const.tosca, // Set the button color to Const.tosca
+          ),
+          child: Text(
+            'Confirm',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildPaymentMethodCard(
-      String method, String accountNumber, String expiryDate, IconData icon) {
+      String method, String accountNumber, String expiryDate, String iconPath) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -168,7 +177,7 @@ class _PaymentPageState extends State<PaymentPage> {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              Icon(icon, size: 40),
+              Image.asset(iconPath, width: 40, height: 40),
               SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,12 +214,16 @@ class PaymentSuccessDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.check_circle, size: 50, color: Colors.green),
+          Image.asset(
+            'assets/icons/ic_checklist.png', // Replace with your actual image path
+            width: 142,
+            height: 142,
+          ),
           SizedBox(height: 16),
           Text(
             'Payment Success',
             style: TextStyle(
-              color: Colors.green,
+              color: Const.tosca,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -222,15 +235,13 @@ class PaymentSuccessDialog extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 16),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Amount'),
               Text(
                 '\$220',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 34),
               ),
             ],
           ),
@@ -247,7 +258,10 @@ class PaymentSuccessDialog extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
-          Text('Your feedback'),
+          Text(
+            'Your feedback will help us to improve your\nexperience better',
+            textAlign: TextAlign.center,
+          ),
           SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
@@ -260,7 +274,16 @@ class PaymentSuccessDialog extends StatelessWidget {
                 },
               );
             },
-            child: Text('Please Feedback'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  Const.tosca, // Set the button color to Const.tosca
+              minimumSize: Size(150, 50), // Customize the width and height
+            ),
+            child: Text(
+              'Please Feedback',
+              style:
+                  TextStyle(color: Colors.white), // Set the text color to white
+            ),
           ),
         ],
       ),
@@ -268,7 +291,16 @@ class PaymentSuccessDialog extends StatelessWidget {
   }
 }
 
-class FeedbackForm extends StatelessWidget {
+class FeedbackForm extends StatefulWidget {
+  @override
+  _FeedbackFormState createState() => _FeedbackFormState();
+}
+
+class _FeedbackFormState extends State<FeedbackForm> {
+  int selectedStar = 5;
+  String selectedTip = '';
+  bool showOtherAmountField = false;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -282,23 +314,22 @@ class FeedbackForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Text(
-                'Rate Your Experience',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
             SizedBox(height: 16),
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(5, (index) {
-                  return Icon(
-                    Icons.star,
-                    color: index < 5 ? Colors.yellow : Colors.grey,
+                  return IconButton(
+                    icon: Icon(
+                      Icons.star,
+                      color: index < selectedStar ? Colors.yellow : Colors.grey,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        selectedStar = index + 1;
+                      });
+                    },
                   );
                 }),
               ),
@@ -316,7 +347,7 @@ class FeedbackForm extends StatelessWidget {
             SizedBox(height: 8),
             Center(
               child: Text(
-                'You rated Angela 5 stars',
+                'You rated Angela $selectedStar stars',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -347,29 +378,50 @@ class FeedbackForm extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16),
-            Text(
-              'Enter other amount',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  showOtherAmountField = true;
+                });
+              },
+              child: Text(
+                'Enter other amount',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: 'Enter amount',
-                border: OutlineInputBorder(),
+            if (showOtherAmountField) ...[
+              SizedBox(height: 8),
+              TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Enter amount',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
+            ],
             SizedBox(height: 16),
             Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => FeedbackDetails()),
-                  );
-                },
-                child: Text('Submit'),
+              child: SizedBox(
+                width: 353, // Set the width to 353
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FeedbackDetails()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Const.tosca, // Set the button color to Const.tosca
+                  ),
+                  child: Text(
+                    'Submit',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             ),
           ],
@@ -379,10 +431,33 @@ class FeedbackForm extends StatelessWidget {
   }
 
   Widget _buildTipCard(String amount) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(amount),
+    bool isSelected = selectedTip == amount;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedTip = amount;
+        });
+      },
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: isSelected ? Const.tosca : Colors.grey,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Text(
+            amount,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isSelected ? Const.tosca : Colors.black,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -405,11 +480,15 @@ class FeedbackDetails extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 100),
+            Image.asset(
+              'assets/icons/ic_checklist.png', // Replace with your actual image path
+              width: 142,
+              height: 142,
+            ),
             SizedBox(height: 20),
             Text(
               'Thank you for your feedback',
-              style: TextStyle(color: Colors.green, fontSize: 20),
+              style: TextStyle(color: Const.tosca, fontSize: 20),
             ),
             SizedBox(height: 10),
             Text(
@@ -418,19 +497,32 @@ class FeedbackDetails extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailAppointmentPage(
-                      pharmacistName: 'Angela XIan xian',
-                      // isCompleted: true,
-                    ),
+            Center(
+              child: SizedBox(
+                width: 300,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AppointmentPage(
+                            // pharmacistName: 'Angela XIan xian',
+                            // isCompleted: true,
+                            ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Const.tosca, // Set the button color to Const.tosca
                   ),
-                );
-              },
-              child: Text('View Detail'),
+                  child: Text(
+                    'View Detail',
+                    style: TextStyle(
+                        color: Colors.white), // Set the text color to white
+                  ),
+                ),
+              ),
             ),
           ],
         ),

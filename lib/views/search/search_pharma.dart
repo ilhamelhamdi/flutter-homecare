@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_homecare/views/book_appointment.dart';
+import 'package:flutter_homecare/const.dart';
 
 class SearchPharmacistPage extends StatefulWidget {
   @override
@@ -281,6 +282,7 @@ class PharmacistProfilePage extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
+                            color: Const.tosca,
                           ),
                         ),
                         Text('Patients'),
@@ -296,9 +298,9 @@ class PharmacistProfilePage extends StatelessWidget {
                         Text(
                           '10Y++',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Const.tosca),
                         ),
                         Text('Experience'),
                       ],
@@ -310,9 +312,20 @@ class PharmacistProfilePage extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.yellow,
+                        Row(
+                          children: [
+                            Text(
+                              '4.5',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Const.tosca),
+                            ),
+                            Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                            ),
+                          ],
                         ),
                         Text(
                           'Rating',
@@ -354,6 +367,7 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 8),
             Row(
               children: [
                 Icon(Icons.calendar_today, color: Colors.grey),
@@ -364,7 +378,9 @@ class PharmacistProfilePage extends StatelessWidget {
             SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.location_on, color: Colors.blue),
+                Icon(
+                  Icons.location_on,
+                ),
                 SizedBox(width: 8),
                 Text(
                   'Caterpillar Hospital, Jack Road, Singapore 89191',
@@ -390,9 +406,10 @@ class PharmacistProfilePage extends StatelessWidget {
                   child: Row(
                     children: [
                       Container(
-                        width: 50,
-                        height: 50,
-                        color: Colors.grey,
+                        width: 112,
+                        height: 76,
+                        child:
+                            Image.asset('assets/images/cert${index + 1}.png'),
                       ),
                       SizedBox(width: 16),
                       Expanded(
@@ -436,32 +453,34 @@ class PharmacistProfilePage extends StatelessWidget {
               children: List.generate(3, (index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.grey,
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage:
+                                AssetImage('assets/images/review1.png'),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
                               'Reviewer $index',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Text(
-                              'This is a detailed review comment that can be seen in full. '
-                              'It provides insights and feedback about the pharmacist\'s services.',
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Icon(Icons.star, color: Colors.yellow),
-                          Text('4.5'),
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.star, color: Colors.yellow),
+                              Text('4.5'),
+                            ],
+                          ),
                         ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'This is a detailed review comment that can be seen in full. '
+                        'It provides insights and feedback about the pharmacist\'s services.',
                       ),
                     ],
                   ),
