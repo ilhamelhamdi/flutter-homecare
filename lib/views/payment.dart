@@ -133,8 +133,10 @@ class _PaymentPageState extends State<PaymentPage> {
                 'assets/icons/ic_visa.png'),
             _buildPaymentMethodCard('MasterCard', '**** **** **** 5678',
                 '11/25', 'assets/icons/mastercard.png'),
-            _buildPaymentMethodCard('PayPal', '**** **** **** 9012', '10/24',
-                'assets/icons/paypal.png'),
+            _buildPaymentMethodCard('Alipay', '**** **** **** 9012', '10/24',
+                'assets/icons/ic_alipay.png'),
+            _buildPaymentMethodCard('PayNow', '**** **** **** 9012', '10/24',
+                'assets/icons/ic_paynow.jpg'),
             _buildPaymentMethodCard(
                 'Cash', ' ', '12/26', 'assets/icons/cash.png'),
           ],
