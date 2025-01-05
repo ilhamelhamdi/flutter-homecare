@@ -398,7 +398,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile'),
+        title: Text(
+          'Profile Information',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -406,84 +409,152 @@ class _EditProfilePageState extends State<EditProfilePage> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Age'),
-                keyboardType: TextInputType.number,
-                onSaved: (value) {
-                  _age = int.parse(value!);
-                },
-              ),
-              DropdownButtonFormField<String>(
-                value: _gender,
-                decoration: InputDecoration(labelText: 'Gender'),
-                items: ['Male', 'Female'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _gender = newValue!;
-                  });
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Weight (KG)'),
-                keyboardType: TextInputType.number,
-                onSaved: (value) {
-                  _weight = double.parse(value!);
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Height (CM)'),
-                keyboardType: TextInputType.number,
-                onSaved: (value) {
-                  _height = double.parse(value!);
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Contact Number'),
-                keyboardType: TextInputType.phone,
-                onSaved: (value) {
-                  _contactNumber = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Home Address'),
-                onSaved: (value) {
-                  _homeAddress = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Drug Allergy Statuses'),
-                onSaved: (value) {
-                  _drugAllergy = value!;
-                },
-              ),
-              SizedBox(height: 16),
-              Center(
-                child: SizedBox(
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        // Handle save profile information
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Const.tosca, // Set the button color to Const.tosca
-                    ),
-                    child: Text(
-                      'Save',
-                      style: TextStyle(color: Colors.white),
+              Container(
+                width: 352,
+                height: 56,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Age',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
+                  keyboardType: TextInputType.number,
+                  onSaved: (value) {
+                    _age = int.parse(value!);
+                  },
                 ),
               ),
+              SizedBox(height: 20),
+              Container(
+                width: 352,
+                height: 56,
+                child: DropdownButtonFormField<String>(
+                  value: _gender,
+                  decoration: InputDecoration(
+                    labelText: 'Gender',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  items: ['Male', 'Female'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _gender = newValue!;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                width: 352,
+                height: 56,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Weight (KG)',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onSaved: (value) {
+                    _weight = double.parse(value!);
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                width: 352,
+                height: 56,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Height (CM)',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onSaved: (value) {
+                    _height = double.parse(value!);
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                width: 352,
+                height: 56,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Contact Number',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  onSaved: (value) {
+                    _contactNumber = value!;
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                width: 352,
+                height: 56,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Home Address',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onSaved: (value) {
+                    _homeAddress = value!;
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                width: 352,
+                height: 156,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Drug Allergy Statuses',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onSaved: (value) {
+                    _drugAllergy = value!;
+                  },
+                ),
+              ),
+              SizedBox(height: 16),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          height: 60,
+          child: ElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                // Handle save profile information
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF40E0D0), // Warna biru tosca
+            ),
+            child: Text(
+              'Save',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
       ),
