@@ -195,7 +195,7 @@ class _DashboardState extends State<Dashboard> {
             elevation: 2,
             flexibleSpace: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
                     Color(0xFF8EF4E8),
                     Color(0xFF35C5CF)
@@ -203,7 +203,7 @@ class _DashboardState extends State<Dashboard> {
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
                 ),
-                borderRadius: BorderRadius.vertical(
+                borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(
                       30), // Membuat border radius di bagian bawah
                 ),
@@ -212,7 +212,7 @@ class _DashboardState extends State<Dashboard> {
                     color: Colors.black.withOpacity(0.2), // Warna shadow
                     spreadRadius: 5,
                     blurRadius: 7,
-                    offset: Offset(0, 3), // Posisi shadow
+                    offset: const Offset(0, 3), // Posisi shadow
                   ),
                 ],
               ),
@@ -230,7 +230,7 @@ class _DashboardState extends State<Dashboard> {
                         fit: BoxFit.contain,
                         height: 25,
                       ),
-                      Spacer(), // Menambahkan spacer untuk memisahkan logo dan CircleAvatar
+                      const Spacer(), // Menambahkan spacer untuk memisahkan logo dan CircleAvatar
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -246,7 +246,7 @@ class _DashboardState extends State<Dashboard> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 15), // Membuat sudut membulat
-                            image: DecorationImage(
+                            image: const DecorationImage(
                               image: AssetImage(
                                   'assets/icons/ic_avatar.png'), // Ganti dengan path gambar Anda
                               fit: BoxFit.cover,
@@ -256,21 +256,22 @@ class _DashboardState extends State<Dashboard> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Live Longer & Live Healthier, ${userName ?? 'Welcome User'}!",
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                  SizedBox(height: 20), // Jarak di bawah teks
+                  const SizedBox(height: 20), // Jarak di bawah teks
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15),
@@ -281,11 +282,11 @@ class _DashboardState extends State<Dashboard> {
                           'assets/icons/ic_doctor.png',
                           width: 24,
                           height: 24,
-                          color: Color.fromARGB(255, 0, 0,
+                          color: const Color.fromARGB(255, 0, 0,
                               0), // Menambahkan warna jika diperlukan
                         ),
-                        SizedBox(width: 10),
-                        Expanded(
+                        const SizedBox(width: 10),
+                        const Expanded(
                           child: TextField(
                             decoration: InputDecoration(
                               hintText:
@@ -335,7 +336,7 @@ class _DashboardState extends State<Dashboard> {
             ],
           ),
           body: Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 60),
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 60),
             color: Colors.white,
             child: SingleChildScrollView(
               controller: _scrollController,
@@ -349,7 +350,7 @@ class _DashboardState extends State<Dashboard> {
                           child: Text(
                             AppLocalizations.of(context)!.translate('services'),
                             textAlign: TextAlign.left,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF232F55),
                               fontSize: 20,
                               fontFamily: 'Inter',
@@ -363,7 +364,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                   // SearchInputBox(),
                   // SizedBox(height: 20),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -380,7 +381,7 @@ class _DashboardState extends State<Dashboard> {
                             'assets/icons/ic_pharma_service.png', // Replace with your actual image path
                         title: AppLocalizations.of(context)!
                             .translate('pharmacist_services'),
-                        backgroundColor: Color(0x559AE1FF),
+                        backgroundColor: const Color(0x559AE1FF),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -397,7 +398,7 @@ class _DashboardState extends State<Dashboard> {
                             'assets/icons/ic_nurse.png', // Replace with your actual image path
                         title: AppLocalizations.of(context)!
                             .translate('home_nursing'),
-                        backgroundColor: Color(0x33B28CFF),
+                        backgroundColor: const Color(0x33B28CFF),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -409,13 +410,13 @@ class _DashboardState extends State<Dashboard> {
                             'assets/icons/ic_diabetic.png', // Replace with your actual image path
                         title: AppLocalizations.of(context)!
                             .translate('diabetic_care'),
-                        backgroundColor: Color(0x33B28CFF),
+                        backgroundColor: const Color(0x33B28CFF),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -423,13 +424,14 @@ class _DashboardState extends State<Dashboard> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
                           );
                         },
                         iconPath: 'assets/icons/ic_report.png',
                         title: AppLocalizations.of(context)!
                             .translate('home_screening'),
-                        backgroundColor: Color(0x6B8EF4DC),
+                        backgroundColor: const Color(0x6B8EF4DC),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -437,7 +439,8 @@ class _DashboardState extends State<Dashboard> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
                           );
                           // Utils.openPDFFromAssets(
                           //     context, 'assets/pdfs/content_service.pdf');
@@ -445,7 +448,7 @@ class _DashboardState extends State<Dashboard> {
                         iconPath: 'assets/icons/ic_drug.png',
                         title: AppLocalizations.of(context)!
                             .translate('remote_monitoring'),
-                        backgroundColor: Color(0xFFD3F2FF),
+                        backgroundColor: const Color(0xFFD3F2FF),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
@@ -453,27 +456,28 @@ class _DashboardState extends State<Dashboard> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
                           );
                         },
                         iconPath: 'assets/icons/ic_lung.png',
                         title: AppLocalizations.of(context)!
                             .translate('2nd_opinion'),
-                        backgroundColor: Color(0x6B8EF4DC),
+                        backgroundColor: const Color(0x6B8EF4DC),
                         // iconColor: Colors.white,
                         titleColor: Colors.black,
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Card(
                     color: Colors.white,
-                    margin: EdgeInsets.symmetric(horizontal: 16.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: ListTile(
-                      title: Text('Health Profile',
+                      title: const Text('Health Profile',
                           style: TextStyle(
                               fontSize: 18, color: Color(0xFF35C5CF))),
-                      subtitle: Text('Anna Bella.'),
+                      subtitle: const Text('Anna Bella.'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -485,12 +489,12 @@ class _DashboardState extends State<Dashboard> {
                                     builder: (context) => ProfilePage()),
                               );
                             },
-                            child: Text('View all',
-                                style: const TextStyle(
+                            child: const Text('View all',
+                                style: TextStyle(
                                     fontSize: 14, color: Colors.black)),
                           ),
                           IconButton(
-                            icon: Icon(Icons.more_vert),
+                            icon: const Icon(Icons.more_vert),
                             onPressed: () {
                               // Handle more options action
                             },
@@ -499,7 +503,7 @@ class _DashboardState extends State<Dashboard> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -521,11 +525,12 @@ class _DashboardState extends State<Dashboard> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   GridView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
@@ -550,11 +555,11 @@ class _DashboardState extends State<Dashboard> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             services[index]
                                 ['name']!, // Use the name from the list
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                             ),
                             textAlign: TextAlign.center,
@@ -608,7 +613,7 @@ class CircularIconWithTitle extends StatelessWidget {
                 // color: iconColor.withOpacity(1.0), // Use withOpacity to control opacity
               ),
             ),
-            SizedBox(
+            const SizedBox(
                 height: 8), // Add some space between the avatar and the title
             Text(
               title,
@@ -665,7 +670,7 @@ class RectangularIconWithTitle extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
                 height: 8), // Add some space between the avatar and the title
             Text(
               title,
@@ -705,10 +710,10 @@ class _SearchInputBoxState extends State<SearchInputBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(
+      margin: const EdgeInsets.fromLTRB(
           30.0, 20.0, 30.0, 10.0), // Set margin around the entire TextField
       child: ClipRRect(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft:
               Radius.circular(50.0), // Adjust these values for the oval shape
           topRight:
@@ -724,9 +729,9 @@ class _SearchInputBoxState extends State<SearchInputBox> {
           decoration: InputDecoration(
             filled: true, // Enable filling the TextField with a color
             fillColor: Colors.grey[100], // Set the background color to grey
-            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            contentPadding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
             prefixIcon: IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 // Handle search action here
                 print('Search submitted: ${_controller.text}');

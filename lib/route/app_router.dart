@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_homecare/views/splashscreen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_homecare/cubit/locations/location_page.dart';
 import 'package:flutter_homecare/cubit/partnership/request_page.dart';
@@ -17,6 +18,11 @@ import 'app_routes.dart';
 
 final GoRouter router = GoRouter(
   routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) =>
+          SplashScreen(), // Set SplashScreen as the initial route
+    ),
     GoRoute(
       path: AppRoutes.service_request,
       builder: (context, state) {

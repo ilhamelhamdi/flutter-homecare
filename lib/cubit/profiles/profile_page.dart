@@ -10,7 +10,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'My Health Profile',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -30,8 +30,8 @@ class ProfilePage extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(width: 16),
-                Column(
+                const SizedBox(width: 16),
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -52,7 +52,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Card(
               elevation: 4,
               shadowColor: Colors.grey,
@@ -61,17 +61,17 @@ class ProfilePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Health Records',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     ListTile(
-                      leading: Icon(
+                      leading: const Icon(
                         Icons.medical_services,
                         color: Color(0xFF35C5CF),
                       ),
-                      title: Text('Medical Records'),
-                      trailing: Icon(
+                      title: const Text('Medical Records'),
+                      trailing: const Icon(
                         Icons.arrow_forward_ios,
                       ),
                       onTap: () {
@@ -84,35 +84,37 @@ class ProfilePage extends StatelessWidget {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.biotech, color: Color(0xFF35C5CF)),
-                      title: Text('Lab Reports'),
-                      trailing: Icon(Icons.arrow_forward_ios),
+                      leading:
+                          const Icon(Icons.biotech, color: Color(0xFF35C5CF)),
+                      title: const Text('Lab Reports'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         // Handle Lab Reports tap
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.radio, color: Color(0xFF35C5CF)),
-                      title: Text('Radiology Reports'),
-                      trailing: Icon(Icons.arrow_forward_ios),
+                      leading:
+                          const Icon(Icons.radio, color: Color(0xFF35C5CF)),
+                      title: const Text('Radiology Reports'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         // Handle Radiology Reports tap
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.health_and_safety,
+                      leading: const Icon(Icons.health_and_safety,
                           color: Color(0xFF35C5CF)),
-                      title: Text('Health Screening'),
-                      trailing: Icon(Icons.arrow_forward_ios),
+                      title: const Text('Health Screening'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         // Handle Health Screening tap
                       },
                     ),
                     ListTile(
-                      leading:
-                          Icon(Icons.local_pharmacy, color: Color(0xFF35C5CF)),
-                      title: Text('Pharma Profile'),
-                      trailing: Icon(Icons.arrow_forward_ios),
+                      leading: const Icon(Icons.local_pharmacy,
+                          color: Color(0xFF35C5CF)),
+                      title: const Text('Pharma Profile'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         // Handle Pharma Profile tap
                       },
@@ -121,7 +123,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Card(
               elevation: 4,
               shadowColor: Colors.grey,
@@ -130,15 +132,15 @@ class ProfilePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Appointment',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     ListTile(
-                      leading:
-                          Icon(Icons.calendar_today, color: Color(0xFF35C5CF)),
-                      title: Text('All My Appointments'),
-                      trailing: Icon(Icons.arrow_forward_ios),
+                      leading: const Icon(Icons.calendar_today,
+                          color: Color(0xFF35C5CF)),
+                      title: const Text('All My Appointments'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -152,16 +154,16 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Profile Information',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -172,23 +174,23 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8),
-            Text('Age: 35 | Weight: 55 KG | Height: 155 cm'),
-            SizedBox(height: 8),
-            Text('Phone Number: +6232433'),
-            SizedBox(height: 8),
-            Text('Home Address (Primary):'),
-            Text('7 Nassim Road Lodge, Singapore'),
-            SizedBox(height: 16),
+            const SizedBox(height: 8),
+            const Text('Age: 35 | Weight: 55 KG | Height: 155 cm'),
+            const SizedBox(height: 8),
+            const Text('Phone Number: +6232433'),
+            const SizedBox(height: 8),
+            const Text('Home Address (Primary):'),
+            const Text('7 Nassim Road Lodge, Singapore'),
+            const SizedBox(height: 16),
             OutlinedButton.icon(
               onPressed: () {
                 // Perform logout logic here (e.g., clearing user session)
                 GoRouter.of(context).go(AppRoutes.signIn);
               },
-              icon: Icon(Icons.logout, color: Colors.red),
-              label: Text('Logout', style: TextStyle(color: Colors.red)),
+              icon: const Icon(Icons.logout, color: Colors.red),
+              label: const Text('Logout', style: TextStyle(color: Colors.red)),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.red),
+                side: const BorderSide(color: Colors.red),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -254,12 +256,12 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        title: Text(
+        title: const Text(
           'Medical Records',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -276,11 +278,11 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
               : index;
           return Card(
             elevation: 4,
-            shadowColor: Colors.grey,
+            shadowColor: Colors.black,
             margin: const EdgeInsets.symmetric(vertical: 8.0),
             child: ListTile(
               title: Text(records[recordIndex]),
-              subtitle: Text('Last updated: 08-09-2024'),
+              subtitle: const Text('Last updated: 08-09-2024'),
               trailing: PopupMenuButton<String>(
                 onSelected: (String value) {
                   if (value == 'Modify') {
@@ -306,13 +308,21 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
         onPressed: () {
           // Handle add new record
         },
-        child: Icon(Icons.add),
+        backgroundColor: Const.tosca,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
       bottomNavigationBar: _editingIndex != null
           ? BottomAppBar(
               child: ElevatedButton(
                 onPressed: _submitModification,
-                child: Text('Submit'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Const.tosca, // Warna tosca
+                ),
+                child:
+                    const Text('Submit', style: TextStyle(color: Colors.white)),
               ),
             )
           : null,
@@ -329,22 +339,22 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Patient Information',
+            const Text('Patient Information',
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            Divider(),
+            const Divider(),
             TextField(
               controller: _diseaseNameController,
-              decoration: InputDecoration(labelText: 'Disease Name'),
+              decoration: const InputDecoration(labelText: 'Disease Name'),
             ),
-            SizedBox(height: 8),
-            Text('Disease History Description'),
+            const SizedBox(height: 8),
+            const Text('Disease History Description'),
             TextField(
               controller: _diseaseHistoryController,
               maxLines: 4,
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
-            SizedBox(height: 8),
-            Text('Patient with Special Consideration'),
+            const SizedBox(height: 8),
+            const Text('Patient with Special Consideration'),
             Wrap(
               spacing: 8.0,
               children: List.generate(6, (index) {
@@ -359,16 +369,16 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
                 );
               }),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Treatment Information'),
+                const Text('Treatment Information'),
                 ElevatedButton(
                   onPressed: () {
                     // Handle add treatment information
                   },
-                  child: Text('+ Add'),
+                  child: const Text('+ Add'),
                 ),
               ],
             ),
@@ -398,7 +408,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Profile Information',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
@@ -425,7 +435,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: 352,
                 height: 56,
@@ -450,7 +460,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: 352,
                 height: 56,
@@ -467,7 +477,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: 352,
                 height: 56,
@@ -484,7 +494,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: 352,
                 height: 56,
@@ -501,7 +511,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: 352,
                 height: 56,
@@ -517,7 +527,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: 352,
                 height: 156,
@@ -533,7 +543,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -549,9 +559,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF40E0D0), // Warna biru tosca
+              backgroundColor: const Color(0xFF40E0D0), // Warna biru tosca
             ),
-            child: Text(
+            child: const Text(
               'Save',
               style: TextStyle(color: Colors.white),
             ),
