@@ -281,6 +281,7 @@ class _HomePageState extends State<HomePage>
               Tab(icon: Icon(Icons.favorite_border_outlined)),
               Tab(icon: Icon(Icons.person_outline)),
             ],
+            indicatorColor: Color(0xFF40E0D0), // Warna tosca
           ), // A floating tab bar
           fit: StackFit.expand,
           icon: (width, height) => Center(

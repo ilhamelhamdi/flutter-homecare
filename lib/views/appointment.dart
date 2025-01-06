@@ -53,18 +53,19 @@ class _AppointmentPageState extends State<AppointmentPage>
             ),
           ],
         ),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Color(0xFF40E0D0), // Warna tosca
+          tabs: [
+            Tab(text: 'Upcoming'),
+            Tab(text: 'Completed'),
+            Tab(text: 'Cancelled'),
+            Tab(text: 'Missed'),
+          ],
+        ),
       ),
       body: Column(
         children: [
-          TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(text: 'Upcoming'),
-              Tab(text: 'Completed'),
-              Tab(text: 'Cancelled'),
-              Tab(text: 'Missed'),
-            ],
-          ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -112,12 +113,22 @@ class _AppointmentPageState extends State<AppointmentPage>
                               padding: EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.yellow,
+                                color: status == 'Completed'
+                                    ? Colors.green
+                                    : status == 'Cancelled' ||
+                                            status == 'Missed'
+                                        ? Colors.red
+                                        : Colors.yellow,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(status,
                                   style: TextStyle(
-                                    color: Color(0xFFE59500),
+                                    color: status == 'Completed'
+                                        ? Colors.white
+                                        : status == 'Cancelled' ||
+                                                status == 'Missed'
+                                            ? Colors.white
+                                            : Color(0xFFE59500),
                                   )),
                             ),
                           ],
@@ -141,34 +152,43 @@ class _AppointmentPageState extends State<AppointmentPage>
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: Text('Cancel Booking',
-                          style: const TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold)),
-                    ),
-                    Container(
-                      width: 160,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF35C5CF), Color(0xFF9DCEFF)],
-                          begin: Alignment.bottomRight,
-                          end: Alignment.topLeft,
+                      child: Text(
+                        status == 'Completed' || status == 'Missed'
+                            ? 'Book Again'
+                            : 'Cancel Booking',
+                        style: TextStyle(
+                          color: status == 'Completed' || status == 'Missed'
+                              ? Colors.green
+                              : Colors.red,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          // Handle reschedule
-                        },
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                    ),
+                    if (status == 'Upcoming')
+                      Container(
+                        width: 160,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF35C5CF), Color(0xFF9DCEFF)],
+                            begin: Alignment.bottomRight,
+                            end: Alignment.topLeft,
                           ),
                         ),
-                        child: Text('Reschedule',
-                            style: TextStyle(color: Colors.white)),
+                        child: OutlinedButton(
+                          onPressed: () {
+                            // Handle reschedule
+                          },
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text('Reschedule',
+                              style: TextStyle(color: Colors.white)),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ],
