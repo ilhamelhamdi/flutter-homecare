@@ -51,7 +51,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Pharmacist',
+        title: const Text('Search Pharmacist',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
@@ -60,21 +60,21 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
           children: [
             TextField(
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 hintText: 'Search Pharmacist',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: pharmacists.length,
                 itemBuilder: (context, index) {
                   final pharmacist = pharmacists[index];
                   return Card(
-                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
@@ -94,7 +94,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                       ),
                                     ),
                                   ),
-                                  Positioned(
+                                  const Positioned(
                                     bottom: 36,
                                     right: 3,
                                     child: Icon(
@@ -105,29 +105,29 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               Row(
                                 children: [
                                   StarRating(rating: pharmacist['rating']),
-                                  SizedBox(width: 4),
+                                  const SizedBox(width: 4),
                                   Text(pharmacist['rating']
                                       .toString()), // Rating
                                 ],
                               ),
                             ],
                           ),
-                          SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   pharmacist['name'],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text('Pharmacist'),
+                                const Text('Pharmacist'),
                                 Row(
                                   children: [
                                     TextButton(
@@ -139,7 +139,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                                   PharmacistProfilePage()),
                                         );
                                       },
-                                      child: Text('Appointment',
+                                      child: const Text('Appointment',
                                           style:
                                               TextStyle(color: Colors.black)),
                                     ),
@@ -149,7 +149,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                             ? Icons.favorite
                                             : Icons.favorite_border,
                                       ),
-                                      color: Color(0xFF35C5CF),
+                                      color: const Color(0xFF35C5CF),
                                       onPressed: () {
                                         _toggleFavorite(index);
                                       },
@@ -220,7 +220,7 @@ class PharmacistProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pharmacist Details'),
+        title: const Text('Pharmacist Details'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -235,13 +235,13 @@ class PharmacistProfilePage extends StatelessWidget {
                       height: 100,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: DecorationImage(
+                        image: const DecorationImage(
                           image: AssetImage('assets/images/images_olla.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Positioned(
+                    const Positioned(
                       bottom: 0,
                       right: 0,
                       child: Icon(
@@ -252,15 +252,15 @@ class PharmacistProfilePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
-                Text(
+                const SizedBox(height: 8),
+                const Text(
                   'Dr. Khanza Deliva',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
                 ),
-                Text(
+                const Text(
                   'Pharmacist',
                   style: TextStyle(
                     fontSize: 16,
@@ -268,13 +268,13 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            Row(
+            const SizedBox(height: 16),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         Text(
@@ -292,7 +292,7 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         Text(
@@ -309,7 +309,7 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         Row(
@@ -340,8 +340,8 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            Align(
+            const SizedBox(height: 16),
+            const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'About Me',
@@ -351,13 +351,13 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Dr. Khanza Deliva is a highly experienced pharmacist with over 10 years of experience in the field. She has successfully treated over 180 patients and is known for her dedication and expertise.',
               textAlign: TextAlign.justify,
             ),
-            SizedBox(height: 16),
-            Align(
+            const SizedBox(height: 16),
+            const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Working Information',
@@ -367,16 +367,16 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 8),
-            Row(
+            const SizedBox(height: 8),
+            const Row(
               children: [
                 Icon(Icons.calendar_today, color: Colors.grey),
                 SizedBox(width: 8),
                 Text('Monday - Friday, 08.00 AM - 21.00 PM'),
               ],
             ),
-            SizedBox(height: 8),
-            Row(
+            const SizedBox(height: 8),
+            const Row(
               children: [
                 Icon(
                   Icons.location_on,
@@ -388,8 +388,8 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 8),
-            Align(
+            const SizedBox(height: 8),
+            const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Professional Certification',
@@ -411,17 +411,18 @@ class PharmacistProfilePage extends StatelessWidget {
                         child:
                             Image.asset('assets/images/cert${index + 1}.png'),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Certificate Title $index',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text('ID Number: 12345$index'),
-                            Text('Issued: 2021'),
+                            const Text('Issued: 2021'),
                           ],
                         ),
                       ),
@@ -430,13 +431,13 @@ class PharmacistProfilePage extends StatelessWidget {
                 );
               }),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Reviews',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -445,7 +446,7 @@ class PharmacistProfilePage extends StatelessWidget {
                   onPressed: () {
                     // Handle See All click
                   },
-                  child: Text('See All'),
+                  child: const Text('See All'),
                 ),
               ],
             ),
@@ -458,18 +459,19 @@ class PharmacistProfilePage extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          CircleAvatar(
+                          const CircleAvatar(
                             backgroundImage:
                                 AssetImage('assets/images/review1.png'),
                           ),
-                          SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Text(
                               'Reviewer $index',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
-                          Row(
+                          const Row(
                             children: [
                               Icon(Icons.star, color: Colors.yellow),
                               Text('4.5'),
@@ -477,8 +479,8 @@ class PharmacistProfilePage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
-                      Text(
+                      const SizedBox(height: 8),
+                      const Text(
                         'This is a detailed review comment that can be seen in full. '
                         'It provides insights and feedback about the pharmacist\'s services.',
                       ),
@@ -499,15 +501,15 @@ class PharmacistProfilePage extends StatelessWidget {
               MaterialPageRoute(builder: (context) => BookAppointmentPage()),
             );
           },
-          child: Text(
-            'Book Appointment',
-            style: TextStyle(color: Colors.white),
-          ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF35C5CF),
+            backgroundColor: const Color(0xFF35C5CF),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
+          ),
+          child: const Text(
+            'Book Appointment',
+            style: TextStyle(color: Colors.white),
           ),
         ),
       ),

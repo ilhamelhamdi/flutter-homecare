@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_homecare/app_localzations.dart';
-import 'package:flutter_homecare/cubit/nursing/nursing_case_details.dart';
+import 'package:flutter_homecare/cubit/nursing/nursing_cubit.dart';
+import 'package:flutter_homecare/cubit/nursing/nursing_state.dart';
 import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/main.dart';
@@ -99,24 +101,11 @@ class NursingCard extends StatelessWidget {
 }
 
 class _NursingState extends State<NursingService> {
-  final List<Map<String, String>> dummyTenders = [
-    {
-      'title': 'Primary Nursing',
-      'description':
-          'Monitor and administer\nnursing procedures from\nbody checking, Medication,\ntube feed and suctioning to\ninjections and wound care.',
-      'imagePath': 'assets/icons/ilu_nurse.png',
-      'color': '9AE1FF',
-      'opacity': '0.3',
-    },
-    {
-      'title': 'Specialized Nursing Services',
-      'description':
-          'Focus on recovery and leave\nthe complex nursing care in\nthe hands of our experienced\nnurse Care Pros',
-      'imagePath': 'assets/icons/ilu_nurse_special.png',
-      'color': 'B28CFF',
-      'opacity': '0.2',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    context.read<NursingCubit>().loadNursingServices();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,55 +120,67 @@ class _NursingState extends State<NursingService> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: ListView.separated(
-                itemCount: dummyTenders.length,
-                itemBuilder: (context, index) {
-                  final tender = dummyTenders[index];
-                  return NursingCard(
-                    pharma: tender,
-                    onTap: () {
-                      String route;
-                      switch (index) {
-                        case 0:
-                          navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NursingDetailsPage(
-                                  // item: tender,
+              child: BlocBuilder<NursingCubit, NursingState>(
+                builder: (context, state) {
+                  if (state is NursingLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is NursingLoaded) {
+                    return ListView.separated(
+                      itemCount: state.tenders.length,
+                      itemBuilder: (context, index) {
+                        final tender = state.tenders[index];
+                        return NursingCard(
+                          pharma: tender,
+                          onTap: () {
+                            String route;
+                            switch (index) {
+                              case 0:
+                                navbarVisibility(true);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PersonalPage(
+                                        // item: tender,
+                                        ),
                                   ),
-                            ),
-                          ).then((_) {
-                            // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
-                          });
-                          return;
-                        case 1:
-                          navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NursingService(
-                                  // item: tender,
+                                ).then((_) {
+                                  // Show the bottom navigation bar when returning
+                                  navbarVisibility(false);
+                                });
+                                return;
+                              case 1:
+                                navbarVisibility(true);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PersonalPage(
+                                        // item: tender,
+                                        ),
                                   ),
-                            ),
-                          ).then((_) {
-                            // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
-                          });
-                          return;
-                        default:
-                          route = AppRoutes.home;
-                      }
-                      Navigator.pushNamed(context, route);
-                    },
-                    color: Color(int.parse('0xFF${tender['color']}'))
-                        .withOpacity(tender['opacity'] != null
-                            ? double.parse(tender['opacity']!)
-                            : 1.0),
-                  );
+                                ).then((_) {
+                                  // Show the bottom navigation bar when returning
+                                  navbarVisibility(false);
+                                });
+                                return;
+                              default:
+                                route = AppRoutes.home;
+                            }
+                            Navigator.pushNamed(context, route);
+                          },
+                          color: Color(int.parse('0xFF${tender['color']}'))
+                              .withOpacity(tender['opacity'] != null
+                                  ? double.parse(tender['opacity']!)
+                                  : 1.0),
+                        );
+                      },
+                      separatorBuilder: (context, index) => Divider(height: 1),
+                    );
+                  } else if (state is NursingError) {
+                    return Center(child: Text(state.message));
+                  } else {
+                    return Container();
+                  }
                 },
-                separatorBuilder: (context, index) => Divider(height: 1),
               ),
             ),
           ],

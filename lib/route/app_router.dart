@@ -11,6 +11,7 @@ import 'package:flutter_homecare/cubit/submenu/submenu_page.dart';
 import 'package:flutter_homecare/cubit/partnership/list/partnership_list_page.dart';
 import 'package:flutter_homecare/cubit/pharmacist_profile/pharmacist_profile_page.dart';
 import 'package:flutter_homecare/cubit/personal/personal_page.dart';
+// import 'package:flutter_homecare/cubit/nursing/nursing_page.dart';
 import 'package:flutter_homecare/main.dart';
 import 'package:flutter_homecare/views/dashboard.dart';
 import 'package:flutter_homecare/views/pharma.dart';
@@ -92,6 +93,12 @@ final GoRouter router = GoRouter(
         return PersonalPage();
       },
     ),
+    // GoRoute(
+    //   path: AppRoutes.nursing,
+    //   builder: (context, state) {
+    //     return NursingService();
+    //   },
+    // ),
   ],
   errorPageBuilder: (context, state) {
     return MaterialPage(child: HomePage());
