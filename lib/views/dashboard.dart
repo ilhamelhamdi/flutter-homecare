@@ -236,7 +236,7 @@ class _DashboardState extends State<Dashboard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AppointmentPage(),
+                              builder: (context) => ProfilePage(),
                             ),
                           );
                         },
@@ -404,7 +404,12 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          // selectTab(1);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ComingSoonDialog();
+                            },
+                          );
                         },
                         iconPath:
                             'assets/icons/ic_diabetic.png', // Replace with your actual image path
@@ -422,10 +427,11 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       RectangularIconWithTitle(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()),
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ComingSoonDialog();
+                            },
                           );
                         },
                         iconPath: 'assets/icons/ic_report.png',
@@ -437,13 +443,12 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()),
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ComingSoonDialog();
+                            },
                           );
-                          // Utils.openPDFFromAssets(
-                          //     context, 'assets/pdfs/content_service.pdf');
                         },
                         iconPath: 'assets/icons/ic_drug.png',
                         title: AppLocalizations.of(context)!
@@ -454,10 +459,11 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()),
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ComingSoonDialog();
+                            },
                           );
                         },
                         iconPath: 'assets/icons/ic_lung.png',
@@ -599,33 +605,31 @@ class CircularIconWithTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 40, // Adjust the radius as needed
-              backgroundColor: backgroundColor,
-              child: Image.asset(
-                iconPath,
-                width: 50, // Adjust the size as needed
-                height: 50, // Adjust the size as needed
-                // color: iconColor.withOpacity(1.0), // Use withOpacity to control opacity
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 40, // Adjust the radius as needed
+            backgroundColor: backgroundColor,
+            child: Image.asset(
+              iconPath,
+              width: 50, // Adjust the size as needed
+              height: 50, // Adjust the size as needed
+              // color: iconColor.withOpacity(1.0), // Use withOpacity to control opacity
             ),
-            const SizedBox(
-                height: 8), // Add some space between the avatar and the title
-            Text(
-              title,
-              style: TextStyle(
-                color: titleColor,
-                fontSize: 12,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w700,
-              ),
+          ),
+          const SizedBox(
+              height: 8), // Add some space between the avatar and the title
+          Text(
+            title,
+            style: TextStyle(
+              color: titleColor,
+              fontSize: 12,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w700,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

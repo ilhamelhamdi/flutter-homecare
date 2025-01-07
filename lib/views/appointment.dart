@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_homecare/const.dart';
 
 class AppointmentPage extends StatefulWidget {
   static const String route = '/appointment';
@@ -180,6 +181,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                             // Handle reschedule
                           },
                           style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: Const.tosca),
                             backgroundColor: Colors.transparent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),

@@ -124,7 +124,7 @@ class _MyAppState extends State<MyApp> {
           ),
           locale: DevicePreview.locale(context),
           builder: DevicePreview.appBuilder,
-          localizationsDelegates: [
+          localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

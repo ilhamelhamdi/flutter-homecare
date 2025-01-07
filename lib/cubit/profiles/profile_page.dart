@@ -113,7 +113,16 @@ class ProfilePage extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.local_pharmacy,
                           color: Color(0xFF35C5CF)),
-                      title: const Text('Pharma Profile'),
+                      title: const Text('Pharmagenomics Profile'),
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        // Handle Pharma Profile tap
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.local_pharmacy,
+                          color: Color(0xFF35C5CF)),
+                      title: const Text('Wellness Genomics Profile'),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         // Handle Pharma Profile tap
@@ -174,25 +183,37 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            const Text('Age: 35 | Weight: 55 KG | Height: 155 cm'),
-            const SizedBox(height: 8),
-            const Text('Phone Number: +6232433'),
-            const SizedBox(height: 8),
-            const Text('Home Address (Primary):'),
-            const Text('7 Nassim Road Lodge, Singapore'),
-            const SizedBox(height: 16),
-            OutlinedButton.icon(
-              onPressed: () {
-                // Perform logout logic here (e.g., clearing user session)
-                GoRouter.of(context).go(AppRoutes.signIn);
-              },
-              icon: const Icon(Icons.logout, color: Colors.red),
-              label: const Text('Logout', style: TextStyle(color: Colors.red)),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.red),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 8),
+                  Text('Age: 35 | Weight: 55 KG | Height: 155 cm'),
+                  SizedBox(height: 8),
+                  Text('Phone Number: +6232433'),
+                  SizedBox(height: 8),
+                  Text('Home Address (Primary):'),
+                  Text('7 Nassim Road Lodge, Singapore'),
+                  SizedBox(height: 16),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  // Perform logout logic here (e.g., clearing user session)
+                  GoRouter.of(context).go(AppRoutes.signIn);
+                },
+                icon: const Icon(Icons.logout, color: Colors.red),
+                label:
+                    const Text('Logout', style: TextStyle(color: Colors.red)),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.red),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -307,6 +328,7 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Handle add new record
+          _submitModification;
         },
         backgroundColor: Const.tosca,
         child: const Icon(
@@ -555,7 +577,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                // Handle save profile information
+
+                Navigator.pop(context);
               }
             },
             style: ElevatedButton.styleFrom(
