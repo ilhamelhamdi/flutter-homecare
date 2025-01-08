@@ -59,6 +59,8 @@
   "nursing": "Home Nursing",
   "allied_services" : "Allied Services",
   "health_coaching" : "Health Coaching",
-  "diabetic_care2" : "Diabetic Care"
+  "diabetic_care2" : "Diabetic Care",
+  "home_health" : "Home Health Screening"
+  
 
 }

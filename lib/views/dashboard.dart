@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
 import 'package:flutter_homecare/views/appointment.dart';
 import 'package:flutter_homecare/views/diabetic_care.dart';
+import 'package:flutter_homecare/views/home_health_screening.dart';
 import 'package:flutter_homecare/views/nursing.dart';
 import 'package:flutter_homecare/views/pharmacist_services.dart';
 
@@ -428,11 +429,11 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       RectangularIconWithTitle(
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ComingSoonDialog();
-                            },
+                          navbarVisibility(true);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeHealth()),
                           );
                         },
                         iconPath: 'assets/icons/ic_report.png',
