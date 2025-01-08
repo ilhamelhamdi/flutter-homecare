@@ -32,20 +32,20 @@ class _AppointmentPageState extends State<AppointmentPage>
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'My Appointment',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: () {
                     // Handle search action
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.filter_list),
+                  icon: const Icon(Icons.filter_list),
                   onPressed: () {
                     // Handle filter action
                   },
@@ -56,12 +56,12 @@ class _AppointmentPageState extends State<AppointmentPage>
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Color(0xFF40E0D0), // Warna tosca
+          indicatorColor: const Color(0xFF40E0D0), // Warna tosca
           tabs: [
-            Tab(text: 'Upcoming'),
-            Tab(text: 'Completed'),
-            Tab(text: 'Cancelled'),
-            Tab(text: 'Missed'),
+            const Tab(text: 'Upcoming'),
+            const Tab(text: 'Completed'),
+            const Tab(text: 'Cancelled'),
+            const Tab(text: 'Missed'),
           ],
         ),
       ),
@@ -88,108 +88,260 @@ class _AppointmentPageState extends State<AppointmentPage>
       itemCount: 10, // Dummy data count
       itemBuilder: (context, index) {
         return Card(
-          margin: EdgeInsets.all(10),
+          margin: const EdgeInsets.all(10),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       backgroundImage: AssetImage(
                           'assets/images/images_budi.png'), // Dummy avatar image
                       radius: 30,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Dr. Budi Sanjaya',
+                        const Text('Dr. Budi Sanjaya',
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         Row(
                           children: [
-                            Text('Radiologist |'),
-                            SizedBox(width: 5),
+                            const Text('Radiologist |'),
+                            const SizedBox(width: 5),
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: status == 'Completed'
-                                    ? Colors.green
+                                    ? const Color(0x1A18B23C)
                                     : status == 'Cancelled' ||
                                             status == 'Missed'
-                                        ? Colors.red
-                                        : Colors.yellow,
+                                        ? Color(0x1AED3443)
+                                        : const Color(0x1AE59500),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(status,
                                   style: TextStyle(
                                     color: status == 'Completed'
-                                        ? Colors.white
+                                        ? Colors.green
                                         : status == 'Cancelled' ||
                                                 status == 'Missed'
-                                            ? Colors.white
-                                            : Color(0xFFE59500),
+                                            ? Colors.red
+                                            : const Color(0xFFE59500),
                                   )),
                             ),
                           ],
                         ),
-                        Text('Monday, 12 July 2021 | 11:00 AM'),
+                        const Text('Monday, 12 July 2021 | 11:00 AM'),
                       ],
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    OutlinedButton(
-                      onPressed: () {
-                        // Handle cancel booking
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.red),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                    if (status == 'Completed')
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 160,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                // Handle rating
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Const.tosca),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                'Rating',
+                                style: TextStyle(
+                                  color: Const.tosca,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Container(
+                            width: 160,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF40E0D0), // Tosca color
+                                  Color(0xFF35C5CF),
+                                ],
+                                begin: Alignment.bottomRight,
+                                end: Alignment.topLeft,
+                              ),
+                            ),
+                            child: OutlinedButton(
+                              onPressed: () {
+                                // Handle book again
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side:
+                                    const BorderSide(color: Colors.transparent),
+                                backgroundColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                'Book Again',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      child: Text(
-                        status == 'Completed' || status == 'Missed'
-                            ? 'Book Again'
-                            : 'Cancel Booking',
-                        style: TextStyle(
-                          color: status == 'Completed' || status == 'Missed'
-                              ? Colors.green
-                              : Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    if (status == 'Upcoming')
+                    if (status == 'Cancelled')
                       Container(
-                        width: 160,
+                        width: 350,
+                        height: 41,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                            colors: [Color(0xFF35C5CF), Color(0xFF9DCEFF)],
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF40E0D0), // Tosca color
+                              Color(0xFF35C5CF),
+                            ],
                             begin: Alignment.bottomRight,
                             end: Alignment.topLeft,
                           ),
                         ),
                         child: OutlinedButton(
                           onPressed: () {
-                            // Handle reschedule
+                            // Handle book again
                           },
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: Const.tosca),
+                            side: const BorderSide(color: Colors.transparent),
                             backgroundColor: Colors.transparent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text('Reschedule',
-                              style: TextStyle(color: Colors.white)),
+                          child: const Text(
+                            'Book Again',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
+                      ),
+                    if (status == 'Missed')
+                      Row(
+                        children: [
+                          OutlinedButton(
+                            onPressed: () {
+                              // Handle cancel booking
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.red),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancel Booking',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 160,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF35C5CF),
+                                  Color(0xFF9DCEFF),
+                                ],
+                                begin: Alignment.bottomRight,
+                                end: Alignment.topLeft,
+                              ),
+                            ),
+                            child: OutlinedButton(
+                              onPressed: () {
+                                // Handle reschedule
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side:
+                                    const BorderSide(color: Colors.transparent),
+                                backgroundColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                'Reschedule',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (status == 'Upcoming')
+                      Row(
+                        children: [
+                          OutlinedButton(
+                            onPressed: () {
+                              // Handle cancel booking
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.red),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancel Booking',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 160,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF35C5CF),
+                                  Color(0xFF9DCEFF),
+                                ],
+                                begin: Alignment.bottomRight,
+                                end: Alignment.topLeft,
+                              ),
+                            ),
+                            child: OutlinedButton(
+                              onPressed: () {
+                                // Handle reschedule
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side:
+                                    const BorderSide(color: Colors.transparent),
+                                backgroundColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                'Reschedule',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                   ],
                 ),
