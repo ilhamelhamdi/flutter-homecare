@@ -14,7 +14,7 @@ import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 // import 'package:flutter_homecare/cubit/nursing/nursing_page.dart';
 import 'package:flutter_homecare/main.dart';
 import 'package:flutter_homecare/views/dashboard.dart';
-import 'package:flutter_homecare/views/pharma.dart';
+import 'package:flutter_homecare/views/pharmacist_services.dart';
 import 'app_routes.dart';
 
 final GoRouter router = GoRouter(

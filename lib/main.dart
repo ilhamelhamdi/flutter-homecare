@@ -80,7 +80,7 @@ void changeLang(BuildContext context, String lang) {
 
 class MyApp extends StatefulWidget {
   final AppLanguage appLanguage;
-  MyApp({required this.appLanguage});
+  MyApp({super.key, required this.appLanguage});
   final List<Color> colors = [Colors.white];
 
   @override
@@ -130,10 +130,10 @@ class _MyAppState extends State<MyApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: [
-            const Locale('en', 'US'), // English
-            const Locale('id', 'ID'), // Indo
-            const Locale('zh', ''), // Chinese
+          supportedLocales: const [
+            Locale('en', 'US'), // English
+            Locale('id', 'ID'), // Indo
+            Locale('zh', ''), // Chinese
           ],
           routerConfig: router,
         );
@@ -272,17 +272,6 @@ class _HomePageState extends State<HomePage>
         padding: const EdgeInsets.only(
             top: .0), // Adjust the bottom padding as needed
         child: BottomBar(
-          child: TabBar(
-            controller: tabController,
-            tabs: [
-              Tab(icon: Icon(Icons.home_outlined)),
-              Tab(icon: Icon(Icons.schedule_outlined)),
-              Tab(icon: Icon(Icons.add_shopping_cart_outlined)),
-              Tab(icon: Icon(Icons.favorite_border_outlined)),
-              Tab(icon: Icon(Icons.person_outline)),
-            ],
-            indicatorColor: Color(0xFF40E0D0), // Warna tosca
-          ), // A floating tab bar
           fit: StackFit.expand,
           icon: (width, height) => Center(
             child: IconButton(
@@ -297,7 +286,7 @@ class _HomePageState extends State<HomePage>
           ),
           borderRadius:
               BorderRadius.circular(20), // Adjust the border radius as needed
-          duration: Duration(seconds: 1),
+          duration: const Duration(seconds: 1),
           curve: Curves.decelerate,
           showIcon: true,
           width: MediaQuery.of(context).size.width * 0.8,
@@ -335,6 +324,17 @@ class _HomePageState extends State<HomePage>
               ProfilePage(), // Add your pages here
             ],
           ),
+          child: TabBar(
+            controller: tabController,
+            tabs: const [
+              Tab(icon: Icon(Icons.home_outlined)),
+              Tab(icon: Icon(Icons.calendar_month_outlined)),
+              Tab(icon: Icon(Icons.add_shopping_cart_outlined)),
+              Tab(icon: Icon(Icons.favorite_border_outlined)),
+              Tab(icon: Icon(Icons.person_outline)),
+            ],
+            indicatorColor: const Color(0xFF40E0D0), // Warna tosca
+          ),
         ),
       ),
     );
@@ -342,14 +342,16 @@ class _HomePageState extends State<HomePage>
 }
 
 class ComingSoonDialog extends StatelessWidget {
+  const ComingSoonDialog({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Coming Soon'),
-      content: Text('This feature is coming soon.'),
+      title: const Text('Coming Soon'),
+      content: const Text('This feature is coming soon.'),
       actions: <Widget>[
         TextButton(
-          child: Text('OK'),
+          child: const Text('OK'),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -363,7 +365,7 @@ void showComingSoonDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return ComingSoonDialog();
+      return const ComingSoonDialog();
     },
   );
 }

@@ -3,6 +3,7 @@ import 'package:flutter_homecare/app_localzations.dart';
 import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/main.dart';
+import 'package:flutter_homecare/views/health_coaching.dart';
 
 import 'package:flutter_homecare/widgets/chat_pharma.dart';
 
@@ -110,7 +111,7 @@ class _PharmaState extends State<PharmaServices> {
       'opacity': '0.1',
     },
     {
-      'title': 'Compehensive Therapy\nReview',
+      'title': 'Comprehensive Therapy\nReview',
       'description':
           'Comprehensive review of your medication\nand lifestyle to optimize treatment\noutcomes and minimize potential side\neffects',
       'imagePath': 'assets/icons/ilu_therapy.png',
@@ -172,11 +173,31 @@ class _PharmaState extends State<PharmaServices> {
                           });
                           return;
                         case 1:
-                          route = AppRoutes.home;
-                          break;
+                          navbarVisibility(true);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PersonalPage(),
+                            ),
+                          ).then((_) {
+                            // Show the bottom navigation bar when returning
+                            navbarVisibility(false);
+                          });
+                          return;
                         case 2:
-                          route = AppRoutes.home;
-                          break;
+                          navbarVisibility(true);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HealthCoaching(),
+                            ),
+                          ).then((_) {
+                            // Show the bottom navigation bar when returning
+                            navbarVisibility(false);
+                          });
+                          return;
                         case 3:
                           route = AppRoutes.home;
                           break;

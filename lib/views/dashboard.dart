@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
 import 'package:flutter_homecare/views/appointment.dart';
 import 'package:flutter_homecare/views/nursing.dart';
-import 'package:flutter_homecare/views/pharma.dart';
+import 'package:flutter_homecare/views/pharmacist_services.dart';
 
 // import 'package:flutter_homecare/views/details/detail_products.dart';
 // import 'package:flutter_homecare/views/poct.dart';
