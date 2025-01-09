@@ -5,6 +5,8 @@ import 'package:flutter_homecare/views/diabetic_care.dart';
 import 'package:flutter_homecare/views/home_health_screening.dart';
 import 'package:flutter_homecare/views/nursing.dart';
 import 'package:flutter_homecare/views/pharmacist_services.dart';
+import 'package:flutter_homecare/views/remote_patient_monitoring.dart';
+import 'package:flutter_homecare/views/second_opinion.dart';
 
 // import 'package:flutter_homecare/views/details/detail_products.dart';
 // import 'package:flutter_homecare/views/poct.dart';
@@ -444,12 +446,21 @@ class _DashboardState extends State<Dashboard> {
                         titleColor: Colors.black,
                       ),
                       RectangularIconWithTitle(
+                        // onTap: () {
+                        //   showDialog(
+                        //     context: context,
+                        //     builder: (BuildContext context) {
+                        //       return ComingSoonDialog();
+                        //     },
+                        //   );
+                        // },
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ComingSoonDialog();
-                            },
+                          navbarVisibility(true);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    RemotePatientMonitoring()),
                           );
                         },
                         iconPath: 'assets/icons/ic_drug.png',
@@ -461,11 +472,11 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ComingSoonDialog();
-                            },
+                          navbarVisibility(true);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OpinionMedical()),
                           );
                         },
                         iconPath: 'assets/icons/ic_lung.png',

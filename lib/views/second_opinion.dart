@@ -3,10 +3,11 @@ import 'package:flutter_homecare/app_localzations.dart';
 import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/main.dart';
+import 'package:flutter_homecare/views/medical_store.dart';
 
 import 'package:flutter_homecare/widgets/chat_pharma.dart';
 
-class DiabeticCare extends StatefulWidget {
+class OpinionMedical extends StatefulWidget {
   @override
   _PharmaState createState() => _PharmaState();
 }
@@ -24,8 +25,8 @@ class PharmaCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Container(
-        width: 360,
-        height: 260,
+        width: 357,
+        height: 280,
         padding: const EdgeInsets.all(16.0),
         color:
             color.withOpacity(0.1), // Set the background color with 10% opacity
@@ -99,21 +100,21 @@ class PharmaCard extends StatelessWidget {
   }
 }
 
-class _PharmaState extends State<DiabeticCare> {
+class _PharmaState extends State<OpinionMedical> {
   final List<Map<String, String>> dummyTenders = [
     {
-      'title': 'Diabetic Retinal\nPhotography (DRP)',
+      'title': 'Teleradiology',
       'description':
-          'A common eye disease among diabetic\npatients. Blood capillaries may bleed\nand damage the retina, potentially\nleading to blindness. Regular\ndiabetic retinal photography\ncan detect and monitor your eyes.',
-      'imagePath': 'assets/images/ilu_diabet_retina.png',
+          'Discover expert second opinions on medical imaging from our specialized radiologists, guiding your healthcare decisions with focused knowledge in cardiovascular, musculoskeletal, head & neck, and neuro-imaging',
+      'imagePath': 'assets/images/ilu_teleradiology.png',
       'color': '9AE1FF',
       'opacity': '0.33',
     },
     {
-      'title': 'Diabetic Foot Screening\n (DFS)',
+      'title': 'Telepathology',
       'description':
-          'Conducted by trained nurses, who will\nalso educate on proper footcare and\ngood sugar control. Referrals to\nfootcare specialists will be made\nwhere appropriate.',
-      'imagePath': 'assets/images/ilu_diabet_foot.png',
+          'Our specialists leverage cutting-edge telemedicine tech for remote pathology image reviews and consultations with medical teams globally',
+      'imagePath': 'assets/images/ilu_telepathology.png',
       'color': 'B28CFF',
       'opacity': '0.2',
     },
@@ -123,7 +124,7 @@ class _PharmaState extends State<DiabeticCare> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.translate('diabetic_care2'),
+        title: Text(AppLocalizations.of(context)!.translate('home_health'),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
       body: Container(
@@ -160,7 +161,7 @@ class _PharmaState extends State<DiabeticCare> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PersonalPage(),
+                              builder: (context) => MedicalStorePage(),
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning

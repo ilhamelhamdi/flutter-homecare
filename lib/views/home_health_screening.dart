@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_homecare/app_localzations.dart';
+import 'package:flutter_homecare/const.dart';
 import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/main.dart';
@@ -23,7 +24,7 @@ class PharmaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Container(
         width: 357,
         height: 280,
@@ -38,27 +39,27 @@ class PharmaCard extends StatelessWidget {
               children: [
                 Text(
                   '${pharma['title']}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   '${pharma['description']}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400, // Light font weight
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextButton(
                   onPressed: onTap,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(width: 5),
-                      Text(
+                      const SizedBox(width: 5),
+                      const Text(
                         'Book Now',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -66,7 +67,7 @@ class PharmaCard extends StatelessWidget {
                           color: Color(0xFF35C5CF),
                         ),
                       ),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       Image.asset(
                         'assets/icons/ic_play.png',
                         width: 20,
@@ -125,10 +126,10 @@ class _PharmaState extends State<HomeHealth> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.translate('home_health'),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
       body: Container(
-        margin: EdgeInsets.fromLTRB(0, 0, 0, 60.0),
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 60.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -148,7 +149,7 @@ class _PharmaState extends State<HomeHealth> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PersonalPage(),
+                              builder: (context) => HomeHealthScreeningDetail(),
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
@@ -168,12 +169,6 @@ class _PharmaState extends State<HomeHealth> {
                             navbarVisibility(false);
                           });
                           return;
-                        case 2:
-                          route = AppRoutes.home;
-                          break;
-                        case 3:
-                          route = AppRoutes.home;
-                          break;
                         default:
                           route = AppRoutes.home;
                       }
@@ -185,7 +180,7 @@ class _PharmaState extends State<HomeHealth> {
                             : 1.0),
                   );
                 },
-                separatorBuilder: (context, index) => Divider(height: 1),
+                separatorBuilder: (context, index) => const Divider(height: 1),
               ),
             ),
           ],
@@ -225,7 +220,7 @@ class _PharmaDetailPageState extends State<PharmaDetailPage> {
       });
 
       // Simulate a response from the other side
-      Future.delayed(Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 1), () {
         setState(() {
           _chatHistory.add({
             "message": "This is a dummy response",
@@ -233,7 +228,7 @@ class _PharmaDetailPageState extends State<PharmaDetailPage> {
           });
           _scrollController.animateTo(
             _scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
           );
         });
@@ -248,6 +243,226 @@ class _PharmaDetailPageState extends State<PharmaDetailPage> {
       chatController: _chatController,
       scrollController: _scrollController,
       sendMessage: _sendMessage,
+    );
+  }
+}
+
+class HomeHealthScreeningDetail extends StatefulWidget {
+  @override
+  _HomeHealthScreeningDetailState createState() =>
+      _HomeHealthScreeningDetailState();
+}
+
+class _HomeHealthScreeningDetailState extends State<HomeHealthScreeningDetail> {
+  bool kidneyFunctionChecked = false;
+  bool urinalysisChecked = false;
+  bool liverProfileChecked = false;
+  bool ovarianScreeningChecked = false;
+  bool prostateScreeningChecked = false;
+  bool nasopharyngealCancerScreeningChecked = false;
+  bool pancreaticScreeningChecked = false;
+  bool breastScreeningChecked = false;
+  bool betaHCGChecked = false;
+  bool cReactiveProteinChecked = false;
+  bool cardiacProfileTestChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home Health Screening'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Basic Screening',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const Divider(color: Colors.grey),
+            _buildScreeningCard(
+              'Kidney Function',
+              kidneyFunctionChecked,
+              (value) {
+                setState(() {
+                  kidneyFunctionChecked = value!;
+                });
+              },
+            ),
+            _buildScreeningCard(
+              'Urinalysis',
+              urinalysisChecked,
+              (value) {
+                setState(() {
+                  urinalysisChecked = value!;
+                });
+              },
+            ),
+            _buildScreeningCard(
+              'Liver Profile',
+              liverProfileChecked,
+              (value) {
+                setState(() {
+                  liverProfileChecked = value!;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Cancer Biomarker',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const Divider(color: Colors.grey),
+            _buildScreeningCard(
+              'Ovarian Screening(CA 125)',
+              ovarianScreeningChecked,
+              (value) {
+                setState(() {
+                  ovarianScreeningChecked = value!;
+                });
+              },
+            ),
+            _buildScreeningCard(
+              'Prostate Screening(PSA)',
+              prostateScreeningChecked,
+              (value) {
+                setState(() {
+                  prostateScreeningChecked = value!;
+                });
+              },
+            ),
+            _buildScreeningCard(
+              'Nasopharyngeal Cancer Screening(EBV)',
+              nasopharyngealCancerScreeningChecked,
+              (value) {
+                setState(() {
+                  nasopharyngealCancerScreeningChecked = value!;
+                });
+              },
+            ),
+            _buildScreeningCard(
+              'Pancreatic Screening(EBV)',
+              pancreaticScreeningChecked,
+              (value) {
+                setState(() {
+                  pancreaticScreeningChecked = value!;
+                });
+              },
+            ),
+            _buildScreeningCard(
+              'Breast Screening (CA 15.3)',
+              breastScreeningChecked,
+              (value) {
+                setState(() {
+                  breastScreeningChecked = value!;
+                });
+              },
+            ),
+            _buildScreeningCard(
+              'Beta HCG (Testes)',
+              betaHCGChecked,
+              (value) {
+                setState(() {
+                  betaHCGChecked = value!;
+                });
+              },
+            ),
+            const Text(
+              'Cardiovascular Screening',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const Divider(color: Colors.grey),
+            _buildScreeningCard(
+              'C-Reactive Protein (CRP)',
+              cReactiveProteinChecked,
+              (value) {
+                setState(() {
+                  cReactiveProteinChecked = value!;
+                });
+              },
+            ),
+            _buildScreeningCard(
+              'Cardiac Profile Test(AA1 + APB)',
+              cardiacProfileTestChecked,
+              (value) {
+                setState(() {
+                  cardiacProfileTestChecked = value!;
+                });
+              },
+            ),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Estimated Budget',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 5),
+                    Icon(Icons.info_outline_rounded, color: Colors.grey),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      '\$145',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                    ),
+                    SizedBox(width: 5),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: 352,
+              height: 58,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ComingSoonDialog(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF35C5CF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: const Text(
+                  'Book Appointment',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScreeningCard(
+      String title, bool isChecked, ValueChanged<bool?> onChanged) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: Checkbox(
+          value: isChecked,
+          onChanged: onChanged,
+          activeColor: Const.tosca,
+        ),
+        title: Text(title),
+        trailing: const Icon(Icons.info_outline, color: Colors.grey),
+      ),
     );
   }
 }
