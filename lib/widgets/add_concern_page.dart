@@ -23,7 +23,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Add an Issue',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
@@ -32,9 +32,9 @@ class _AddConcernPageState extends State<AddConcernPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: Align(
+            const Padding(
+              padding: EdgeInsets.only(left: 12.0),
+              child: const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Tell us your concern',
@@ -45,7 +45,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             SizedBox(
               width: 338,
               height: 50,
@@ -53,14 +53,15 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 controller: _issueTitleController,
                 decoration: InputDecoration(
                   hintText: 'Issue Title',
-                  hintStyle: TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
+                  hintStyle:
+                      const TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Container(
               width: 338,
               height: 129,
@@ -69,11 +70,12 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 decoration: InputDecoration(
                   hintText:
                       'Please enter questions, concerns, relevant symptoms related to your case along with related keywords.',
-                  hintStyle: TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
+                  hintStyle:
+                      const TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                       vertical: 10,
                       horizontal: 10), // Adjust the vertical padding as needed
                 ),
@@ -85,17 +87,17 @@ class _AddConcernPageState extends State<AddConcernPage> {
               padding: const EdgeInsets.only(left: 12.0),
               child: Column(
                 children: [
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   ImagePreview(onImageSelected: _addImage),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   ImagePreview(onImageSelected: _addImage),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   ImagePreview(onImageSelected: _addImage),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
-            Spacer(),
+            const Spacer(),
             SizedBox(
               width: 352,
               height: 58,
@@ -113,9 +115,9 @@ class _AddConcernPageState extends State<AddConcernPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF35C5CF),
+                  backgroundColor: const Color(0xFF35C5CF),
                 ),
-                child: Text(
+                child: const Text(
                   'Add',
                   style: TextStyle(color: Colors.white),
                 ),

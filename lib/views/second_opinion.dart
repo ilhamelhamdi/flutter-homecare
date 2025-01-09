@@ -4,6 +4,7 @@ import 'package:flutter_homecare/cubit/personal/personal_page.dart';
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/main.dart';
 import 'package:flutter_homecare/views/medical_store.dart';
+import 'package:flutter_homecare/views/teleradiology.dart';
 
 import 'package:flutter_homecare/widgets/chat_pharma.dart';
 
@@ -124,7 +125,7 @@ class _PharmaState extends State<OpinionMedical> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.translate('home_health'),
+        title: Text(AppLocalizations.of(context)!.translate('teleradiology'),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
       body: Container(
@@ -148,7 +149,7 @@ class _PharmaState extends State<OpinionMedical> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PersonalPage(),
+                              builder: (context) => TeleradiologyDetail(),
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning

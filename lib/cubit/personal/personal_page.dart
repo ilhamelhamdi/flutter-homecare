@@ -11,7 +11,7 @@ class PersonalPage extends StatelessWidget {
       create: (context) => PersonalCubit()..loadPersonalDetails(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Personal Case Detail',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
@@ -21,8 +21,8 @@ class PersonalPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(height: 0.0),
-              Column(
+              const SizedBox(height: 0.0),
+              const Column(
                 children: [
                   Center(
                     child: Text(
@@ -34,7 +34,7 @@ class PersonalPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Center(
                     child: Text(
                       'There are no issues added yet.\n Please add one or more issues so\nyou can proceed to the next step.',
@@ -60,19 +60,19 @@ class PersonalPage extends StatelessWidget {
                         );
                       },
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Color(0xFF35C5CF)),
+                        side: const BorderSide(color: Color(0xFF35C5CF)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Add an Issue',
                         style:
                             TextStyle(color: Color(0xFF35C5CF), fontSize: 20),
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   SizedBox(
                     width: 352,
                     height: 58,
@@ -81,17 +81,17 @@ class PersonalPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomePage(),
+                            builder: (context) => const HomePage(),
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFB2B9C4),
+                        backgroundColor: const Color(0xFFB2B9C4),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Next',
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
