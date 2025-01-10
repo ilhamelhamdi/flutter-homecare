@@ -116,7 +116,7 @@ class _TeleradiologyDetailState extends State<TeleradiologyDetail> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             ImagePreview(onImageSelected: _addImage),
@@ -146,7 +146,7 @@ class _TeleradiologyDetailState extends State<TeleradiologyDetail> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             ImagePreview(onImageSelected: _addImage),
@@ -176,7 +176,7 @@ class _TeleradiologyDetailState extends State<TeleradiologyDetail> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             ImagePreview(onImageSelected: _addImage),
@@ -206,14 +206,14 @@ class _TeleradiologyDetailState extends State<TeleradiologyDetail> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             const Text(
               'Medical Opinion',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            Divider(),
+            const Divider(),
             const Text(
               '** Information below will be provided by Medical Professionals only',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
@@ -231,7 +231,7 @@ class _TeleradiologyDetailState extends State<TeleradiologyDetail> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             const Text(
@@ -246,7 +246,7 @@ class _TeleradiologyDetailState extends State<TeleradiologyDetail> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Container(
@@ -261,10 +261,10 @@ class _TeleradiologyDetailState extends State<TeleradiologyDetail> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 24.0),
                 ),
-                child: Text(
+                child: const Text(
                   'Submit',
                   style: TextStyle(
                       fontSize: 16,
