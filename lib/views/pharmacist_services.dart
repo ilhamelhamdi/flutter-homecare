@@ -161,7 +161,7 @@ class _PharmaState extends State<PharmaServices> {
                       String route;
                       switch (index) {
                         case 0:
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
 
                           Navigator.push(
                             context,
@@ -170,11 +170,11 @@ class _PharmaState extends State<PharmaServices> {
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
+                            // navbarVisibility(false);
                           });
                           return;
                         case 1:
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
 
                           Navigator.push(
                             context,
@@ -183,11 +183,11 @@ class _PharmaState extends State<PharmaServices> {
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
+                            // navbarVisibility(false);
                           });
                           return;
                         case 2:
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
 
                           Navigator.push(
                             context,
@@ -196,7 +196,7 @@ class _PharmaState extends State<PharmaServices> {
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
+                            // navbarVisibility(false);
                           });
                           return;
                         case 3:

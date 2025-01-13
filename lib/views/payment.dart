@@ -3,27 +3,27 @@ import 'package:flutter_homecare/const.dart';
 import 'package:flutter_homecare/main.dart';
 import 'package:flutter_homecare/views/appointment.dart';
 import 'package:go_router/go_router.dart';
-import 'package:navbar_router/navbar_router.dart';
+// import 'package:navbar_router/navbar_router.dart';
 
 class PaymentPage extends StatefulWidget {
   @override
   _PaymentPageState createState() => _PaymentPageState();
 }
 
-void navbarVisibility(bool status) {
-  NavbarNotifier.hideBottomNavBar = status;
-  if (status == true) {
-    NavbarNotifier.hideBottomNavBar = false;
-    if (NavbarNotifier.isNavbarHidden) {
-      NavbarNotifier.hideBottomNavBar = false;
-    }
-  } else {
-    NavbarNotifier.hideBottomNavBar = true;
-    if (NavbarNotifier.isNavbarHidden) {
-      NavbarNotifier.hideBottomNavBar = true;
-    }
-  }
-}
+// void navbarVisibility(bool status) {
+//   NavbarNotifier.hideBottomNavBar = status;
+//   if (status == true) {
+//     NavbarNotifier.hideBottomNavBar = false;
+//     if (NavbarNotifier.isNavbarHidden) {
+//       NavbarNotifier.hideBottomNavBar = false;
+//     }
+//   } else {
+//     NavbarNotifier.hideBottomNavBar = true;
+//     if (NavbarNotifier.isNavbarHidden) {
+//       NavbarNotifier.hideBottomNavBar = true;
+//     }
+//   }
+// }
 
 class _PaymentPageState extends State<PaymentPage> {
   String selectedPaymentMethod = '';
@@ -521,7 +521,7 @@ class FeedbackDetails extends StatelessWidget {
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () {
-                    navbarVisibility(true); // Tampilkan navbar sebelum navigasi
+                    // navbarVisibility(true); // Tampilkan navbar sebelum navigasi
                     context.go('/dasboard');
                   },
                   style: ElevatedButton.styleFrom(

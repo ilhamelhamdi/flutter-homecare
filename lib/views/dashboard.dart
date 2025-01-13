@@ -375,7 +375,7 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       RectangularIconWithTitle(
                         onTap: () {
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -392,7 +392,7 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -409,7 +409,7 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -432,7 +432,7 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       RectangularIconWithTitle(
                         onTap: () {
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -456,7 +456,7 @@ class _DashboardState extends State<Dashboard> {
                         //   );
                         // },
                         onTap: () {
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -473,7 +473,7 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

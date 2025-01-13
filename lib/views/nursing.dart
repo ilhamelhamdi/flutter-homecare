@@ -142,7 +142,7 @@ class _NursingState extends State<NursingService> {
                       String route;
                       switch (index) {
                         case 0:
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -152,11 +152,11 @@ class _NursingState extends State<NursingService> {
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
+                            // navbarVisibility(false);
                           });
                           return;
                         case 1:
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -166,7 +166,7 @@ class _NursingState extends State<NursingService> {
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
+                            // navbarVisibility(false);
                           });
                           return;
                         default:

@@ -5,7 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_homecare/route/app_router.dart';
 import 'package:flutter_homecare/views/dashboard.dart';
 import 'package:flutter_homecare/views/favourites.dart';
-import 'package:navbar_router/navbar_router.dart';
+// import 'package:navbar_router/navbar_router.dart';
 
 import 'const.dart';
 import 'views/appointment.dart';
@@ -157,12 +157,12 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
-  void dispose() {
-    NavbarNotifier.clear();
-    WidgetsBinding.instance.removeObserver(this);
-    tabController.dispose();
-    super.dispose();
-  }
+  // void dispose() {
+  //   NavbarNotifier.clear();
+  //   WidgetsBinding.instance.removeObserver(this);
+  //   tabController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_homecare/app_localzations.dart';
 import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/cubit/nursing/nursing_payment.dart';
-import 'package:flutter_homecare/cubit/personal/personal_page.dart';
+
 import 'package:flutter_homecare/route/app_routes.dart';
 import 'package:flutter_homecare/main.dart';
 import 'package:flutter_homecare/views/medical_store.dart';
@@ -145,7 +144,7 @@ class _PharmaState extends State<HomeHealth> {
                       String route;
                       switch (index) {
                         case 0:
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
 
                           Navigator.push(
                             context,
@@ -154,11 +153,11 @@ class _PharmaState extends State<HomeHealth> {
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
+                            // navbarVisibility(false);
                           });
                           return;
                         case 1:
-                          navbarVisibility(true);
+                          // navbarVisibility(true);
 
                           Navigator.push(
                             context,
@@ -167,7 +166,7 @@ class _PharmaState extends State<HomeHealth> {
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
-                            navbarVisibility(false);
+                            // navbarVisibility(false);
                           });
                           return;
                         default:
