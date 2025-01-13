@@ -33,6 +33,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.3"
+  badges:
+    dependency: transitive
+    description:
+      name: badges
+      sha256: a7b6bbd60dce418df0db3058b53f9d083c22cdb5132a052145dc267494df0b84
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.2"
   bloc:
     dependency: transitive
     description:
@@ -721,10 +729,10 @@ packages:
     dependency: "direct main"
     description:
       name: navbar_router
-      sha256: "396d2ce86c9b1d0d109bfd8a555c8c0f01574ab3d1204a41f25cd080c7c595b9"
+      sha256: c19df05e8ba8d83f1197aff485db07307ef517c318bf972dedee0bf658dd3202
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.3"
+    version: "0.7.6"
   nested:
     dependency: transitive
     description:
