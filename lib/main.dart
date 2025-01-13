@@ -18,22 +18,6 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 
-class NavigationHistory {
-  static List<BuildContext> _history = [];
-
-  static void addContext(BuildContext context) {
-    _history.add(context);
-  }
-
-  static BuildContext? getPreviousContext() {
-    if (_history.length > 1) {
-      // Return the second last context in the history
-      return _history[_history.length - 2];
-    }
-    return null;
-  }
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLanguage appLanguage = AppLanguage();
@@ -47,35 +31,6 @@ void main() async {
       ),
     ),
   );
-}
-
-void selectTab(int index) {
-  NavbarNotifier.index = index;
-}
-
-void routeTab(String route, int index) {
-  NavbarNotifier.pushNamed(route, index);
-  NavbarNotifier.index = 0;
-}
-
-void navbarVisibility(bool status) {
-  NavbarNotifier.hideBottomNavBar = status;
-  if (status == true) {
-    NavbarNotifier.hideBottomNavBar = false;
-    if (NavbarNotifier.isNavbarHidden) {
-      NavbarNotifier.hideBottomNavBar = false;
-    }
-  } else {
-    NavbarNotifier.hideBottomNavBar = true;
-    if (NavbarNotifier.isNavbarHidden) {
-      NavbarNotifier.hideBottomNavBar = true;
-    }
-  }
-}
-
-void changeLang(BuildContext context, String lang) {
-  var appLanguage = Provider.of<AppLanguage>(context, listen: false);
-  appLanguage.changeLanguage(Locale(lang));
 }
 
 class MyApp extends StatefulWidget {
@@ -192,29 +147,6 @@ class _HomePageState extends State<HomePage>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   bool _resumedFromBackground = false;
 
-  List<NavbarItem> items = [];
-
-  // final Map<int, Map<String, Widget>> _routes = {
-  //   0: {
-  //     '/': Dashboard(),
-  //   },
-  //   1: {
-  //     '/': Products(),
-  //   },
-  //   2: {
-  //     '/': Distributors(),
-  //   },
-  //   3: {
-  //     '/': Outsourcing(),
-  //   },
-  //   4: {
-  //     '/': Outsourcing(),
-  //   },
-  // };
-
-  DateTime oldTime = DateTime.now();
-  DateTime newTime = DateTime.now();
-
   late TabController tabController;
 
   @override
@@ -223,22 +155,6 @@ class _HomePageState extends State<HomePage>
     WidgetsBinding.instance.addObserver(this);
     tabController = TabController(length: 5, vsync: this);
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   initializeNavbarItems();
-  // }
-
-  // void initializeNavbarItems() {
-  //   items = [
-  //     NavbarItem(IconMedmap.home, 'Home'),
-  //     NavbarItem(IconMedmap.products, 'Products'),
-  //     NavbarItem(IconMedmap.distributors, 'Distributors'),
-  //     NavbarItem(IconMedmap.tenders, 'Tenders'),
-  //     NavbarItem(IconMedmap.tenders, 'More'),
-  //   ];
-  // }
 
   @override
   void dispose() {
@@ -258,7 +174,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         if (_resumedFromBackground) {
