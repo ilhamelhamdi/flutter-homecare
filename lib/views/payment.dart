@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/main.dart';
-import 'package:flutter_homecare/views/appointment.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/main.dart';
+import 'package:m2health/views/appointment.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:navbar_router/navbar_router.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_homecare/cubit/partnership/list/partnership_list_wgt_card.dart';
+import 'package:m2health/cubit/partnership/list/partnership_list_wgt_card.dart';
 import 'partnership_list_cubit.dart';
 
 class PartnershipListPage extends StatelessWidget {
@@ -13,7 +13,8 @@ class PartnershipListPage extends StatelessWidget {
         title: const Text('Partnership List'),
       ),
       body: BlocProvider(
-        create: (context) => PartnershipListCubit()..fetchPartnershipLists(context),
+        create: (context) =>
+            PartnershipListCubit()..fetchPartnershipLists(context),
         child: BlocBuilder<PartnershipListCubit, PartnershipListState>(
           builder: (context, state) {
             if (state is PartnershipListStateLoading) {

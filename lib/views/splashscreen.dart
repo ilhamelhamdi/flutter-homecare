@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart'; // Import GoRouter
-import 'package:flutter_homecare/const.dart'; // Import constants
+import 'package:m2health/const.dart'; // Import constants
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});

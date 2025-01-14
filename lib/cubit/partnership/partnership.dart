@@ -35,7 +35,7 @@ class City {
 // Mendapatkan daftar negara
 Future<List<Country>> fetchCountries() async {
   final response = await http.get(Uri.parse(
-      'https://api-flutter_homecare.mandatech.co.id/v1/countries?page=1&limit=25'));
+      'https://api-m2health.mandatech.co.id/v1/countries?page=1&limit=25'));
 
   if (response.statusCode == 200) {
     List<dynamic> data = json.decode(response.body)['data'];
@@ -48,7 +48,7 @@ Future<List<Country>> fetchCountries() async {
 // Mendapatkan daftar kota berdasarkan ID negara
 Future<List<City>> fetchCities(int countryId) async {
   final response = await http.get(Uri.parse(
-      'https://api-flutter_homecare.mandatech.co.id/v1/countries/$countryId/states?page=1&limit=1000'));
+      'https://api-m2health.mandatech.co.id/v1/countries/$countryId/states?page=1&limit=1000'));
 
   if (response.statusCode == 200) {
     List<dynamic> data = json.decode(response.body)['data'];

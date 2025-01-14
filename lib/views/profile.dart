@@ -1,10 +1,10 @@
 // import 'package:flutter/material.dart';
-// import 'package:flutter_homecare/models/profile_distributor.dart';
-// import 'package:flutter_homecare/utils.dart';
+// import 'package:m2health/models/profile_distributor.dart';
+// import 'package:m2health/utils.dart';
 // import '../const.dart';
 // import 'dart:convert';
 // import 'package:http/http.dart' as http;
-// import 'package:flutter_homecare/models/profile_manufacturer.dart';
+// import 'package:m2health/models/profile_manufacturer.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 // import '../widgets/network_image_global.dart';
 

@@ -1,4 +1,4 @@
-import 'package:flutter_homecare/models/r_profile.dart';
+import 'package:m2health/models/r_profile.dart';
 
 abstract class ProfileState {}
 

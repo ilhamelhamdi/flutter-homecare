@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../search/search_pharmacist.dart';
-import 'package:flutter_homecare/widgets/image_preview.dart';
+import 'package:m2health/widgets/image_preview.dart';
 import 'dart:io';
 
 class DetailPersonalPage extends StatelessWidget {

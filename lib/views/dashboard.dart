@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/cubit/nursing/nursing_payment.dart';
-import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
-import 'package:flutter_homecare/views/appointment.dart';
-import 'package:flutter_homecare/views/diabetic_care.dart';
-import 'package:flutter_homecare/views/home_health_screening.dart';
-import 'package:flutter_homecare/views/nursing.dart';
-import 'package:flutter_homecare/views/pharmacist_services.dart';
-import 'package:flutter_homecare/views/remote_patient_monitoring.dart';
-import 'package:flutter_homecare/views/second_opinion.dart';
+import 'package:m2health/cubit/nursing/nursing_payment.dart';
+import 'package:m2health/cubit/profiles/profile_page.dart';
+import 'package:m2health/views/appointment.dart';
+import 'package:m2health/views/diabetic_care.dart';
+import 'package:m2health/views/home_health_screening.dart';
+import 'package:m2health/views/nursing.dart';
+import 'package:m2health/views/pharmacist_services.dart';
+import 'package:m2health/views/remote_patient_monitoring.dart';
+import 'package:m2health/views/second_opinion.dart';
 
-// import 'package:flutter_homecare/views/details/detail_products.dart';
-// import 'package:flutter_homecare/views/poct.dart';
-// import 'package:flutter_homecare/views/tenders.dart';
+// import 'package:m2health/views/details/detail_products.dart';
+// import 'package:m2health/views/poct.dart';
+// import 'package:m2health/views/tenders.dart';
 
 import '../const.dart';
 // import '../utils.dart';

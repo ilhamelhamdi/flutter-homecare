@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/views/book_appointment.dart';
-import 'package:flutter_homecare/const.dart';
+import 'package:m2health/views/book_appointment.dart';
+import 'package:m2health/const.dart';
 
 class SearchPharmacistPage extends StatefulWidget {
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/views/details/detail_pharma.dart';
+import 'package:m2health/views/details/detail_pharma.dart';
 
 class AddIssuePage extends StatefulWidget {
   @override

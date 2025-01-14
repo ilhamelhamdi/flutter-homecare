@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_homecare/main.dart';
+import 'package:m2health/main.dart';
 import 'personal_cubit.dart';
-import 'package:flutter_homecare/widgets/add_concern_page.dart';
+import 'package:m2health/widgets/add_concern_page.dart';
 
 class PersonalPage extends StatelessWidget {
   @override

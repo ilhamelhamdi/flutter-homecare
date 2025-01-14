@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/models/response_product_manual.dart';
-import 'package:flutter_homecare/utils.dart';
+import 'package:m2health/models/response_product_manual.dart';
+import 'package:m2health/utils.dart';
 
 class ButtonDownload extends StatelessWidget {
   final ResponseProductManual productManual;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/widgets/image_preview.dart';
+import 'package:m2health/widgets/image_preview.dart';
 import 'add_summary_page.dart';
 import 'dart:io';
 

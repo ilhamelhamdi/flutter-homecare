@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_homecare/route/app_routes.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'sign_up_cubit.dart';
 
 class SignUpPage extends StatelessWidget {

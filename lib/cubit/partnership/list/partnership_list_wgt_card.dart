@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/cubit/partnership/list/partnership_detail_page.dart';
-import 'package:flutter_homecare/cubit/partnership/list/partnership_list_cubit.dart';
+import 'package:m2health/cubit/partnership/list/partnership_detail_page.dart';
+import 'package:m2health/cubit/partnership/list/partnership_list_cubit.dart';
 
 class PartnershipListWgtCard extends StatelessWidget {
   final PartnershipListModel item;

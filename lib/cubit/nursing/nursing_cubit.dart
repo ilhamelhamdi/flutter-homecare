@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_homecare/cubit/nursing/nursing_state.dart';
+import 'package:m2health/cubit/nursing/nursing_state.dart';
 
 class NursingCubit extends Cubit<NursingState> {
   NursingCubit() : super(NursingInitial());

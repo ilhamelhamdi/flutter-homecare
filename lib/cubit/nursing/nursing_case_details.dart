@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_homecare/cubit/nursing/nursing_payment.dart';
-import 'package:flutter_homecare/main.dart';
-import 'package:flutter_homecare/cubit/nursing/nursing_cubit.dart';
-import 'package:flutter_homecare/views/search/search_nurse.dart';
-import 'package:flutter_homecare/widgets/image_preview.dart';
+import 'package:m2health/cubit/nursing/nursing_payment.dart';
+import 'package:m2health/main.dart';
+import 'package:m2health/cubit/nursing/nursing_cubit.dart';
+import 'package:m2health/views/search/search_nurse.dart';
+import 'package:m2health/widgets/image_preview.dart';
 
 class NursingDetailsPage extends StatelessWidget {
   @override

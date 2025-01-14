@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/cubit/profiles/medical_records/medical_record.dart';
-import 'package:flutter_homecare/route/app_routes.dart';
-import 'package:flutter_homecare/views/appointment.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/cubit/profiles/medical_records/medical_record.dart';
+import 'package:m2health/route/app_routes.dart';
+import 'package:m2health/views/appointment.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {

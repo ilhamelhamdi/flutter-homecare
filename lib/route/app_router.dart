@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/views/splashscreen.dart';
+import 'package:m2health/views/splashscreen.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_homecare/cubit/locations/location_page.dart';
-import 'package:flutter_homecare/cubit/partnership/request_page.dart';
-import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
-import 'package:flutter_homecare/cubit/service_request/service_request_page.dart';
-import 'package:flutter_homecare/cubit/signup/sign_up_page.dart';
-import 'package:flutter_homecare/cubit/signin/sign_in_page.dart';
-import 'package:flutter_homecare/cubit/submenu/submenu_page.dart';
-import 'package:flutter_homecare/cubit/partnership/list/partnership_list_page.dart';
-import 'package:flutter_homecare/cubit/pharmacist_profile/pharmacist_profile_page.dart';
-import 'package:flutter_homecare/cubit/personal/personal_page.dart';
-// import 'package:flutter_homecare/cubit/nursing/nursing_page.dart';
-import 'package:flutter_homecare/main.dart';
-import 'package:flutter_homecare/views/dashboard.dart';
-import 'package:flutter_homecare/views/pharmacist_services.dart';
+import 'package:m2health/cubit/locations/location_page.dart';
+import 'package:m2health/cubit/partnership/request_page.dart';
+import 'package:m2health/cubit/profiles/profile_page.dart';
+import 'package:m2health/cubit/service_request/service_request_page.dart';
+import 'package:m2health/cubit/signup/sign_up_page.dart';
+import 'package:m2health/cubit/signin/sign_in_page.dart';
+import 'package:m2health/cubit/submenu/submenu_page.dart';
+import 'package:m2health/cubit/partnership/list/partnership_list_page.dart';
+import 'package:m2health/cubit/pharmacist_profile/pharmacist_profile_page.dart';
+import 'package:m2health/cubit/personal/personal_page.dart';
+// import 'package:m2health/cubit/nursing/nursing_page.dart';
+import 'package:m2health/main.dart';
+import 'package:m2health/views/dashboard.dart';
+import 'package:m2health/views/pharmacist_services.dart';
 import 'app_routes.dart';
 
 final GoRouter router = GoRouter(

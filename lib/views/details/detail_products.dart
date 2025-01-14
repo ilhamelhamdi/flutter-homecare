@@ -1,8 +1,8 @@
 // import 'package:go_router/go_router.dart';
-// import 'package:flutter_homecare/models/response_product_manual.dart';
-// import 'package:flutter_homecare/route/app_routes.dart';
-// import 'package:flutter_homecare/widgets/button_download.dart';
-// import 'package:flutter_homecare/views/profile.dart';
+// import 'package:m2health/models/response_product_manual.dart';
+// import 'package:m2health/route/app_routes.dart';
+// import 'package:m2health/widgets/button_download.dart';
+// import 'package:m2health/views/profile.dart';
 // import '../../models/product.dart';
 // import '../../models/specification.dart';
 // import '../../models/clinical.dart';

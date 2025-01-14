@@ -1,10 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/cubit/profiles/profile_page.dart';
+import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_homecare/route/app_router.dart';
-import 'package:flutter_homecare/views/dashboard.dart';
-import 'package:flutter_homecare/views/favourites.dart';
+import 'package:m2health/route/app_router.dart';
+import 'package:m2health/views/dashboard.dart';
+import 'package:m2health/views/favourites.dart';
 // import 'package:navbar_router/navbar_router.dart';
 
 import 'const.dart';
@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
       builder: (BuildContext context, Widget? child) {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          title: 'flutter_homecare',
+          title: 'm2health',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Const.colorDashboard),
             useMaterial3: true,

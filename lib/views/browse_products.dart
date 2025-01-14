@@ -1,8 +1,8 @@
 // import 'package:flutter/material.dart';
-// import 'package:flutter_homecare/models/response_product_manual.dart';
-// import 'package:flutter_homecare/route/app_routes.dart';
-// import 'package:flutter_homecare/views/profile.dart';
-// import 'package:flutter_homecare/widgets/button_download.dart';
+// import 'package:m2health/models/response_product_manual.dart';
+// import 'package:m2health/route/app_routes.dart';
+// import 'package:m2health/views/profile.dart';
+// import 'package:m2health/widgets/button_download.dart';
 // import 'package:share_plus/share_plus.dart';
 // import '../models/product_response.dart';
 // import '../models/specification.dart';
@@ -506,8 +506,8 @@
 //                       // Image Slider
 //                       // SliderImages(
 //                       //   images: [
-//                       //     'https://api-flutter_homecare.mandatech.co.id/uploads/product-media/cl2vb1bl8005a0lp0a8sc0qv0.jpg',
-//                       //     'https://api-flutter_homecare.mandatech.co.id/uploads/product-media/cl2vb1jh6005c0lp070mo6xlf.jpg',
+//                       //     'https://api-m2health.mandatech.co.id/uploads/product-media/cl2vb1bl8005a0lp0a8sc0qv0.jpg',
+//                       //     'https://api-m2health.mandatech.co.id/uploads/product-media/cl2vb1jh6005c0lp070mo6xlf.jpg',
 //                       //   ],
 //                       // ),
 //                       SliderImages(images: imageUrls),

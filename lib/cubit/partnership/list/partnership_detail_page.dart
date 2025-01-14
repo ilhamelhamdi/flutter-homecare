@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/cubit/partnership/list/partnership_list_cubit.dart';
+import 'package:m2health/cubit/partnership/list/partnership_list_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';

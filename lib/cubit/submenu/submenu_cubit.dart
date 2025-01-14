@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter_homecare/models/r_profile.dart';
-import 'package:flutter_homecare/utils.dart';
+import 'package:m2health/models/r_profile.dart';
+import 'package:m2health/utils.dart';
 
 class SubmenuCubit extends Cubit<SubmenuState> {
   SubmenuCubit() : super(SubmenuInitial());
@@ -10,7 +10,8 @@ class SubmenuCubit extends Cubit<SubmenuState> {
     try {
       var profile = await Utils.getProfile();
       var username = await Utils.getSpString('username');
-      emit(SubmenuLoaded(profile: profile, username: username ?? 'Username not set'));
+      emit(SubmenuLoaded(
+          profile: profile, username: username ?? 'Username not set'));
     } catch (e) {
       emit(SubmenuError(message: e.toString()));
     }

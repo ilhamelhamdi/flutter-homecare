@@ -8,7 +8,7 @@ class Const {
   // static const String BASE_URL = 'https://api.med-map.org';
   static const String BASE_URL = 'http://192.168.1.2:3333';
   // static const String BASE_URL = 'https://api.med-map.org';
-  // static const String BASE_URL = 'https://api-flutter_homecare.mandatech.co.id';
+  // static const String BASE_URL = 'https://api-m2health.mandatech.co.id';
   // static const String BASE_URL = 'https://be-mdmap.mandatech.co.id/';
   static const String URL_API = BASE_URL + '/v1';
 

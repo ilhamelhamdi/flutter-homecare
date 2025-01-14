@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/utils.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
 import 'package:meta/meta.dart';
 
 part 'service_request_state.dart';

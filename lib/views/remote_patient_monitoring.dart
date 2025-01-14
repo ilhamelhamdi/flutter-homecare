@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_homecare/const.dart';
+import 'package:m2health/const.dart';
 
 class RemotePatientMonitoring extends StatelessWidget {
   @override

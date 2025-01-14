@@ -1,11 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/cubit/profiles/profile_state.dart';
-import 'package:flutter_homecare/models/r_profile.dart';
-import 'package:flutter_homecare/utils.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/cubit/profiles/profile_state.dart';
+import 'package:m2health/models/r_profile.dart';
+import 'package:m2health/utils.dart';
 import 'dart:io';
-
 
 class ProfileCubit extends Cubit<ProfileState> {
   final Dio _dio;

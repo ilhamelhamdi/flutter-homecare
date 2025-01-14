@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/views/payment.dart';
+import 'package:m2health/views/payment.dart';
 
 class DetailAppointmentPage extends StatefulWidget {
   final String pharmacistName;

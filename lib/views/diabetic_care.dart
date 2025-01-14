@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/app_localzations.dart';
-import 'package:flutter_homecare/cubit/nursing/nursing_payment.dart';
-import 'package:flutter_homecare/cubit/personal/personal_page.dart';
-import 'package:flutter_homecare/route/app_routes.dart';
-import 'package:flutter_homecare/main.dart';
+import 'package:m2health/app_localzations.dart';
+import 'package:m2health/cubit/nursing/nursing_payment.dart';
+import 'package:m2health/cubit/personal/personal_page.dart';
+import 'package:m2health/route/app_routes.dart';
+import 'package:m2health/main.dart';
 
-import 'package:flutter_homecare/widgets/chat_pharma.dart';
+import 'package:m2health/widgets/chat_pharma.dart';
 
 class DiabeticCare extends StatefulWidget {
   @override

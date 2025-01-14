@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:time_slot/time_slot.dart';
 import 'details/detail_appointment.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/widgets/time_slot_grid_view.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/widgets/time_slot_grid_view.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   @override

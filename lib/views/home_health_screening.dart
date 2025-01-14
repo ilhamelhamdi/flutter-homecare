@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/app_localzations.dart';
-import 'package:flutter_homecare/const.dart';
+import 'package:m2health/app_localzations.dart';
+import 'package:m2health/const.dart';
 
-import 'package:flutter_homecare/route/app_routes.dart';
-import 'package:flutter_homecare/main.dart';
-import 'package:flutter_homecare/views/medical_store.dart';
+import 'package:m2health/route/app_routes.dart';
+import 'package:m2health/main.dart';
+import 'package:m2health/views/medical_store.dart';
 
-import 'package:flutter_homecare/widgets/chat_pharma.dart';
+import 'package:m2health/widgets/chat_pharma.dart';
 
 class HomeHealth extends StatefulWidget {
   @override
