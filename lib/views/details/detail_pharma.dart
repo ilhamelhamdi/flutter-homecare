@@ -8,7 +8,7 @@ class DetailPersonalPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(
+          title: const Text(
         'Personal Case Detail',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       )),
@@ -17,8 +17,8 @@ class DetailPersonalPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: 0.0),
-            Column(
+            const SizedBox(height: 0.0),
+            const Column(
               children: [
                 Center(
                   child: Text(
@@ -56,18 +56,18 @@ class DetailPersonalPage extends StatelessWidget {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Color(0xFF35C5CF)),
+                      side: const BorderSide(color: Color(0xFF35C5CF)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Add an Issue',
                       style: TextStyle(color: Color(0xFF35C5CF), fontSize: 20),
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 SizedBox(
                   width: 352,
                   height: 58,
@@ -76,12 +76,12 @@ class DetailPersonalPage extends StatelessWidget {
                       // Handle next button press
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFB2B9C4),
+                      backgroundColor: const Color(0xFFB2B9C4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Next',
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
@@ -116,17 +116,17 @@ class _AddConcernPageState extends State<AddConcernPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Add an Issue',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
+            const Padding(
+              padding: EdgeInsets.only(left: 12.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -138,7 +138,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             SizedBox(
               width: 338,
               height: 50,
@@ -146,14 +146,15 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 controller: _issueTitleController,
                 decoration: InputDecoration(
                   hintText: 'Issue Title',
-                  hintStyle: TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
+                  hintStyle:
+                      const TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Container(
               width: 338,
               height: 129,
@@ -162,11 +163,12 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 decoration: InputDecoration(
                   hintText:
                       'Please enter questions, concerns, relevant symptoms related to your case along with related keywords.',
-                  hintStyle: TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
+                  hintStyle:
+                      const TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                       vertical: 10,
                       horizontal: 10), // Adjust the vertical padding as needed
                 ),
@@ -178,17 +180,17 @@ class _AddConcernPageState extends State<AddConcernPage> {
               padding: const EdgeInsets.only(left: 12.0),
               child: Column(
                 children: [
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   ImagePreview(onImageSelected: _addImage),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   ImagePreview(onImageSelected: _addImage),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   ImagePreview(onImageSelected: _addImage),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
-            Spacer(),
+            const Spacer(),
             SizedBox(
               width: 352,
               height: 58,
@@ -206,9 +208,9 @@ class _AddConcernPageState extends State<AddConcernPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF35C5CF),
+                  backgroundColor: const Color(0xFF35C5CF),
                 ),
-                child: Text(
+                child: const Text(
                   'Add',
                   style: TextStyle(color: Colors.white),
                 ),
@@ -236,7 +238,7 @@ class AddSummaryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Summary',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
@@ -246,24 +248,24 @@ class AddSummaryPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Tell us your concern',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Issue Title: $issueTitle',
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Description: $description',
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               children: images.map((image) {
                 return Padding(
@@ -277,7 +279,7 @@ class AddSummaryPage extends StatelessWidget {
                 );
               }).toList(),
             ),
-            Spacer(),
+            const Spacer(),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -294,18 +296,18 @@ class AddSummaryPage extends StatelessWidget {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Color(0xFF35C5CF)),
+                      side: const BorderSide(color: Color(0xFF35C5CF)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Add an Issue',
                       style: TextStyle(color: Color(0xFF35C5CF), fontSize: 20),
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 SizedBox(
                   width: 352,
                   height: 58,
@@ -314,12 +316,12 @@ class AddSummaryPage extends StatelessWidget {
                       // Handle next action
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF35C5CF),
+                      backgroundColor: const Color(0xFF35C5CF),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Next',
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
@@ -347,7 +349,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Personal Case Detail',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
@@ -357,7 +359,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Select your mobility status',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
@@ -372,7 +374,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
                       _mobilityStatus = value!;
                     });
                   },
-                  activeColor: Color(0xFF35C5CF),
+                  activeColor: const Color(0xFF35C5CF),
                 ),
                 RadioListTile<String>(
                   title: const Text('Wheelchair bound'),
@@ -383,7 +385,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
                       _mobilityStatus = value!;
                     });
                   },
-                  activeColor: Color(0xFF35C5CF),
+                  activeColor: const Color(0xFF35C5CF),
                 ),
                 RadioListTile<String>(
                   title: const Text('Walking Aid'),
@@ -394,7 +396,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
                       _mobilityStatus = value!;
                     });
                   },
-                  activeColor: Color(0xFF35C5CF),
+                  activeColor: const Color(0xFF35C5CF),
                 ),
                 RadioListTile<String>(
                   title: const Text('Mobile Without Aid'),
@@ -405,23 +407,23 @@ class _AddIssuePageState extends State<AddIssuePage> {
                       _mobilityStatus = value!;
                     });
                   },
-                  activeColor: Color(0xFF35C5CF),
+                  activeColor: const Color(0xFF35C5CF),
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'Select a related health record',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Container(
               width: 362,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(10),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: _selectedStatus,
@@ -442,9 +444,9 @@ class _AddIssuePageState extends State<AddIssuePage> {
                     });
                   },
                   isExpanded: true,
-                  icon: Icon(Icons.arrow_drop_down),
+                  icon: const Icon(Icons.arrow_drop_down),
                   iconSize: 24,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 16,
                   ),
@@ -452,7 +454,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
                 ),
               ),
             ),
-            Spacer(),
+            const Spacer(),
             SizedBox(
               width: 352,
               height: 58,
@@ -466,12 +468,12 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF35C5CF),
+                  backgroundColor: const Color(0xFF35C5CF),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Next',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
@@ -504,7 +506,7 @@ class _PaymentPharmaState extends State<PaymentPharma> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pharmacist Services',
+        title: const Text('Pharmacist Services',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
@@ -525,30 +527,31 @@ class _PaymentPharmaState extends State<PaymentPharma> {
                       height: 24,
                       decoration: BoxDecoration(
                         color: _selectedServices[i]
-                            ? Color(0xFF35C5CF)
+                            ? const Color(0xFF35C5CF)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Color(0xFF35C5CF)),
+                        border: Border.all(color: const Color(0xFF35C5CF)),
                       ),
                       child: _selectedServices[i]
-                          ? Icon(Icons.check, color: Colors.white, size: 16)
+                          ? const Icon(Icons.check,
+                              color: Colors.white, size: 16)
                           : null,
                     ),
                   ),
                   title: Text(
                     serviceTitles[i],
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold), // Set the font size
                     overflow:
                         TextOverflow.visible, // Ensure the text is fully shown
                   ),
-                  trailing:
-                      Icon(Icons.info_outline_rounded, color: Colors.grey),
+                  trailing: const Icon(Icons.info_outline_rounded,
+                      color: Colors.grey),
                 ),
               ),
-            Spacer(),
-            Row(
+            const Spacer(),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
@@ -575,7 +578,7 @@ class _PaymentPharmaState extends State<PaymentPharma> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             SizedBox(
               width: 352,
               height: 58,
@@ -589,12 +592,12 @@ class _PaymentPharmaState extends State<PaymentPharma> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF35C5CF),
+                  backgroundColor: const Color(0xFF35C5CF),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Book Appointment',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),

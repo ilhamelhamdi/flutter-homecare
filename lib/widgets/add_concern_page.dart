@@ -28,13 +28,13 @@ class _AddConcernPageState extends State<AddConcernPage> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             const Padding(
               padding: EdgeInsets.only(left: 12.0),
-              child: const Align(
+              child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Tell us your concern',
@@ -97,33 +97,35 @@ class _AddConcernPageState extends State<AddConcernPage> {
                 ],
               ),
             ),
-            const Spacer(),
-            SizedBox(
-              width: 352,
-              height: 58,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddSummaryPage(
-                        issueTitle: _issueTitleController.text,
-                        description: _descriptionController.text,
-                        images: _images,
-                      ),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF35C5CF),
-                ),
-                child: const Text(
-                  'Add',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
+            const SizedBox(height: 30),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: SizedBox(
+          width: 352,
+          height: 58,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddSummaryPage(
+                    issueTitle: _issueTitleController.text,
+                    description: _descriptionController.text,
+                    images: _images,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF35C5CF),
+            ),
+            child: const Text(
+              'Add',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         ),
       ),
     );

@@ -7,10 +7,10 @@ import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:m2health/cubit/service_request/service_request_page.dart';
 import 'package:m2health/cubit/signup/sign_up_page.dart';
 import 'package:m2health/cubit/signin/sign_in_page.dart';
-import 'package:m2health/cubit/submenu/submenu_page.dart';
+// import 'package:m2health/cubit/submenu/submenu_page.dart';
 import 'package:m2health/cubit/partnership/list/partnership_list_page.dart';
 import 'package:m2health/cubit/pharmacist_profile/pharmacist_profile_page.dart';
-import 'package:m2health/cubit/personal/personal_page.dart';
+import 'package:m2health/cubit/pharmacist/personal_page.dart';
 // import 'package:m2health/cubit/nursing/nursing_page.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/views/dashboard.dart';
@@ -55,10 +55,10 @@ final GoRouter router = GoRouter(
       path: AppRoutes.dashboard,
       builder: (context, state) => Dashboard(),
     ),
-    GoRoute(
-      path: AppRoutes.submenu,
-      builder: (context, state) => SubmenuPage(),
-    ),
+    // GoRoute(
+    //   path: AppRoutes.submenu,
+    //   builder: (context, state) => SubmenuPage(),
+    // ),
     GoRoute(
       path: AppRoutes.signUp,
       builder: (context, state) => SignUpPage(),
