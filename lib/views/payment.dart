@@ -304,6 +304,24 @@ class PaymentSuccessDialog extends StatelessWidget {
                   TextStyle(color: Colors.white), // Set the text color to white
             ),
           ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              context.go('/dasboard');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  Const.tosca, // Set the button color to Const.tosca
+              minimumSize:
+                  const Size(150, 50), // Customize the width and height
+            ),
+            child: const Text(
+              'Return to Home',
+              style:
+                  TextStyle(color: Colors.white), // Set the text color to white
+            ),
+          ),
         ],
       ),
     );
@@ -442,6 +460,34 @@ class _FeedbackFormState extends State<FeedbackForm> {
                   ),
                 ),
               ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: SizedBox(
+                width: 353, // Set the width to 353
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FeedbackDetails()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Const.tosca, // Set the button color to Const.tosca
+                  ),
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
             ),
           ],
         ),

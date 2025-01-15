@@ -10,7 +10,7 @@ import 'package:m2health/cubit/signin/sign_in_page.dart';
 // import 'package:m2health/cubit/submenu/submenu_page.dart';
 import 'package:m2health/cubit/partnership/list/partnership_list_page.dart';
 import 'package:m2health/cubit/pharmacist_profile/pharmacist_profile_page.dart';
-import 'package:m2health/cubit/pharmacist/personal_page.dart';
+import 'package:m2health/cubit/pharmacist/pharmacist_page.dart';
 // import 'package:m2health/cubit/nursing/nursing_page.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/views/dashboard.dart';

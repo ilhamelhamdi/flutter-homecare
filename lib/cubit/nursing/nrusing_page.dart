@@ -4,7 +4,7 @@ import 'package:m2health/app_localzations.dart';
 import 'package:m2health/cubit/nursing/nursing_cubit.dart';
 import 'package:m2health/cubit/nursing/nursing_payment.dart';
 import 'package:m2health/cubit/nursing/nursing_state.dart';
-import 'package:m2health/cubit/pharmacist/personal_page.dart';
+import 'package:m2health/cubit/pharmacist/pharmacist_page.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/main.dart';
 
