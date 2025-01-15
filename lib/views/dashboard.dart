@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:m2health/cubit/nursing/nursing_payment.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:m2health/views/appointment.dart';
 import 'package:m2health/views/diabetic_care.dart';

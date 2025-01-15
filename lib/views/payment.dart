@@ -568,7 +568,7 @@ class FeedbackDetails extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // navbarVisibility(true); // Tampilkan navbar sebelum navigasi
-                    context.go('/dasboard');
+                    context.go('/appointment');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:

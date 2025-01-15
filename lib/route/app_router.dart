@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:m2health/views/appointment.dart';
 import 'package:m2health/views/splashscreen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/cubit/locations/location_page.dart';
@@ -54,6 +55,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: AppRoutes.dashboard,
       builder: (context, state) => Dashboard(),
+    ),
+    GoRoute(
+      path: AppRoutes.appointment,
+      builder: (context, state) => AppointmentPage(),
     ),
     // GoRoute(
     //   path: AppRoutes.submenu,
