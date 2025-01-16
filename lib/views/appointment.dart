@@ -235,6 +235,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                       ),
                     if (status == 'Missed')
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           OutlinedButton(
                             onPressed: () {

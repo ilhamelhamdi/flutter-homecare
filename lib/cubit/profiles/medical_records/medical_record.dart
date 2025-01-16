@@ -18,6 +18,7 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
   ];
 
   int? _editingIndex;
+  bool _isAddingNewRecord = false;
   final TextEditingController _diseaseNameController = TextEditingController();
   final TextEditingController _diseaseHistoryController =
       TextEditingController();
@@ -46,7 +47,22 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
       if (_editingIndex != null) {
         records[_editingIndex!] = _diseaseNameController.text;
         _editingIndex = null;
+      } else {
+        records.add(_diseaseNameController.text);
       }
+      _diseaseNameController.clear();
+      _diseaseHistoryController.clear();
+      _specialConsiderations = List.generate(6, (_) => false);
+    });
+  }
+
+  void _addNewRecord() {
+    setState(() {
+      records.add(_diseaseNameController.text);
+      _diseaseNameController.clear();
+      _diseaseHistoryController.clear();
+      _specialConsiderations = List.generate(6, (_) => false);
+      _isAddingNewRecord = false;
     });
   }
 
@@ -67,14 +83,12 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemCount: records.length + (_editingIndex != null ? 1 : 0),
+        itemCount: records.length + (_isAddingNewRecord ? 1 : 0),
         itemBuilder: (context, index) {
-          if (_editingIndex != null && index == _editingIndex! + 1) {
-            return _buildModifyForm();
+          if (_isAddingNewRecord && index == records.length) {
+            return _buildForm();
           }
-          int recordIndex = _editingIndex != null && index > _editingIndex!
-              ? index - 1
-              : index;
+          int recordIndex = index;
           return Card(
             elevation: 4,
             shadowColor: Colors.black,
@@ -124,8 +138,9 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Handle add new record
-          _submitModification();
+          setState(() {
+            _isAddingNewRecord = true;
+          });
         },
         backgroundColor: Const.tosca,
         child: const Icon(
@@ -133,10 +148,10 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
           color: Colors.white,
         ),
       ),
-      bottomNavigationBar: _editingIndex != null
+      bottomNavigationBar: _isAddingNewRecord
           ? BottomAppBar(
               child: ElevatedButton(
-                onPressed: _submitModification,
+                onPressed: _addNewRecord,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Const.tosca, // Warna tosca
                 ),
@@ -148,7 +163,7 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
     );
   }
 
-  Widget _buildModifyForm() {
+  Widget _buildForm() {
     return Card(
       elevation: 4,
       shadowColor: Colors.grey,
