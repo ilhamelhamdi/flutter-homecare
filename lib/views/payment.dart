@@ -308,7 +308,7 @@ class PaymentSuccessDialog extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              context.go('/dasboard');
+              context.go('/dashboard');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor:
@@ -567,7 +567,6 @@ class FeedbackDetails extends StatelessWidget {
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () {
-                    // navbarVisibility(true); // Tampilkan navbar sebelum navigasi
                     context.go('/appointment');
                   },
                   style: ElevatedButton.styleFrom(

@@ -50,6 +50,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late AppLocalizations localizations;
   Locale _locale = const Locale('zh');
+  bool _showBottomAppBar = false;
 
   void changeLanguage(Locale locale) {
     setState(() {
@@ -78,7 +79,42 @@ class _MyAppState extends State<MyApp> {
             useMaterial3: true,
           ),
           locale: DevicePreview.locale(context),
-          builder: DevicePreview.appBuilder,
+          builder: (context, child) {
+            return Stack(
+              children: [
+                DevicePreview.appBuilder(context, child),
+                if (_showBottomAppBar)
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: BottomAppBar(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.home),
+                            onPressed: () {
+                              // Handle home button press
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.calendar_today),
+                            onPressed: () {
+                              // Handle calendar button press
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.person),
+                            onPressed: () {
+                              // Handle profile button press
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -157,12 +193,11 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
-  // void dispose() {
-  //   NavbarNotifier.clear();
-  //   WidgetsBinding.instance.removeObserver(this);
-  //   tabController.dispose();
-  //   super.dispose();
-  // }
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    tabController.dispose();
+    super.dispose();
+  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

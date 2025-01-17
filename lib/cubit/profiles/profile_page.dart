@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
-import 'package:m2health/cubit/profiles/medical_records/medical_record.dart';
+import 'package:m2health/cubit/profiles/profile_details/medical_record.dart';
+import 'package:m2health/cubit/profiles/profile_details/pharmagenomical.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/views/appointment.dart';
 import 'package:go_router/go_router.dart';
@@ -117,7 +118,12 @@ class ProfilePage extends StatelessWidget {
                       title: const Text('Pharmagenomics Profile'),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
-                        // Handle Pharma Profile tap
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PharmagenomicsProfilePage(),
+                          ),
+                        );
                       },
                     ),
                     ListTile(
