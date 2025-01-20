@@ -45,6 +45,21 @@ class MyApp extends StatefulWidget {
     _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
     state!.changeLanguage(newLocale);
   }
+
+  static void toggleBottomAppBar(BuildContext context) {
+    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state!.toggleBottomAppBar();
+  }
+
+  static void showBottomAppBar(BuildContext context) {
+    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state!.showBottomAppBar();
+  }
+
+  static void hideBottomAppBar(BuildContext context) {
+    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state!.hideBottomAppBar();
+  }
 }
 
 class _MyAppState extends State<MyApp> {
@@ -55,6 +70,24 @@ class _MyAppState extends State<MyApp> {
   void changeLanguage(Locale locale) {
     setState(() {
       _locale = locale;
+    });
+  }
+
+  void toggleBottomAppBar() {
+    setState(() {
+      _showBottomAppBar = !_showBottomAppBar;
+    });
+  }
+
+  void showBottomAppBar() {
+    setState(() {
+      _showBottomAppBar = true;
+    });
+  }
+
+  void hideBottomAppBar() {
+    setState(() {
+      _showBottomAppBar = false;
     });
   }
 
@@ -80,39 +113,13 @@ class _MyAppState extends State<MyApp> {
           ),
           locale: DevicePreview.locale(context),
           builder: (context, child) {
-            return Stack(
-              children: [
-                DevicePreview.appBuilder(context, child),
-                if (_showBottomAppBar)
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: BottomAppBar(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.home),
-                            onPressed: () {
-                              // Handle home button press
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.calendar_today),
-                            onPressed: () {
-                              // Handle calendar button press
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.person),
-                            onPressed: () {
-                              // Handle profile button press
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
+            return Scaffold(
+              body: Stack(
+                children: [
+                  DevicePreview.appBuilder(context, child),
+                ],
+              ),
+              bottomNavigationBar: _showBottomAppBar ? BottomAppBar() : null,
             );
           },
           localizationsDelegates: const [
@@ -182,6 +189,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   bool _resumedFromBackground = false;
+  bool _showBottomBar = true;
 
   late TabController tabController;
 
@@ -190,13 +198,22 @@ class _HomePageState extends State<HomePage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     tabController = TabController(length: 5, vsync: this);
+    tabController.addListener(_handleTabSelection);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    tabController.removeListener(_handleTabSelection);
     tabController.dispose();
     super.dispose();
+  }
+
+  void _handleTabSelection() {
+    setState(() {
+      // Hide BottomBar on the third tab (index 2)
+      _showBottomBar = tabController.index != 2;
+    });
   }
 
   @override
@@ -221,101 +238,227 @@ class _HomePageState extends State<HomePage>
       child: Padding(
         padding: const EdgeInsets.only(
             top: .0), // Adjust the bottom padding as needed
-        child: BottomBar(
-          fit: StackFit.expand,
-          icon: (width, height) => Center(
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: null,
-              icon: Icon(
-                Icons.arrow_upward_rounded,
-                color: Colors.grey, // Replace with your unselected color
-                size: width,
+        child: Stack(
+          children: [
+            BottomBar(
+              fit: StackFit.expand,
+              icon: (width, height) => Center(
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: null,
+                  icon: Icon(
+                    Icons.arrow_upward_rounded,
+                    color: Colors.grey, // Replace with your unselected color
+                    size: width,
+                  ),
+                ),
+              ),
+              borderRadius: BorderRadius.circular(
+                  20), // Adjust the border radius as needed
+              duration: const Duration(seconds: 1),
+              curve: Curves.decelerate,
+              showIcon: true,
+              width: MediaQuery.of(context).size.width * 0.8,
+              barColor: Colors.white, // Replace with your bar color
+              start: 2,
+              end: 0,
+              offset: 10,
+              barAlignment: Alignment.bottomCenter,
+              iconHeight: 35,
+              iconWidth: 35,
+              reverse: false,
+              barDecoration: BoxDecoration(
+                color: Colors.blue, // Replace with your current page color
+                borderRadius: BorderRadius.circular(
+                    20), // Adjust the border radius as needed
+              ),
+              iconDecoration: BoxDecoration(
+                color: Colors.blue, // Replace with your current page color
+                borderRadius: BorderRadius.circular(
+                    20), // Adjust the border radius as needed
+              ),
+              hideOnScroll: true,
+              scrollOpposite: false,
+              onBottomBarHidden: () {},
+              onBottomBarShown: () {},
+              body: (context, controller) => TabBarView(
+                controller: tabController,
+                dragStartBehavior: DragStartBehavior.down,
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  Dashboard(),
+                  AppointmentPage(),
+                  MedicalStorePage(),
+                  FavouritesPage(),
+                  ProfilePage(), // Add your pages here
+                ],
+              ),
+              child: TabBar(
+                controller: tabController,
+                tabs: const [
+                  Tab(icon: Icon(Icons.home_outlined)),
+                  Tab(icon: Icon(Icons.calendar_month_outlined)),
+                  Tab(icon: Icon(Icons.add_shopping_cart_outlined)),
+                  Tab(icon: Icon(Icons.favorite_border_outlined)),
+                  Tab(icon: Icon(Icons.person_outline)),
+                ],
+                indicatorColor: const Color(0xFF40E0D0), // Warna tosca
               ),
             ),
-          ),
-          borderRadius:
-              BorderRadius.circular(20), // Adjust the border radius as needed
-          duration: const Duration(seconds: 1),
-          curve: Curves.decelerate,
-          showIcon: true,
-          width: MediaQuery.of(context).size.width * 0.8,
-          barColor: Colors.white, // Replace with your bar color
-          start: 2,
-          end: 0,
-          offset: 10,
-          barAlignment: Alignment.bottomCenter,
-          iconHeight: 35,
-          iconWidth: 35,
-          reverse: false,
-          barDecoration: BoxDecoration(
-            color: Colors.blue, // Replace with your current page color
-            borderRadius:
-                BorderRadius.circular(20), // Adjust the border radius as needed
-          ),
-          iconDecoration: BoxDecoration(
-            color: Colors.blue, // Replace with your current page color
-            borderRadius:
-                BorderRadius.circular(20), // Adjust the border radius as needed
-          ),
-          hideOnScroll: true,
-          scrollOpposite: false,
-          onBottomBarHidden: () {},
-          onBottomBarShown: () {},
-          body: (context, controller) => TabBarView(
-            controller: tabController,
-            dragStartBehavior: DragStartBehavior.down,
-            physics: const BouncingScrollPhysics(),
-            children: [
-              Dashboard(),
-              AppointmentPage(),
-              MedicalStorePage(),
-              FavouritesPage(),
-              ProfilePage(), // Add your pages here
-            ],
-          ),
-          child: TabBar(
-            controller: tabController,
-            tabs: const [
-              Tab(icon: Icon(Icons.home_outlined)),
-              Tab(icon: Icon(Icons.calendar_month_outlined)),
-              Tab(icon: Icon(Icons.add_shopping_cart_outlined)),
-              Tab(icon: Icon(Icons.favorite_border_outlined)),
-              Tab(icon: Icon(Icons.person_outline)),
-            ],
-            indicatorColor: const Color(0xFF40E0D0), // Warna tosca
-          ),
+            if (!_showBottomBar)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 0, // Hide BottomBar by setting height to 0
+                ),
+              ),
+          ],
         ),
       ),
     );
   }
 }
 
-class ComingSoonDialog extends StatelessWidget {
-  const ComingSoonDialog({super.key});
+class BottomAppBar extends StatefulWidget {
+  const BottomAppBar({Key? key}) : super(key: key);
+
+  @override
+  _CustomBottomAppBarState createState() => _CustomBottomAppBarState();
+}
+
+class _CustomBottomAppBarState extends State<BottomAppBar>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
+  bool _resumedFromBackground = false;
+  bool _showBottomBar = true;
+
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    tabController = TabController(length: 5, vsync: this);
+    tabController.addListener(_handleTabSelection);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    tabController.removeListener(_handleTabSelection);
+    tabController.dispose();
+    super.dispose();
+  }
+
+  void _handleTabSelection() {
+    setState(() {
+      // Hide BottomBar on the third tab (index 2)
+      _showBottomBar = tabController.index != 2;
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _resumedFromBackground = true;
+      print("onResume");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Coming Soon'),
-      content: const Text('This feature is coming soon.'),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('OK'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        if (_resumedFromBackground) {
+          _resumedFromBackground = false;
+          return false; // Prevent default back button behavior
+        } else {
+          return true; // Allow default back button behavior
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(
+            top: .0), // Adjust the bottom padding as needed
+        child: Stack(
+          children: [
+            BottomBar(
+              fit: StackFit.expand,
+              icon: (width, height) => Center(
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: null,
+                  icon: Icon(
+                    Icons.arrow_upward_rounded,
+                    color: Colors.grey, // Replace with your unselected color
+                    size: width,
+                  ),
+                ),
+              ),
+              borderRadius: BorderRadius.circular(
+                  20), // Adjust the border radius as needed
+              duration: const Duration(seconds: 1),
+              curve: Curves.decelerate,
+              showIcon: true,
+              width: MediaQuery.of(context).size.width * 0.8,
+              barColor: Colors.white, // Replace with your bar color
+              start: 2,
+              end: 0,
+              offset: 10,
+              barAlignment: Alignment.bottomCenter,
+              iconHeight: 35,
+              iconWidth: 35,
+              reverse: false,
+              barDecoration: BoxDecoration(
+                color: Colors.blue, // Replace with your current page color
+                borderRadius: BorderRadius.circular(
+                    20), // Adjust the border radius as needed
+              ),
+              iconDecoration: BoxDecoration(
+                color: Colors.blue, // Replace with your current page color
+                borderRadius: BorderRadius.circular(
+                    20), // Adjust the border radius as needed
+              ),
+              hideOnScroll: true,
+              scrollOpposite: false,
+              onBottomBarHidden: () {},
+              onBottomBarShown: () {},
+              body: (context, controller) => TabBarView(
+                controller: tabController,
+                dragStartBehavior: DragStartBehavior.down,
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  Dashboard(),
+                  AppointmentPage(),
+                  MedicalStorePage(),
+                  FavouritesPage(),
+                  ProfilePage(), // Add your pages here
+                ],
+              ),
+              child: TabBar(
+                controller: tabController,
+                tabs: const [
+                  Tab(icon: Icon(Icons.home_outlined)),
+                  Tab(icon: Icon(Icons.calendar_month_outlined)),
+                  Tab(icon: Icon(Icons.add_shopping_cart_outlined)),
+                  Tab(icon: Icon(Icons.favorite_border_outlined)),
+                  Tab(icon: Icon(Icons.person_outline)),
+                ],
+                indicatorColor: const Color(0xFF40E0D0), // Warna tosca
+              ),
+            ),
+            if (!_showBottomBar)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 0, // Hide BottomBar by setting height to 0
+                ),
+              ),
+          ],
         ),
-      ],
+      ),
     );
   }
-}
-
-void showComingSoonDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return const ComingSoonDialog();
-    },
-  );
 }

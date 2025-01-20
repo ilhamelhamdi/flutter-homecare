@@ -15,7 +15,6 @@ import 'package:m2health/cubit/pharmacist/pharmacist_page.dart';
 // import 'package:m2health/cubit/nursing/nursing_page.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/views/dashboard.dart';
-import 'package:m2health/views/pharmacist_services.dart';
 import 'app_routes.dart';
 
 final GoRouter router = GoRouter(

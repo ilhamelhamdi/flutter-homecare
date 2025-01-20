@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/main.dart';
+import 'package:m2health/widgets/bottombar.dart';
 
 class AppointmentPage extends StatefulWidget {
   static const String route = '/appointment';
@@ -80,6 +82,7 @@ class _AppointmentPageState extends State<AppointmentPage>
           ),
         ],
       ),
+      // bottomNavigationBar: CustomBottomAppBar(),
     );
   }
 
@@ -118,7 +121,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                                     ? const Color(0x1A18B23C)
                                     : status == 'Cancelled' ||
                                             status == 'Missed'
-                                        ? Color(0x1AED3443)
+                                        ? const Color(0x1AED3443)
                                         : const Color(0x1AE59500),
                                 borderRadius: BorderRadius.circular(4),
                               ),

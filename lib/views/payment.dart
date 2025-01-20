@@ -3,6 +3,7 @@ import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/views/appointment.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m2health/widgets/bottombar.dart';
 // import 'package:navbar_router/navbar_router.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -304,7 +305,7 @@ class PaymentSuccessDialog extends StatelessWidget {
                   TextStyle(color: Colors.white), // Set the text color to white
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -461,7 +462,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Center(
@@ -486,7 +487,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],
@@ -567,16 +568,20 @@ class FeedbackDetails extends StatelessWidget {
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.go('/appointment');
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                          body: AppointmentPage(),
+                          bottomNavigationBar: CustomBottomAppBar(),
+                        ),
+                      ),
+                    );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Const.tosca, // Set the button color to Const.tosca
-                  ),
                   child: const Text(
                     'View Detail',
                     style: TextStyle(
-                        color: Colors.white), // Set the text color to white
+                        color: Const.tosca), // Set the text color to white
                   ),
                 ),
               ),

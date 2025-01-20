@@ -425,12 +425,12 @@ class _HomeHealthScreeningDetailState extends State<HomeHealthScreeningDetail> {
               height: 58,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ComingSoonDialog(),
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => const ComingSoonDialog(),
+                  //   ),
+                  // );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF35C5CF),
