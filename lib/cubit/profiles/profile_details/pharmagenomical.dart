@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:file_picker/file_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 class PharmagenomicsProfilePage extends StatefulWidget {
   @override
@@ -41,18 +41,18 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
     );
   }
 
-  // void _pickPdf() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.custom,
-  //     allowedExtensions: ['pdf'],
-  //   );
+  void _pickPdf() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
 
-  //   if (result != null) {
-  //     setState(() {
-  //       _pdfFileName = result.files.single.name;
-  //     });
-  //   }
-  // }
+    if (result != null) {
+      setState(() {
+        _pdfFileName = result.files.single.name;
+      });
+    }
+  }
 
   void _removePdf() {
     setState(() {
@@ -66,37 +66,35 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
       appBar: AppBar(
         title: const Text('Pharmagenomics Profile'),
       ),
-      body: ListView.builder(
-        itemCount: _data.length,
-        itemBuilder: (context, index) {
-          final profile = _data[index];
-          return Card(
-            margin: const EdgeInsets.all(8.0),
-            child: ListTile(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Gene: ${profile['gene']}'),
-                  Text('Genotype: ${profile['genotype']}'),
-                  Text('Phenotype: ${profile['phenotype']}'),
-                ],
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () => _editProfile(profile),
-              ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _data.length,
+              itemBuilder: (context, index) {
+                final profile = _data[index];
+                return Card(
+                  margin: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Gene: ${profile['gene']}'),
+                        Text('Genotype: ${profile['genotype']}'),
+                        Text('Phenotype: ${profile['phenotype']}'),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () => _editProfile(profile),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addNewProfile,
-        child: const Icon(Icons.add),
-        backgroundColor: Colors.blue,
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Expanded(
-          child: SingleChildScrollView(
+          ),
+          Container(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -117,7 +115,7 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () {
-                        // _pickPdf();
+                        _pickPdf();
                       },
                     ),
                     IconButton(
@@ -129,7 +127,12 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
               ],
             ),
           ),
-        ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addNewProfile,
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.blue,
       ),
     );
   }
