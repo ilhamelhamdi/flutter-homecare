@@ -29,6 +29,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     String email,
     String password,
     String username,
+    String s,
   ) async {
     print(email + " " + password + " " + username + " ");
     if (email.isEmpty ||

@@ -42,9 +42,9 @@ class _SignInPageState extends State<SignInPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Sign In'),
+          title: const Text('Sign In'),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               context.go(AppRoutes.home); // Redirect to home
             },
@@ -62,11 +62,11 @@ class _SignInPageState extends State<SignInPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Error'),
+                      title: const Text('Error'),
                       content: Text(state.message),
                       actions: <Widget>[
                         TextButton(
-                          child: Text('OK'),
+                          child: const Text('OK'),
                           onPressed: () {
                             context.pop();
                           },
@@ -93,7 +93,8 @@ class _SignInPageState extends State<SignInPage> {
                 autofocus: false,
                 decoration: InputDecoration(
                   hintText: 'Email',
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0)),
                 ),
@@ -104,24 +105,25 @@ class _SignInPageState extends State<SignInPage> {
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'Password',
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0)),
                 ),
               );
 
               final loginButton = Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF35C5CF),
+                    backgroundColor: const Color(0xFF35C5CF),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     elevation: 5.0,
                     side: BorderSide.none,
-                    padding: EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(12.0),
                   ),
                   onPressed: () {
                     String emailValue = emailController.text;
@@ -130,19 +132,19 @@ class _SignInPageState extends State<SignInPage> {
                         .read<SignInCubit>()
                         .signIn(emailValue, passwordValue);
                   },
-                  child: Text('Sign In', style: TextStyle(fontSize: 18)),
+                  child: const Text('Sign In', style: TextStyle(fontSize: 18)),
                 ),
               );
 
               final createAccountText = Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: GestureDetector(
                   onTap: () {
                     context.push(AppRoutes.signUp);
                   },
-                  child: Text(
+                  child: const Text(
                     'Create new account',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Color(0xFF35C5CF), // Turquoise green color
                     ),
@@ -151,7 +153,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               );
 
-              final continueWithText = Padding(
+              const continueWithText = Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
                   'Or continue with',
@@ -164,7 +166,7 @@ class _SignInPageState extends State<SignInPage> {
               );
 
               final socialIcons = Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -175,7 +177,7 @@ class _SignInPageState extends State<SignInPage> {
                         // Handle Facebook login
                       },
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     IconButton(
                       icon: Image.asset('assets/icons/ic_google.png'),
                       iconSize: 40,
@@ -183,7 +185,7 @@ class _SignInPageState extends State<SignInPage> {
                         // Handle Google login
                       },
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     IconButton(
                       icon: Image.asset('assets/icons/ic_wechat.png'),
                       iconSize: 40,
@@ -219,9 +221,9 @@ class _SignInPageState extends State<SignInPage> {
               return Center(
                 child: ListView(
                   shrinkWrap: true,
-                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                  padding: const EdgeInsets.only(left: 24.0, right: 24.0),
                   children: <Widget>[
-                    Text(
+                    const Text(
                       'Login Here',
                       style: TextStyle(
                         fontSize: 24,
@@ -230,8 +232,8 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 8.0),
-                    Text(
+                    const SizedBox(height: 8.0),
+                    const Text(
                       "Welcome Back you've\nbeen missed",
                       style: TextStyle(
                         fontSize: 16,
@@ -243,13 +245,13 @@ class _SignInPageState extends State<SignInPage> {
                     //   CircularProgressIndicator()
                     // else
                     //   logo,
-                    SizedBox(height: 48.0),
+                    const SizedBox(height: 48.0),
                     email,
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     password,
-                    SizedBox(height: 24.0),
+                    const SizedBox(height: 24.0),
                     loginButton,
-                    SizedBox(height: 11.0),
+                    const SizedBox(height: 11.0),
                     createAccountText,
                     continueWithText,
                     socialIcons,

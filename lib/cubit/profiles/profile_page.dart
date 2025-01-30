@@ -4,6 +4,7 @@ import 'package:m2health/const.dart';
 import 'package:m2health/cubit/profiles/profile_details/medical_record.dart';
 import 'package:m2health/cubit/profiles/profile_details/pharmagenomical.dart';
 import 'package:m2health/route/app_routes.dart';
+import 'package:m2health/utils.dart';
 import 'package:m2health/views/appointment.dart';
 import 'package:go_router/go_router.dart';
 
@@ -209,8 +210,9 @@ class ProfilePage extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: OutlinedButton.icon(
-                onPressed: () {
-                  // Perform logout logic here (e.g., clearing user session)
+                onPressed: () async {
+                  await Utils.clearSp();
+                  debugPrint('Data telah dibersihkan');
                   GoRouter.of(context).go(AppRoutes.signIn);
                 },
                 icon: const Icon(Icons.logout, color: Colors.red),
@@ -320,7 +322,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
+              SizedBox(
                 width: 352,
                 height: 56,
                 child: TextFormField(
