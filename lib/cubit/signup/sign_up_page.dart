@@ -13,6 +13,7 @@ class SignUpPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String? _passwordError;
+  String? role;
 
   void _validatePasswords() {
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -29,7 +30,7 @@ class SignUpPage extends StatelessWidget {
             _emailController.text,
             _passwordController.text,
             _usernameController.text,
-            // role?.toLowerCase() ?? 'manufacturer',
+            role?.toLowerCase() ?? 'user',
           );
     }
   }
@@ -182,7 +183,7 @@ class SignUpPage extends StatelessWidget {
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
-                        // role = newValue!;
+                        role = newValue;
                       },
                     ),
                     const SizedBox(height: 30),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
-import 'package:m2health/views/appointment.dart';
 import 'package:m2health/views/diabetic_care.dart';
 import 'package:m2health/views/home_health_screening.dart';
 import 'package:m2health/views/nursing.dart';
 import 'package:m2health/views/pharmacist_services.dart';
 import 'package:m2health/views/remote_patient_monitoring.dart';
 import 'package:m2health/views/second_opinion.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'package:m2health/views/details/detail_products.dart';
 // import 'package:m2health/views/poct.dart';
@@ -41,6 +41,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  String? userName;
   // final api = Api();
   // late analysis.AnalysisResponse analysisResponse;
   // late affair.AffairResponse affairResponse;
@@ -62,6 +63,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    _loadUserName();
     _scrollController = ScrollController()
       ..addListener(() {
         if (_scrollController.position.pixels ==
@@ -79,6 +81,14 @@ class _DashboardState extends State<Dashboard> {
     // getMarketingServices();
     // getAnalysis();
     // getAffairs();
+  }
+
+  Future<void> _loadUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('username') ?? 'Awokwok';
+    });
+    debugPrint('Username loaded: $userName');
   }
 
   // Future<void> getServiceRequest({int page = 1}) async {
@@ -190,7 +200,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    String? userName = "Anna";
     return Consumer<AppLanguage>(
       builder: (context, appLanguage, child) {
         return Scaffold(
@@ -264,7 +273,7 @@ class _DashboardState extends State<Dashboard> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Live Longer & Live Healthier, ${userName ?? 'Welcome User'}!",
+                      "Live Longer & Live Healthier, $userName!",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
