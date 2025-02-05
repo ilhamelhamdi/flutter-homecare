@@ -29,13 +29,14 @@ class SignUpCubit extends Cubit<SignUpState> {
     String email,
     String password,
     String username,
-    String s,
+    String role,
   ) async {
-    print(email + " " + password + " " + username + " ");
+    print(email + " " + password + " " + username + " " + role);
     if (email.isEmpty ||
         !emailRegex.hasMatch(email) ||
         password.isEmpty ||
-        username.isEmpty) {
+        username.isEmpty ||
+        role.isEmpty) {
       emit(SignUpFailure('Please fill in all fields correctly.'));
       return;
     }
@@ -43,7 +44,16 @@ class SignUpCubit extends Cubit<SignUpState> {
 
     var dio = Dio();
     dio.interceptors.add(const OmegaDioLogger());
+
     var mUrl = Const.API_REGISTER;
+    if (role == 'patient') {
+      mUrl = Const.API_REGISTER + 'patient';
+    } else if (role == 'nurse') {
+      mUrl = Const.API_REGISTER + 'nurse';
+    } else if (role == 'manufacturer') {
+      mUrl = Const.API_REGISTER + 'manufacturer';
+    }
+
     try {
       var response = await dio.post(mUrl,
           data: {"email": email, "password": password, "username": username},
@@ -67,6 +77,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   Future<void> getUser(String token, String role) async {
     var dio = Dio();
     dio.interceptors.add(const OmegaDioLogger());
+
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.get(Const.URL_API + "/$role/profile",
