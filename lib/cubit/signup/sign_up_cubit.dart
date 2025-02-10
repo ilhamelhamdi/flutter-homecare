@@ -50,8 +50,6 @@ class SignUpCubit extends Cubit<SignUpState> {
       mUrl = Const.API_REGISTER + 'patient';
     } else if (role == 'nurse') {
       mUrl = Const.API_REGISTER + 'nurse';
-    } else if (role == 'manufacturer') {
-      mUrl = Const.API_REGISTER + 'manufacturer';
     }
 
     try {

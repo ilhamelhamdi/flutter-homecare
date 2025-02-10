@@ -1,4 +1,3 @@
-
 class rProfile {
   final int id;
   final String? name;
@@ -48,7 +47,7 @@ class rProfile {
 
   factory rProfile.fromJson(Map<String, dynamic> json) {
     return rProfile(
-      id: json['id'],
+      id: json['id'] ?? 0,
       name: json['name'],
       picName: json['pic_name'],
       description: json['description'],
@@ -62,13 +61,26 @@ class rProfile {
       user: User.fromJson(json['user']),
       logo: json['logo'] != null ? Logo.fromJson(json['logo']) : null,
       type: json['type'] != null ? Type.fromJson(json['type']) : null,
-      industryCategory: json['industry_category'] != null ? IndustryCategory.fromJson(json['industry_category']) : null,
-      country: json['country'] != null ? Country.fromJson(json['country']) : null,
-      profileFile: json['profile_file'] != null ? ProfileFile.fromJson(json['profile_file']) : null,
-      categoryOne: json['category_one'] != null ? Category.fromJson(json['category_one']) : null,
-      categoryTwo: json['category_two'] != null ? Category.fromJson(json['category_two']) : null,
-      categoryOneService: json['category_one_service'] != null ? Category.fromJson(json['category_one_service']) : null,
-      categoryTwoService: json['category_two_service'] != null ? Category.fromJson(json['category_two_service']) : null,
+      industryCategory: json['industry_category'] != null
+          ? IndustryCategory.fromJson(json['industry_category'])
+          : null,
+      country:
+          json['country'] != null ? Country.fromJson(json['country']) : null,
+      profileFile: json['profile_file'] != null
+          ? ProfileFile.fromJson(json['profile_file'])
+          : null,
+      categoryOne: json['category_one'] != null
+          ? Category.fromJson(json['category_one'])
+          : null,
+      categoryTwo: json['category_two'] != null
+          ? Category.fromJson(json['category_two'])
+          : null,
+      categoryOneService: json['category_one_service'] != null
+          ? Category.fromJson(json['category_one_service'])
+          : null,
+      categoryTwoService: json['category_two_service'] != null
+          ? Category.fromJson(json['category_two_service'])
+          : null,
     );
   }
 
@@ -143,7 +155,7 @@ class Logo {
   }
 }
 
-class IndustryCategory{
+class IndustryCategory {
   final int id;
   final String name;
   final DateTime createdAt;

@@ -74,6 +74,11 @@ class SignInCubit extends Cubit<SignInState> {
         return;
       }
 
+      if (response.data['id'] == null) {
+        emit(SignInError('id_null_cok'));
+        return;
+      }
+
       rProfile mData = rProfile.fromJson(response.data);
       Utils.setProfile(mData);
       emit(SignInSuccess());
