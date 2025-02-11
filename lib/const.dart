@@ -6,7 +6,7 @@ class Const {
   static const String URL_WEB_DETAIL_PRODUCT = URL_WEB + '/product-detail';
   // static const String BASE_URL = 'http://192.168.50.100:3333';
   // static const String BASE_URL = 'https://api.med-map.org';
-  static const String BASE_URL = 'http://192.168.1.25:3333';
+  static const String BASE_URL = 'http://192.168.1.3:3333';
   // static const String BASE_URL = 'https://api.med-map.org';
   // static const String BASE_URL = 'https://api-m2health.mandatech.co.id';
   // static const String BASE_URL = 'https://be-mdmap.mandatech.co.id/';
@@ -23,7 +23,9 @@ class Const {
   static const String API_REGISTER = URL_API + '/auth/register/';
   // new API homecare
   static const String API_APPOINTMENT = URL_API + '/appointments';
+  static const String API_PROFILE = URL_API + '/profiles';
 
+// end new api
   static const String URL_PRIVACY = URL_WEB + '/privacy-policy';
 
   static const String ROLE = 'role';
