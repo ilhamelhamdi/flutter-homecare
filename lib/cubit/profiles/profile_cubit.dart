@@ -27,20 +27,6 @@ class ProfileCubit extends Cubit<ProfileState> {
         final profile = Profile.fromJson(profileData);
         emit(ProfileLoaded(profile));
       } else if (response.statusCode == 401) {
-        emit(ProfileLoaded(Profile(
-          id: 0,
-          userId: 0,
-          email: '',
-          username: '',
-          age: 0,
-          weight: 0,
-          height: 0,
-          phoneNumber: '',
-          homeAddress: '',
-          createdAt: '',
-          updatedAt: '',
-        )));
-      } else if (response.statusCode == 401) {
         emit(ProfileUnauthenticated());
       } else {
         emit(ProfileError('Failed to load profile'));
