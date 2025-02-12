@@ -34,41 +34,41 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: DecorationImage(
+                        image: const DecorationImage(
                           image: AssetImage(
                               'assets/images/images_olla.png'), // Replace with your image path
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           widget.pharmacistName,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        Text('Staff Nurse at Cardiology Department'),
-                        Row(
+                        const Text('Staff Nurse at Cardiology Department'),
+                        const Row(
                           children: [
                             Icon(Icons.location_on, color: Colors.blue),
                             SizedBox(width: 4),
                             Text('Royal Hospital, Singapore'),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.yellow),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Upcoming',
                             style: TextStyle(color: Colors.orange),
                           ),
@@ -79,48 +79,48 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Schedule Appointment',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
             ),
-            SizedBox(height: 8),
-            Row(
+            const SizedBox(height: 8),
+            const Row(
               children: [
                 Icon(Icons.calendar_today, color: Colors.grey),
                 SizedBox(width: 8),
                 Text('Monday, March 17, 2024'),
               ],
             ),
-            SizedBox(height: 8),
-            Row(
+            const SizedBox(height: 8),
+            const Row(
               children: [
                 Icon(Icons.access_time, color: Colors.grey),
                 SizedBox(width: 8),
                 Text('10:00 AM - 11:00 AM (60 Minutes)'),
               ],
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Patient Information',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             ListTile(
               title: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: 100, // Set a fixed width for the label
-                    child: Text('Full Name: '),
+                    child: const Text('Full Name: '),
                   ),
-                  Flexible(
+                  const Flexible(
                     child: Text('John Doe'),
                   ),
                 ],
@@ -132,9 +132,9 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                 children: [
                   Container(
                     width: 100, // Set a fixed width for the label
-                    child: Text('Age: '),
+                    child: const Text('Age: '),
                   ),
-                  Flexible(
+                  const Flexible(
                     child: Text('30'),
                   ),
                 ],
@@ -146,9 +146,9 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                 children: [
                   Container(
                     width: 100, // Set a fixed width for the label
-                    child: Text('Gender: '),
+                    child: const Text('Gender: '),
                   ),
-                  Flexible(
+                  const Flexible(
                     child: Text('Male'),
                   ),
                 ],
@@ -163,7 +163,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                     children: [
                       Container(
                         width: 100, // Set a fixed width for the label
-                        child: Text('Problem: '),
+                        child: const Text('Problem: '),
                       ),
                       Flexible(
                         child: Text(
@@ -181,7 +181,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                           _isExpanded = true;
                         });
                       },
-                      child: Text(
+                      child: const Text(
                         'View More',
                         style: TextStyle(color: Colors.blue),
                       ),
@@ -195,38 +195,38 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                 children: [
                   Container(
                     width: 100, // Set a fixed width for the label
-                    child: Text('Address: '),
+                    child: const Text('Address: '),
                   ),
-                  Flexible(
+                  const Flexible(
                     child: Text('123 Main Street, Singapore'),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Card(
               child: Container(
                 height: 200,
-                child: Center(
+                child: const Center(
                   child: Text('Google Map Placeholder'),
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Services',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Inject, Blood Glucose Check, Medication Administration, NGT Feeding',
               style: TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 16),
-            Row(
+            const SizedBox(height: 16),
+            const Row(
               children: [
                 Text(
                   'Estimated Budget',
@@ -239,8 +239,8 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                 Icon(Icons.info_outline_rounded, color: Colors.grey),
               ],
             ),
-            SizedBox(height: 8),
-            Column(
+            const SizedBox(height: 8),
+            const Column(
               children: [
                 Row(
                   children: [
@@ -317,18 +317,18 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF35C5CF),
+                  backgroundColor: const Color(0xFF35C5CF),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Pay',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             SizedBox(
               width: double.infinity, // Set the width to fill the parent
               height: 50, // Set a fixed height
@@ -341,23 +341,23 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        contentPadding: EdgeInsets.all(16.0),
+                        contentPadding: const EdgeInsets.all(16.0),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Align(
                               alignment: Alignment.topRight,
                               child: IconButton(
-                                icon: Icon(Icons.close),
+                                icon: const Icon(Icons.close),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
                               ),
                             ),
-                            Icon(Icons.warning_outlined,
+                            const Icon(Icons.warning_outlined,
                                 size: 50, color: Colors.red),
-                            SizedBox(height: 16),
-                            Text(
+                            const SizedBox(height: 16),
+                            const Text(
                               'Are you sure want to cancel this appointment?',
                               style: TextStyle(
                                 color: Colors.blue,
@@ -365,12 +365,12 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            SizedBox(height: 8),
-                            Text(
+                            const SizedBox(height: 8),
+                            const Text(
                               'You can rebook it later from the canceled appointment menu.',
                               textAlign: TextAlign.center,
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -378,14 +378,14 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text('No'),
+                                  child: const Text('No'),
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
                                     // Handle the cancellation logic here
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text('Yes, Cancel'),
+                                  child: const Text('Yes, Cancel'),
                                   style: ElevatedButton.styleFrom(
                                       // primary: Colors.red,
                                       ),
@@ -405,7 +405,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'Cancel',
                   style: TextStyle(color: Colors.white),
                 ),

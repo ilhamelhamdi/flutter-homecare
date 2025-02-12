@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/app_localzations.dart';
-import 'package:m2health/cubit/pharmacist/pharmacist_page.dart';
+import 'package:m2health/cubit/personal/personal_page.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/main.dart';
 
@@ -22,7 +22,7 @@ class PharmaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Container(
         width: 360,
         height: 260,
@@ -37,35 +37,35 @@ class PharmaCard extends StatelessWidget {
               children: [
                 Text(
                   '${pharma['title']}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   '${pharma['description']}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400, // Light font weight
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextButton(
                   onPressed: onTap,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(width: 5),
-                      Text(
+                      const SizedBox(width: 5),
+                      const Text(
                         'Book Now',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: Color(0xFF35C5CF),
                         ),
                       ),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       Image.asset(
                         'assets/icons/ic_play.png',
                         width: 20,
@@ -124,10 +124,10 @@ class _PharmaState extends State<DiabeticCare> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.translate('diabetic_care2'),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
       body: Container(
-        margin: EdgeInsets.fromLTRB(0, 0, 0, 60.0),
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 60.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -184,7 +184,7 @@ class _PharmaState extends State<DiabeticCare> {
                             : 1.0),
                   );
                 },
-                separatorBuilder: (context, index) => Divider(height: 1),
+                separatorBuilder: (context, index) => const Divider(height: 1),
               ),
             ),
           ],
@@ -224,7 +224,7 @@ class _PharmaDetailPageState extends State<PharmaDetailPage> {
       });
 
       // Simulate a response from the other side
-      Future.delayed(Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 1), () {
         setState(() {
           _chatHistory.add({
             "message": "This is a dummy response",
@@ -232,7 +232,7 @@ class _PharmaDetailPageState extends State<PharmaDetailPage> {
           });
           _scrollController.animateTo(
             _scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
           );
         });
