@@ -21,7 +21,11 @@ class Const {
   static const String API_PRODUCTS = URL_API + '/products/';
   static const String API_LOGIN = URL_API + '/auth/login';
   static const String API_REGISTER = URL_API + '/auth/register/';
+  // new API homecare
+  static const String API_APPOINTMENT = URL_API + '/appointments';
+  static const String API_PROFILE = URL_API + '/profiles';
 
+// end new api
   static const String URL_PRIVACY = URL_WEB + '/privacy-policy';
 
   static const String ROLE = 'role';

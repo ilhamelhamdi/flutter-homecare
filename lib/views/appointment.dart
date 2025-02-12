@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
-import 'package:m2health/main.dart';
-import 'package:m2health/widgets/bottombar.dart';
+import 'package:m2health/cubit/appointment/appointment_cubit.dart';
+import 'package:m2health/models/appointment.dart';
+import 'package:dio/dio.dart';
 
 class AppointmentPage extends StatefulWidget {
   static const String route = '/appointment';
@@ -19,6 +21,7 @@ class _AppointmentPageState extends State<AppointmentPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    context.read<AppointmentCubit>().fetchAppointments();
   }
 
   @override
@@ -67,29 +70,46 @@ class _AppointmentPageState extends State<AppointmentPage>
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
+      body: BlocBuilder<AppointmentCubit, AppointmentState>(
+        builder: (context, state) {
+          if (state is AppointmentLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is AppointmentLoaded) {
+            return Column(
               children: [
-                buildAppointmentList('Upcoming'),
-                buildAppointmentList('Completed'),
-                buildAppointmentList('Cancelled'),
-                buildAppointmentList('Missed'),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      buildAppointmentList(state.appointments, 'Upcoming'),
+                      buildAppointmentList(state.appointments, 'Completed'),
+                      buildAppointmentList(state.appointments, 'Cancelled'),
+                      buildAppointmentList(state.appointments, 'Missed'),
+                    ],
+                  ),
+                ),
               ],
-            ),
-          ),
-        ],
+            );
+          } else if (state is AppointmentError) {
+            return Center(child: Text(state.message));
+          } else {
+            return Center(child: Text('No appointments found'));
+          }
+        },
       ),
       // bottomNavigationBar: CustomBottomAppBar(),
     );
   }
 
-  Widget buildAppointmentList(String status) {
+  Widget buildAppointmentList(List<Appointment> appointments, String status) {
+    final filteredAppointments = appointments
+        .where((appointment) => appointment.status == status)
+        .toList();
+
     return ListView.builder(
-      itemCount: 10, // Dummy data count
+      itemCount: filteredAppointments.length,
       itemBuilder: (context, index) {
+        final appointment = filteredAppointments[index];
         return Card(
           margin: const EdgeInsets.all(10),
           child: Padding(
@@ -137,7 +157,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                             ),
                           ],
                         ),
-                        const Text('Monday, 12 July 2021 | 11:00 AM'),
+                        Text('${appointment.date} | ${appointment.hour}'),
                       ],
                     ),
                   ],

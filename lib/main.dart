@@ -5,6 +5,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:m2health/route/app_router.dart';
 import 'package:m2health/views/dashboard.dart';
 import 'package:m2health/views/favourites.dart';
+import 'package:m2health/cubit/appointment/appointment_cubit.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:navbar_router/navbar_router.dart';
 
 import 'const.dart';
@@ -101,41 +104,49 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: appSetting,
-      builder: (BuildContext context, Widget? child) {
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: 'm2health',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Const.colorDashboard),
-            useMaterial3: true,
-          ),
-          locale: DevicePreview.locale(context),
-          builder: (context, child) {
-            return Scaffold(
-              body: Stack(
-                children: [
-                  DevicePreview.appBuilder(context, child),
-                ],
-              ),
-              bottomNavigationBar: _showBottomAppBar ? BottomAppBar() : null,
-            );
-          },
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en', 'US'), // English
-            Locale('id', 'ID'), // Indo
-            Locale('zh', ''), // Chinese
-          ],
-          routerConfig: router,
-        );
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AppointmentCubit(Dio()),
+        ),
+      ],
+      child: AnimatedBuilder(
+        animation: appSetting,
+        builder: (BuildContext context, Widget? child) {
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'm2health',
+            theme: ThemeData(
+              colorScheme:
+                  ColorScheme.fromSeed(seedColor: Const.colorDashboard),
+              useMaterial3: true,
+            ),
+            locale: DevicePreview.locale(context),
+            builder: (context, child) {
+              return Scaffold(
+                body: Stack(
+                  children: [
+                    DevicePreview.appBuilder(context, child),
+                  ],
+                ),
+                bottomNavigationBar: _showBottomAppBar ? BottomAppBar() : null,
+              );
+            },
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en', 'US'), // English
+              Locale('id', 'ID'), // Indo
+              Locale('zh', ''), // Chinese
+            ],
+            routerConfig: router,
+          );
+        },
+      ),
     );
   }
 }

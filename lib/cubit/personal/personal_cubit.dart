@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'pharmacist_state.dart';
+import 'personal_state.dart';
 
 class PersonalCubit extends Cubit<PersonalState> {
   PersonalCubit() : super(PersonalInitial());

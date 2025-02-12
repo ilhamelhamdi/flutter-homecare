@@ -23,17 +23,17 @@ class SignUpPage extends StatelessWidget {
     }
   }
 
-  void _submitForm(BuildContext context) {
-    _validatePasswords();
-    if (_formKey.currentState!.validate() && _passwordError == null) {
-      context.read<SignUpCubit>().signUp(
-            _emailController.text,
-            _passwordController.text,
-            _usernameController.text,
-            role?.toLowerCase() ?? 'user',
-          );
-    }
-  }
+  // void _submitForm(BuildContext context) {
+  //   _validatePasswords();
+  //   if (_formKey.currentState!.validate() && _passwordError == null) {
+  //     context.read<SignUpCubit>().signUp(
+  //           _emailController.text,
+  //           _passwordController.text,
+  //           _usernameController.text,
+  //           role?.toLowerCase() ?? 'user',
+  //         );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +175,7 @@ class SignUpPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      items: <String>['User', 'Nurse']
+                      items: <String>['patient', 'nurse', 'manufacturer']
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -201,7 +201,12 @@ class SignUpPage extends StatelessWidget {
                           padding: const EdgeInsets.all(12.0),
                         ),
                         onPressed: () {
-                          _submitForm(context);
+                          context.read<SignUpCubit>().signUp(
+                                _emailController.text,
+                                _passwordController.text,
+                                _usernameController.text,
+                                role?.toLowerCase() ?? 'patient',
+                              );
                         },
                         child: const Text('Sign Up'),
                       ),
