@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/main.dart';
 import 'personal_cubit.dart';
+import 'personal_state.dart';
 import 'package:m2health/widgets/add_concern_page.dart';
 
 class PersonalPage extends StatelessWidget {
@@ -35,14 +36,88 @@ class PersonalPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Center(
-                    child: Text(
-                      'There are no issues added yet.\n Please add one or more issues so\nyou can proceed to the next step.',
-                      style: TextStyle(fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
                 ],
+              ),
+              Expanded(
+                child: BlocBuilder<PersonalCubit, PersonalState>(
+                  builder: (context, state) {
+                    if (state is PersonalLoading) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (state is PersonalLoaded) {
+                      final issues = state.issues;
+                      return issues.isEmpty
+                          ? Center(
+                              child: Text(
+                                'There are no issues added yet.\n Please add one or more issues so\nyou can proceed to the next step.',
+                                style: TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: issues.length,
+                              itemBuilder: (context, index) {
+                                final issue = issues[index];
+                                return Card(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              issue.title,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: Icon(Icons.delete,
+                                                  color: Colors.red),
+                                              onPressed: () {
+                                                context
+                                                    .read<PersonalCubit>()
+                                                    .deleteIssue(index);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(issue.description),
+                                        SizedBox(height: 8),
+                                        if (issue.images.isNotEmpty)
+                                          Row(
+                                            children: issue.images
+                                                .map<Widget>((image) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 8.0),
+                                                child: Image.asset(
+                                                  image,
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                    } else {
+                      return Center(child: Text('Failed to load issues'));
+                    }
+                  },
+                ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
