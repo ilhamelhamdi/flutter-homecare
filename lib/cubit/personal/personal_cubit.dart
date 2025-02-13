@@ -32,8 +32,27 @@ class PersonalCubit extends Cubit<PersonalState> {
     }
   }
 
-  void updateIssues(List<Issue> issues) {
-    emit(PersonalLoaded(issues));
+  void addIssue(Issue issue) async {
+    if (state is PersonalLoaded) {
+      final currentState = state as PersonalLoaded;
+      final updatedIssues = List<Issue>.from(currentState.issues)..add(issue);
+      emit(PersonalLoaded(updatedIssues));
+
+      try {
+        final token = await Utils.getSpString(Const.TOKEN);
+        await Dio().post(
+          '${Const.API_PERSONAL_CASES}',
+          data: issue.toJson(),
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+      } catch (e) {
+        emit(PersonalError(e.toString()));
+      }
+    }
   }
 
   void deleteIssue(int index) {

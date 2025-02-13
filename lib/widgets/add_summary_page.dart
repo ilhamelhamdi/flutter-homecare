@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'dart:io';
 import 'add_concern_page.dart';
 import 'add_issue_page.dart';
@@ -96,7 +98,10 @@ class AddSummaryPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AddIssuePage(),
+                          builder: (context) => BlocProvider.value(
+                            value: context.read<PersonalCubit>(),
+                            child: AddIssuePage(),
+                          ),
                         ),
                       );
                     },

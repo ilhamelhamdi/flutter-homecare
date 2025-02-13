@@ -42,6 +42,22 @@ class Issue {
       updatedAt: DateTime.parse(json['updated_at']),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'title': title,
+      'description': description,
+      'images': images.join(','),
+      'mobility_status': mobilityStatus,
+      'related_health_record': relatedHealthRecord,
+      'add_on': addOn,
+      'estimated_budget': estimatedBudget,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
 }
 
 abstract class PersonalState extends Equatable {

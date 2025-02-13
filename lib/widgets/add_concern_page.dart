@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/widgets/image_preview.dart';
 import 'add_summary_page.dart';
 import 'dart:io';
@@ -110,10 +112,13 @@ class _AddConcernPageState extends State<AddConcernPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddSummaryPage(
-                    issueTitle: _issueTitleController.text,
-                    description: _descriptionController.text,
-                    images: _images,
+                  builder: (context) => BlocProvider.value(
+                    value: context.read<PersonalCubit>(),
+                    child: AddSummaryPage(
+                      issueTitle: _issueTitleController.text,
+                      description: _descriptionController.text,
+                      images: _images,
+                    ),
                   ),
                 ),
               );
