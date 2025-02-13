@@ -1,26 +1,35 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
 import 'personal_state.dart';
 
 class PersonalCubit extends Cubit<PersonalState> {
   PersonalCubit() : super(PersonalInitial());
 
-  void loadPersonalDetails() {
+  void loadPersonalDetails() async {
     emit(PersonalLoading());
-    // Simulate loading data
-    Future.delayed(Duration(seconds: 1), () {
-      final issues = [
-        Issue(
-          title: 'Issue 1',
-          description: 'Description for issue 1',
-          images: ['assets/image1.png', 'assets/image2.png'],
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+      final response = await Dio().get(
+        '${Const.API_PERSONAL_CASES}',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
         ),
-        Issue(
-          title: 'Issue 2',
-          description: 'Description for issue 2',
-        ),
-      ];
-      emit(PersonalLoaded(issues));
-    });
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data['data'] as List;
+        final issues = data.map((json) => Issue.fromJson(json)).toList();
+        emit(PersonalLoaded(issues));
+      } else {
+        emit(PersonalError('Failed to load data'));
+      }
+    } catch (e) {
+      emit(PersonalError(e.toString()));
+    }
   }
 
   void updateIssues(List<Issue> issues) {

@@ -24,6 +24,7 @@ class Const {
   // new API homecare
   static const String API_APPOINTMENT = URL_API + '/appointments';
   static const String API_PROFILE = URL_API + '/profiles';
+  static const String API_PERSONAL_CASES = URL_API + '/personal-cases';
 
 // end new api
   static const String URL_PRIVACY = URL_WEB + '/privacy-policy';
