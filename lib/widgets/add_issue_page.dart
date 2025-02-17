@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
+import 'package:m2health/views/details/detail_pharma.dart';
+import 'package:m2health/views/payment.dart';
+import 'dart:io';
 
 class AddIssuePage extends StatefulWidget {
   @override
@@ -14,6 +17,38 @@ class _AddIssuePageState extends State<AddIssuePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final List<String> _images = [];
+
+  void _submitData() {
+    final issue = Issue(
+      id: 0,
+      userId: 1,
+      title: _titleController.text,
+      description: _descriptionController.text,
+      images: _images,
+      mobilityStatus: _mobilityStatus,
+      relatedHealthRecord: _selectedStatus,
+      addOn: '',
+      estimatedBudget: 0,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    print('Title: ${_titleController.text}');
+    print('Description: ${_descriptionController.text}');
+    print('Images: ${_images.join(', ')}');
+    print('Mobility Status: $_mobilityStatus');
+    print('Related Health Record: $_selectedStatus');
+
+    context.read<PersonalCubit>().addIssue(issue);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentPharma(
+          issue: issue,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,23 +180,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
               width: 352,
               height: 58,
               child: ElevatedButton(
-                onPressed: () {
-                  final issue = Issue(
-                    id: 0,
-                    userId: 1,
-                    title: _titleController.text,
-                    description: _descriptionController.text,
-                    images: _images,
-                    mobilityStatus: _mobilityStatus,
-                    relatedHealthRecord: _selectedStatus,
-                    addOn: '',
-                    estimatedBudget: 0,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  );
-                  context.read<PersonalCubit>().addIssue(issue);
-                  Navigator.pop(context);
-                },
+                onPressed: _submitData,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF35C5CF),
                   shape: RoundedRectangleBorder(

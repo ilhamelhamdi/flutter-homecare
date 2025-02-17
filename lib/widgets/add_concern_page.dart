@@ -21,6 +21,29 @@ class _AddConcernPageState extends State<AddConcernPage> {
     });
   }
 
+  void _submitData() {
+    final issueTitle = _issueTitleController.text;
+    final description = _descriptionController.text;
+
+    print('Issue Title: $issueTitle');
+    print('Description: $description');
+    print('Images: ${_images.map((image) => image.path).join(', ')}');
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider.value(
+          value: context.read<PersonalCubit>(),
+          child: AddSummaryPage(
+            issueTitle: issueTitle,
+            description: description,
+            images: _images,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,21 +131,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
           width: 352,
           height: 58,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BlocProvider.value(
-                    value: context.read<PersonalCubit>(),
-                    child: AddSummaryPage(
-                      issueTitle: _issueTitleController.text,
-                      description: _descriptionController.text,
-                      images: _images,
-                    ),
-                  ),
-                ),
-              );
-            },
+            onPressed: _submitData,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF35C5CF),
             ),

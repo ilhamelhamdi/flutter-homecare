@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:m2health/cubit/personal/personal_cubit.dart';
+import 'package:m2health/cubit/personal/personal_page.dart';
 import '../views/details/detail_pharma.dart';
 
 class ChatPharma extends StatelessWidget {
@@ -176,7 +178,7 @@ class ChatPharma extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => DetailPersonalPage()),
+                                  builder: (context) => PersonalPage()),
                             );
                           },
                           child: Text(
