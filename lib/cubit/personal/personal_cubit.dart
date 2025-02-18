@@ -31,7 +31,7 @@ class PersonalCubit extends Cubit<PersonalState> {
         emit(PersonalLoaded(issues));
       } else {
         print('Failed to load data: ${response.statusMessage}');
-        emit(PersonalError('Failed to load data'));
+        emit(const PersonalError('Failed to load data'));
       }
     } catch (e) {
       print('Error: $e');
@@ -62,12 +62,37 @@ class PersonalCubit extends Cubit<PersonalState> {
     }
   }
 
-  void deleteIssue(int index) {
+  void deleteIssue(int index) async {
     if (state is PersonalLoaded) {
       final currentState = state as PersonalLoaded;
+      final issue = currentState.issues[index];
       final updatedIssues = List<Issue>.from(currentState.issues)
         ..removeAt(index);
       emit(PersonalLoaded(updatedIssues));
+
+      try {
+        final token = await Utils.getSpString(Const.TOKEN);
+        final response = await Dio().delete(
+          '${Const.API_PERSONAL_CASES}/${issue.id}',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        if (response.statusCode != 200) {
+          // If the delete request failed, re-add the issue to the state
+          updatedIssues.insert(index, issue);
+          emit(PersonalLoaded(updatedIssues));
+          emit(const PersonalError('Failed to delete issue from the database'));
+        }
+      } catch (e) {
+        // If the delete request failed, re-add the issue to the state
+        updatedIssues.insert(index, issue);
+        emit(PersonalLoaded(updatedIssues));
+        emit(PersonalError(e.toString()));
+      }
     }
   }
 }
