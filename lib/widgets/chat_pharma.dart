@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_page.dart';
-import '../views/details/detail_pharma.dart';
+import '../views/details/pharma_add_on.dart';
 
 class ChatPharma extends StatelessWidget {
   final List<Map<String, dynamic>> chatHistory;
@@ -27,8 +27,8 @@ class ChatPharma extends StatelessWidget {
               width: 24,
               height: 24,
             ),
-            SizedBox(width: 8),
-            Column(
+            const SizedBox(width: 8),
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -75,8 +75,8 @@ class ChatPharma extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (index == 0)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 130.0),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 130.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -91,9 +91,9 @@ class ChatPharma extends StatelessWidget {
                           ],
                         ),
                       ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Container(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           left: 14, right: 14, top: 10, bottom: 10),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +107,7 @@ class ChatPharma extends StatelessWidget {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Align(
                               alignment: (chatHistory[index]["isSender"]
@@ -125,10 +125,10 @@ class ChatPharma extends StatelessWidget {
                                     ),
                                   ],
                                   color: (chatHistory[index]["isSender"]
-                                      ? Color(0xFF35C5CF)
+                                      ? const Color(0xFF35C5CF)
                                       : Colors.white),
                                 ),
-                                padding: EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(16),
                                 child: Text(
                                   chatHistory[index]["message"],
                                   style: TextStyle(
@@ -159,16 +159,17 @@ class ChatPharma extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline_rounded, color: Colors.grey),
-                        SizedBox(width: 5),
-                        Text(
+                        const Icon(Icons.info_outline_rounded,
+                            color: Colors.grey),
+                        const SizedBox(width: 5),
+                        const Text(
                           "Need Help? ",
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 12,
                           ),
@@ -181,7 +182,7 @@ class ChatPharma extends StatelessWidget {
                                   builder: (context) => PersonalPage()),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             "Request help from the Pharmacist",
                             style: TextStyle(
                               color: Color(0xFF35C5CF),
@@ -192,7 +193,7 @@ class ChatPharma extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
@@ -200,7 +201,7 @@ class ChatPharma extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.grey.shade200,
                             borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
                                 color: Colors.black26,
                                 blurRadius: 10,
@@ -212,7 +213,7 @@ class ChatPharma extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: TextField(
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     hintText: 'Write your message',
                                     hintStyle: TextStyle(
                                       color: Color(0xFFA1A1A1),
@@ -225,15 +226,15 @@ class ChatPharma extends StatelessWidget {
                                 ),
                               ),
                               IconButton(
-                                icon: Icon(Icons.mic_none_outlined,
+                                icon: const Icon(Icons.mic_none_outlined,
                                     color: Colors.grey),
                                 onPressed: () {
                                   // Add your mic button logic here
                                 },
                               ),
                               IconButton(
-                                color: Color(0xFF35C5CF),
-                                icon: Icon(
+                                color: const Color(0xFF35C5CF),
+                                icon: const Icon(
                                   Icons.send,
                                 ),
                                 onPressed: () {

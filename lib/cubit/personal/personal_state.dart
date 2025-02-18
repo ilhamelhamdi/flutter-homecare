@@ -5,7 +5,7 @@ class Issue {
   final int userId;
   final String title;
   final String description;
-  final List<String> images;
+  final String images; // Change to single string URL
   final String mobilityStatus;
   final String relatedHealthRecord;
   final String addOn;
@@ -18,7 +18,7 @@ class Issue {
     required this.userId,
     required this.title,
     required this.description,
-    required this.images,
+    required this.images, // Change to single string URL
     required this.mobilityStatus,
     required this.relatedHealthRecord,
     required this.addOn,
@@ -29,17 +29,19 @@ class Issue {
 
   factory Issue.fromJson(Map<String, dynamic> json) {
     return Issue(
-      id: json['id'],
-      userId: json['user_id'],
-      title: json['title'],
-      description: json['description'],
-      images: (json['images'] as String).split(','),
-      mobilityStatus: json['mobility_status'],
-      relatedHealthRecord: json['related_health_record'],
-      addOn: json['add_on'],
-      estimatedBudget: json['estimated_budget'].toDouble(),
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      id: json['id'] ?? 0,
+      userId: json['user_id'] ?? 0,
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      images: json['images'] ?? '', // Change to single string URL
+      mobilityStatus: json['mobility_status'] ?? '',
+      relatedHealthRecord: json['related_health_record'] ?? '',
+      addOn: json['add_on'] ?? '',
+      estimatedBudget: (json['estimated_budget'] as num?)?.toDouble() ?? 0.0,
+      createdAt: DateTime.parse(
+          json['created_at'] ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(
+          json['updated_at'] ?? DateTime.now().toIso8601String()),
     );
   }
 
@@ -49,7 +51,7 @@ class Issue {
       'user_id': userId,
       'title': title,
       'description': description,
-      'images': images.join(','),
+      'images': images, // Change to single string URL
       'mobility_status': mobilityStatus,
       'related_health_record': relatedHealthRecord,
       'add_on': addOn,

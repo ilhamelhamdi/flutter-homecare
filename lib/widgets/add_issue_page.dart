@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
-import 'package:m2health/views/details/detail_pharma.dart';
+import 'package:m2health/views/details/pharma_add_on.dart';
 import 'package:m2health/views/payment.dart';
 import 'dart:io';
 
@@ -16,7 +16,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
   String _selectedStatus = 'Select Status';
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final List<String> _images = [];
+  final List<File> _images = [];
 
   void _submitData() {
     final issue = Issue(
@@ -24,7 +24,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
       userId: 1,
       title: _titleController.text,
       description: _descriptionController.text,
-      images: _images,
+      images: _images.map((image) => image.path).join(', '),
       mobilityStatus: _mobilityStatus,
       relatedHealthRecord: _selectedStatus,
       addOn: '',
@@ -35,7 +35,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
 
     print('Title: ${_titleController.text}');
     print('Description: ${_descriptionController.text}');
-    print('Images: ${_images.join(', ')}');
+    print('Images: ${_images.map((image) => image.path).join(', ')}');
     print('Mobility Status: $_mobilityStatus');
     print('Related Health Record: $_selectedStatus');
 
@@ -71,8 +71,8 @@ class _AddIssuePageState extends State<AddIssuePage> {
             Column(
               children: [
                 RadioListTile<String>(
-                  title: const Text('Bedbound'),
-                  value: 'bedbound',
+                  title: const Text('Walk'),
+                  value: 'walk',
                   groupValue: _mobilityStatus,
                   onChanged: (value) {
                     setState(() {
@@ -82,8 +82,8 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   activeColor: const Color(0xFF35C5CF),
                 ),
                 RadioListTile<String>(
-                  title: const Text('Wheelchair bound'),
-                  value: 'wheelchair bound',
+                  title: const Text('Stand'),
+                  value: 'stand',
                   groupValue: _mobilityStatus,
                   onChanged: (value) {
                     setState(() {
@@ -93,8 +93,8 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   activeColor: const Color(0xFF35C5CF),
                 ),
                 RadioListTile<String>(
-                  title: const Text('Walking Aid'),
-                  value: 'Walking Aid',
+                  title: const Text('Chair'),
+                  value: 'chair',
                   groupValue: _mobilityStatus,
                   onChanged: (value) {
                     setState(() {
@@ -104,8 +104,8 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   activeColor: const Color(0xFF35C5CF),
                 ),
                 RadioListTile<String>(
-                  title: const Text('Mobile Without Aid'),
-                  value: 'Mobile Without Aid',
+                  title: const Text('Bed'),
+                  value: 'bed',
                   groupValue: _mobilityStatus,
                   onChanged: (value) {
                     setState(() {

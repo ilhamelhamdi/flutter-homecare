@@ -91,20 +91,11 @@ class PersonalPage extends StatelessWidget {
                                       Text(issue.description),
                                       const SizedBox(height: 8),
                                       if (issue.images.isNotEmpty)
-                                        Row(
-                                          children:
-                                              issue.images.map<Widget>((image) {
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 8.0),
-                                              child: Image.asset(
-                                                image,
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            );
-                                          }).toList(),
+                                        Image.network(
+                                          issue.images,
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
                                         ),
                                     ],
                                   ),
