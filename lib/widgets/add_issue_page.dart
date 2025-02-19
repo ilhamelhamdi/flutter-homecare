@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m2health/const.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
+import 'package:m2health/utils.dart';
 import 'package:m2health/views/details/pharma_add_on.dart';
 import 'package:m2health/views/payment.dart';
 import 'dart:io';
@@ -18,13 +21,13 @@ class _AddIssuePageState extends State<AddIssuePage> {
   final TextEditingController _descriptionController = TextEditingController();
   final List<File> _images = [];
 
-  void _submitData() {
+  Future<void> _submitData() async {
     final issue = Issue(
       id: 0,
       userId: 1,
       title: _titleController.text,
       description: _descriptionController.text,
-      images: _images.map((image) => image.path).join(', '),
+      images: [], // Placeholder, will be updated after upload
       mobilityStatus: _mobilityStatus,
       relatedHealthRecord: _selectedStatus,
       addOn: '',
@@ -38,6 +41,54 @@ class _AddIssuePageState extends State<AddIssuePage> {
     print('Images: ${_images.map((image) => image.path).join(', ')}');
     print('Mobility Status: $_mobilityStatus');
     print('Related Health Record: $_selectedStatus');
+
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+      final formData = FormData.fromMap({
+        'id': issue.id,
+        'user_id': issue.userId,
+        'title': issue.title,
+        'description': issue.description,
+        'mobility_status': issue.mobilityStatus,
+        'related_health_record': issue.relatedHealthRecord,
+        'add_on': issue.addOn,
+        'estimated_budget': issue.estimatedBudget,
+        'created_at': issue.createdAt.toIso8601String(),
+        'updated_at': issue.updatedAt.toIso8601String(),
+        'images': _images.isNotEmpty
+            ? await Future.wait(_images.map((image) async {
+                return await MultipartFile.fromFile(image.path,
+                    filename: image.path.split('/').last);
+              }))
+            : null,
+      });
+
+      final response = await Dio().post(
+        '${Const.API_PERSONAL_CASES}',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Issue added successfully');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PaymentPharma(
+              issue: issue,
+            ),
+          ),
+        );
+      } else {
+        print('Failed to add issue: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
 
     context.read<PersonalCubit>().addIssue(issue);
     Navigator.push(

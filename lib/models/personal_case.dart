@@ -2,7 +2,7 @@ class PersonalCase {
   final int id;
   final String title;
   final String description;
-  final String images; // Change to single string URL
+  final List<String> images; // Change to list of strings
   final String mobilityStatus;
   final String relatedHealthRecord;
   final String addOn;
@@ -13,7 +13,7 @@ class PersonalCase {
     required this.id,
     required this.title,
     required this.description,
-    required this.images, // Change to single string URL
+    required this.images, // Change to list of strings
     required this.mobilityStatus,
     required this.relatedHealthRecord,
     required this.addOn,
@@ -27,7 +27,9 @@ class PersonalCase {
       userId: json['user_id'] ?? 0,
       title: json['title'] ?? '',
       description: json['description'] ?? '',
-      images: json['images'] ?? '', // Change to single string URL
+      images: json['images'] is String
+          ? [json['images']]
+          : List<String>.from(json['images'] ?? []),
       mobilityStatus: json['mobility_status'] ?? '',
       relatedHealthRecord: json['related_health_record'] ?? '',
       addOn: json['add_on'] ?? '',
@@ -40,7 +42,7 @@ class PersonalCase {
       'id': id,
       'title': title,
       'description': description,
-      'images': images, // Change to single string URL
+      'images': images, // Change to list of strings
       'mobility_status': mobilityStatus,
       'related_health_record': relatedHealthRecord,
       'add_on': addOn,

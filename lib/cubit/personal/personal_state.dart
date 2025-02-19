@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 class Issue {
@@ -5,7 +7,7 @@ class Issue {
   final int userId;
   final String title;
   final String description;
-  final String images; // Change to single string URL
+  final List<String> images; // Change to list of strings
   final String mobilityStatus;
   final String relatedHealthRecord;
   final String addOn;
@@ -18,7 +20,7 @@ class Issue {
     required this.userId,
     required this.title,
     required this.description,
-    required this.images, // Change to single string URL
+    required this.images, // Change to list of strings
     required this.mobilityStatus,
     required this.relatedHealthRecord,
     required this.addOn,
@@ -33,7 +35,7 @@ class Issue {
       userId: json['user_id'] ?? 0,
       title: json['title'] ?? '',
       description: json['description'] ?? '',
-      images: json['images'] ?? '', // Change to single string URL
+      images: _parseImages(json['images']),
       mobilityStatus: json['mobility_status'] ?? '',
       relatedHealthRecord: json['related_health_record'] ?? '',
       addOn: json['add_on'] ?? '',
@@ -45,13 +47,27 @@ class Issue {
     );
   }
 
+  static List<String> _parseImages(dynamic images) {
+    if (images == null) return [];
+    if (images is List) return images.map((e) => e.toString()).toList();
+    if (images is String) {
+      try {
+        return List<String>.from(jsonDecode(images));
+      } catch (e) {
+        print("Error parsing images: $e");
+        return [];
+      }
+    }
+    return [];
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'user_id': userId,
       'title': title,
       'description': description,
-      'images': images, // Change to single string URL
+      'images': images, // Change to list of strings
       'mobility_status': mobilityStatus,
       'related_health_record': relatedHealthRecord,
       'add_on': addOn,

@@ -48,7 +48,7 @@ class _PaymentPharmaState extends State<PaymentPharma> {
       "user_id": userId,
       "title": widget.issue.title,
       "description": widget.issue.description,
-      "images": (widget.issue.images as List<String>).join(','),
+      "images": widget.issue.images,
       "mobility_status": widget.issue.mobilityStatus,
       "related_health_record": widget.issue.relatedHealthRecord,
       "add_on": _selectedServices
