@@ -44,71 +44,76 @@ class PersonalPage extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is PersonalLoaded) {
                     final issues = state.issues;
-                    return issues.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'There are no issues added yet.\n Please add one or more issues so\nyou can proceed to the next step.',
-                              style: TextStyle(fontSize: 16),
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: issues.length,
-                            itemBuilder: (context, index) {
-                              final issue = issues[index];
-                              return Card(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            issue.title,
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        context.read<PersonalCubit>().loadPersonalDetails();
+                      },
+                      child: issues.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'There are no issues added yet.\n Please add one or more issues so\nyou can proceed to the next step.',
+                                style: TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: issues.length,
+                              itemBuilder: (context, index) {
+                                final issue = issues[index];
+                                return Card(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              issue.title,
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete,
-                                                color: Colors.red),
-                                            onPressed: () {
-                                              context
-                                                  .read<PersonalCubit>()
-                                                  .deleteIssue(index);
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(issue.description),
-                                      const SizedBox(height: 8),
-                                      if (issue.images.isNotEmpty)
-                                        Wrap(
-                                          spacing: 8.0,
-                                          runSpacing: 8.0,
-                                          children: issue.images.map((image) {
-                                            return Image.network(
-                                              image,
-                                              width: 100,
-                                              height: 100,
-                                              fit: BoxFit.cover,
-                                            );
-                                          }).toList(),
+                                            IconButton(
+                                              icon: const Icon(Icons.delete,
+                                                  color: Colors.red),
+                                              onPressed: () {
+                                                context
+                                                    .read<PersonalCubit>()
+                                                    .deleteIssue(index);
+                                              },
+                                            ),
+                                          ],
                                         ),
-                                    ],
+                                        const SizedBox(height: 8),
+                                        Text(issue.description),
+                                        const SizedBox(height: 8),
+                                        if (issue.images.isNotEmpty)
+                                          Wrap(
+                                            spacing: 8.0,
+                                            runSpacing: 8.0,
+                                            children: issue.images.map((image) {
+                                              return Image.network(
+                                                image,
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover,
+                                              );
+                                            }).toList(),
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          );
+                                );
+                              },
+                            ),
+                    );
                   } else {
                     return const Center(child: Text('Failed to load issues'));
                   }
@@ -123,15 +128,7 @@ class PersonalPage extends StatelessWidget {
                   height: 58,
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BlocProvider.value(
-                            value: context.read<PersonalCubit>(),
-                            child: AddConcernPage(),
-                          ),
-                        ),
-                      );
+                      showAddConcernPage(context);
                     },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Color(0xFF35C5CF)),
@@ -154,7 +151,7 @@ class PersonalPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomePage(),
+                          builder: (context) => AddIssuePage(),
                         ),
                       );
                     },

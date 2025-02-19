@@ -64,7 +64,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
       });
 
       final response = await Dio().post(
-        '${Const.API_PERSONAL_CASES}',
+        Const.API_PERSONAL_CASES,
         data: formData,
         options: Options(
           headers: {
