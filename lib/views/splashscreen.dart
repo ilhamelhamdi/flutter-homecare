@@ -64,25 +64,25 @@ class SplashScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // SizedBox(
-            //   width: 357,
-            //   child: ElevatedButton(
-            //     onPressed: () {
-            //       context.go('/sign-in');
-            //     },
-            //     style: ElevatedButton.styleFrom(
-            //       backgroundColor: Const.tosca,
-            //       padding: const EdgeInsets.symmetric(vertical: 16),
-            //       shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(10),
-            //       ),
-            //     ),
-            //     child: const Text(
-            //       'Get Started',
-            //       style: TextStyle(color: Colors.white),
-            //     ),
-            //   ),
-            // ),
+            SizedBox(
+              width: 357,
+              child: ElevatedButton(
+                onPressed: () {
+                  context.go('/sign-in');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Const.tosca,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'Get Started',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () {

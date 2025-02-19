@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'dart:io';
 import 'add_concern_page.dart';
 import 'add_issue_page.dart';
@@ -18,7 +20,7 @@ class AddSummaryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Summary',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
@@ -28,24 +30,24 @@ class AddSummaryPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Tell us your concern',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Issue Title: $issueTitle',
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Description: $description',
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               children: images.map((image) {
                 return Padding(
@@ -59,7 +61,7 @@ class AddSummaryPage extends StatelessWidget {
                 );
               }).toList(),
             ),
-            Spacer(),
+            const Spacer(),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -76,18 +78,18 @@ class AddSummaryPage extends StatelessWidget {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Color(0xFF35C5CF)),
+                      side: const BorderSide(color: Color(0xFF35C5CF)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Add an Issue',
                       style: TextStyle(color: Color(0xFF35C5CF), fontSize: 20),
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 SizedBox(
                   width: 352,
                   height: 58,
@@ -96,19 +98,22 @@ class AddSummaryPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AddIssuePage(),
+                          builder: (context) => BlocProvider.value(
+                            value: context.read<PersonalCubit>(),
+                            child: AddIssuePage(),
+                          ),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF35C5CF),
+                      backgroundColor: const Color(0xFF35C5CF),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Next',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                 ),

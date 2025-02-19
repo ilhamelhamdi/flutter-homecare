@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:m2health/route/app_router.dart';
@@ -26,11 +27,18 @@ void main() async {
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AppLanguage(),
-      child: DevicePreview(
-        enabled: !kReleaseMode,
-        builder: (context) => MyApp(appLanguage: appLanguage),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AppointmentCubit(Dio())),
+        BlocProvider(
+            create: (context) => PersonalCubit()..loadPersonalDetails()),
+      ],
+      child: ChangeNotifierProvider(
+        create: (context) => AppLanguage(),
+        child: DevicePreview(
+          enabled: !kReleaseMode,
+          builder: (context) => MyApp(appLanguage: appLanguage),
+        ),
       ),
     ),
   );
@@ -106,9 +114,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => AppointmentCubit(Dio())),
         BlocProvider(
-          create: (context) => AppointmentCubit(Dio()),
-        ),
+            create: (context) => PersonalCubit()..loadPersonalDetails()),
       ],
       child: AnimatedBuilder(
         animation: appSetting,
