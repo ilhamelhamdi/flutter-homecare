@@ -30,76 +30,46 @@ class _AddConcernPageState extends State<AddConcernPage> {
     final issueTitle = _issueTitleController.text;
     final description = _descriptionController.text;
 
-    print('Issue Title: $issueTitle');
-    print('Description: $description');
-    print('Images: ${_images.map((image) => image.path).join(', ')}}');
-
-    // Validate the data
     if (issueTitle.isEmpty || description.isEmpty) {
       print('Error: Issue title and description are required.');
       return;
     }
 
-    // Upload images and get URLs
-    List<String> imageUrls = [];
-    if (_images.isNotEmpty) {
-      for (File image in _images) {
-        try {
-          String fileName = image.path.split('/').last;
-          FormData formData = FormData.fromMap({
-            "file":
-                await MultipartFile.fromFile(image.path, filename: fileName),
-          });
-
-          final token =
-              await Utils.getSpString(Const.TOKEN); // Retrieve the token
-          final response = await Dio().post(
-            '${Const.API_PERSONAL_CASES}/upload',
-            data: formData,
-            options: Options(
-              headers: {
-                'Authorization':
-                    'Bearer $token', // Include the token in the headers
-              },
-            ),
-          );
-
-          if (response.statusCode == 200) {
-            imageUrls.add(response.data['url']);
-          } else {
-            print('Failed to upload image: ${response.statusMessage}');
-          }
-        } catch (e) {
-          print('Error uploading image: $e');
-        }
-      }
-    }
-
-    // Prepare the data to be sent to the API
-    final data = {
-      "user_id": 1,
-      "title": issueTitle,
-      "description": description,
-      "images": imageUrls,
-      "mobility_status": "wheel",
-      "related_health_record": "Health Record",
-      "add_on": "additional",
-      "estimated_budget": 1000,
-      "created_at": DateTime.now().toIso8601String(),
-      "updated_at": DateTime.now().toIso8601String(),
-    };
-
-    print('Data to be submitted: $data');
-
     try {
       final token = await Utils.getSpString(Const.TOKEN); // Retrieve the token
+
+      // Create FormData
+      FormData formData = FormData.fromMap({
+        "user_id": 1,
+        "title": issueTitle,
+        "description": description,
+        "mobility_status": "wheel",
+        "related_health_record": "Health Record",
+        "add_on": "additional",
+        "estimated_budget": 1000,
+        "created_at": DateTime.now().toIso8601String(),
+        "updated_at": DateTime.now().toIso8601String(),
+      });
+
+      // Add images to FormData
+      for (File image in _images) {
+        formData.files.add(
+          MapEntry(
+            "images[]", // Adjust according to backend API
+            await MultipartFile.fromFile(image.path,
+                filename: image.path.split('/').last),
+          ),
+        );
+      }
+
+      // Send data to backend
       final response = await Dio().post(
         '${Const.API_PERSONAL_CASES}',
-        data: jsonEncode(data),
+        data: formData,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
           },
         ),
       );
