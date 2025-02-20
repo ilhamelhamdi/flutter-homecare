@@ -6,20 +6,44 @@ import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/views/details/pharma_add_on.dart';
-import 'package:m2health/views/payment.dart';
 import 'dart:io';
 
 class AddIssuePage extends StatefulWidget {
+  final Issue? issue;
+
+  AddIssuePage({this.issue});
+
   @override
   _AddIssuePageState createState() => _AddIssuePageState();
 }
 
 class _AddIssuePageState extends State<AddIssuePage> {
-  String _mobilityStatus = 'bedbound';
-  String _selectedStatus = 'Select Status';
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final List<File> _images = [];
+  late String _mobilityStatus;
+  late String _selectedStatus;
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late List<File> _images;
+
+  final List<String> _statusOptions = [
+    'Select Status',
+    'Status 1',
+    'Status 2',
+    'Status 3'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _mobilityStatus = widget.issue?.mobilityStatus ?? 'bedbound';
+    _selectedStatus = _statusOptions.contains(widget.issue?.relatedHealthRecord)
+        ? widget.issue!.relatedHealthRecord
+        : 'Select Status';
+    _titleController = TextEditingController(text: widget.issue?.title ?? '');
+    _descriptionController =
+        TextEditingController(text: widget.issue?.description ?? '');
+    _images =
+        []; // Initialize with empty list or load existing images if needed
+  }
 
   Future<void> _submitData() async {
     final issue = Issue(
@@ -183,12 +207,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: _selectedStatus,
-                  items: <String>[
-                    'Select Status',
-                    'Status 1',
-                    'Status 2',
-                    'Status 3'
-                  ].map((String value) {
+                  items: _statusOptions.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),

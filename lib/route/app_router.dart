@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:m2health/cubit/locations/location_page.dart';
 import 'package:m2health/cubit/partnership/request_page.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
-import 'package:m2health/cubit/service_request/service_request_page.dart';
 import 'package:m2health/cubit/signup/sign_up_page.dart';
 import 'package:m2health/cubit/signin/sign_in_page.dart';
 // import 'package:m2health/cubit/submenu/submenu_page.dart';
@@ -24,13 +23,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) =>
           SplashScreen(), // Set SplashScreen as the initial route
     ),
-    GoRoute(
-      path: AppRoutes.service_request,
-      builder: (context, state) {
-        final itemId = state.extra as int;
-        return ServiceRequestPage(itemId: itemId);
-      },
-    ),
+
     GoRoute(
       path: '/locations',
       builder: (context, state) => LocationPage(),
