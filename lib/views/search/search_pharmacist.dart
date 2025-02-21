@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:m2health/utils.dart';
 import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
 
@@ -56,10 +57,43 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
     }
   }
 
+  Future<void> updateFavoriteStatus(int pharmacistId, bool isFavorite) async {
+    try {
+      final userId = await Utils.getSpString(
+          Const.USER_ID); // Get user ID from shared preferences
+      final token = await Utils.getSpString(
+          Const.TOKEN); // Get bearer token from shared preferences
+
+      final response = await Dio().post(
+        'http://localhost:3333/v1/favorites',
+        data: {
+          'user_id': userId,
+          'item_id': pharmacistId,
+          'item_type': 'pharmacist',
+          'highlighted': isFavorite ? 1 : 0,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update favorite status');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   void _toggleFavorite(int index) {
     setState(() {
       pharmacists[index]['isFavorite'] = !pharmacists[index]['isFavorite'];
     });
+    print('Toggled favorite for pharmacist ID: ${pharmacists[index]['id']}');
+    print('New favorite status: ${pharmacists[index]['isFavorite']}');
+    updateFavoriteStatus(
+        pharmacists[index]['id'], pharmacists[index]['isFavorite']);
   }
 
   @override

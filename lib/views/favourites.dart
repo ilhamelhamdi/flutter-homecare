@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:m2health/utils.dart';
+import 'package:m2health/const.dart';
 
 class FavouritesPage extends StatefulWidget {
   @override
@@ -6,43 +9,99 @@ class FavouritesPage extends StatefulWidget {
 }
 
 class _FavouritesPageState extends State<FavouritesPage> {
-  final List<Map<String, dynamic>> pharmacists = [
-    {
-      'name': 'Olla Olivia',
-      'image': 'assets/images/images_olla.png',
-      'rating': 4.5,
-      'isFavorite': true,
-    },
-    {
-      'name': 'Tisa Erlangga',
-      'image': 'assets/images/images_tisa.png',
-      'rating': 4.0,
-      'isFavorite': false,
-    },
-    {
-      'name': 'Arieska Budiono',
-      'image': 'assets/images/images_arieska.png',
-      'rating': 4.8,
-      'isFavorite': true,
-    },
-    {
-      'name': 'Peter Xu',
-      'image': 'assets/images/images_peter.png',
-      'rating': 4.3,
-      'isFavorite': false,
-    },
-    {
-      'name': 'Dr. Rianda Tan',
-      'image': 'assets/images/images_rianda.png',
-      'rating': 4.7,
-      'isFavorite': true,
-    },
-  ];
+  List<Map<String, dynamic>> pharmacists = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFavoritePharmacists();
+  }
+
+  Future<void> fetchFavoritePharmacists() async {
+    try {
+      final userId = await Utils.getSpString(
+          Const.USER_ID); // Get user ID from shared preferences
+      final token = await Utils.getSpString(
+          Const.TOKEN); // Get bearer token from shared preferences
+
+      final response = await Dio().get(
+        'http://localhost:3333/v1/favorites',
+        queryParameters: {
+          'user_id': userId,
+          'item_type': 'pharmacist',
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          pharmacists = List<Map<String, dynamic>>.from(response.data['data'])
+              .map((item) {
+            final pharmacist = item['item'];
+            return {
+              'id': item['item_id'],
+              'name': pharmacist != null ? pharmacist['name'] ?? '' : '',
+              'image': pharmacist != null ? pharmacist['avatar'] ?? '' : '',
+              'rating': pharmacist != null
+                  ? (pharmacist['rating'] ?? 0.0).toDouble()
+                  : 0.0,
+              'isFavorite': item['highlighted'] == 1,
+            };
+          }).toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Error: $e');
+    }
+  }
+
+  Future<void> updateFavoriteStatus(int pharmacistId, bool isFavorite) async {
+    try {
+      final userId = await Utils.getSpString(
+          Const.USER_ID); // Get user ID from shared preferences
+      final token = await Utils.getSpString(
+          Const.TOKEN); // Get bearer token from shared preferences
+
+      final response = await Dio().post(
+        'http://localhost:3333/v1/favorites',
+        data: {
+          'user_id': userId,
+          'item_id': pharmacistId,
+          'item_type': 'pharmacist',
+          'highlighted': isFavorite ? 1 : 0,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update favorite status');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   void _toggleFavorite(int index) {
     setState(() {
       pharmacists[index]['isFavorite'] = !pharmacists[index]['isFavorite'];
     });
+    updateFavoriteStatus(
+        pharmacists[index]['id'], pharmacists[index]['isFavorite']);
   }
 
   @override
@@ -60,80 +119,82 @@ class _FavouritesPageState extends State<FavouritesPage> {
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: favoritePharmacists.length,
-        itemBuilder: (context, index) {
-          final pharmacist = favoritePharmacists[index];
-          return Card(
-            margin: EdgeInsets.all(10),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  Stack(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage:
-                            AssetImage(pharmacist['image'] as String),
-                        radius: 30,
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: favoritePharmacists.length,
+              itemBuilder: (context, index) {
+                final pharmacist = favoritePharmacists[index];
+                return Card(
+                  margin: EdgeInsets.all(10),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
                       children: [
-                        Text(
-                          pharmacist['name'] as String,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text('Pharmacist'),
-                        Row(
+                        Stack(
                           children: [
-                            TextButton(
-                              onPressed: () {},
-                              child: Text(
-                                'Appointment',
-                                style: TextStyle(color: Colors.black),
-                              ),
+                            CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(pharmacist['image'] as String),
+                              radius: 30,
                             ),
-                            IconButton(
-                              icon: Icon(
-                                pharmacist['isFavorite'] as bool
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                ),
                               ),
-                              color: Color(0xFF35C5CF),
-                              onPressed: () {
-                                _toggleFavorite(index);
-                              },
                             ),
                           ],
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                pharmacist['name'] as String,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text('Pharmacist'),
+                              Row(
+                                children: [
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      'Appointment',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      pharmacist['isFavorite'] as bool
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                    ),
+                                    color: Color(0xFF35C5CF),
+                                    onPressed: () {
+                                      _toggleFavorite(index);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
