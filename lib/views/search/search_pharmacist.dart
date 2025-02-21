@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:m2health/utils.dart';
 import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
 
@@ -8,43 +10,90 @@ class SearchPharmacistPage extends StatefulWidget {
 }
 
 class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
-  final List<Map<String, dynamic>> pharmacists = [
-    {
-      'name': 'Olla Olivia',
-      'image': 'assets/images/images_olla.png',
-      'rating': 4.5,
-      'isFavorite': false,
-    },
-    {
-      'name': 'Tisa Erlangga',
-      'image': 'assets/images/images_tisa.png',
-      'rating': 4.0,
-      'isFavorite': false,
-    },
-    {
-      'name': 'Arieska Budiono',
-      'image': 'assets/images/images_arieska.png',
-      'rating': 4.8,
-      'isFavorite': false,
-    },
-    {
-      'name': 'Peter Xu',
-      'image': 'assets/images/images_peter.png',
-      'rating': 4.3,
-      'isFavorite': false,
-    },
-    {
-      'name': 'Dr. Rianda Tan',
-      'image': 'assets/images/images_rianda.png',
-      'rating': 4.7,
-      'isFavorite': false,
-    },
-  ];
+  List<Map<String, dynamic>> pharmacists = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPharmacists();
+  }
+
+  Future<void> fetchPharmacists() async {
+    try {
+      final response =
+          await Dio().get('http://localhost:3333/v1/pharmacist-services');
+      if (response.statusCode == 200) {
+        setState(() {
+          pharmacists = List<Map<String, dynamic>>.from(response.data['data'])
+              .map((pharmacist) {
+            return {
+              'id': pharmacist['id'] ?? 0,
+              'name': pharmacist['name'] ?? '',
+              'avatar': pharmacist['avatar'] ?? '',
+              'experience': pharmacist['experience'] ?? 0,
+              'rating': (pharmacist['rating'] ?? 0.0).toDouble(),
+              'about': pharmacist['about'] ?? '',
+              'working_information': pharmacist['working_information'] ?? '',
+              'days_hour': pharmacist['days_hour'] ?? '',
+              'maps_location': pharmacist['maps_location'] ?? '',
+              'certification': pharmacist['certification'] ?? '',
+              'user_id': pharmacist['user_id'] ?? 0,
+              'created_at': pharmacist['created_at'] ?? '',
+              'updated_at': pharmacist['updated_at'] ?? '',
+              'isFavorite': pharmacist['isFavorite'] ?? false,
+            };
+          }).toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Error: $e');
+    }
+  }
+
+  Future<void> updateFavoriteStatus(int pharmacistId, bool isFavorite) async {
+    try {
+      final userId = await Utils.getSpString(
+          Const.USER_ID); // Get user ID from shared preferences
+      final token = await Utils.getSpString(
+          Const.TOKEN); // Get bearer token from shared preferences
+
+      final response = await Dio().post(
+        'http://localhost:3333/v1/favorites',
+        data: {
+          'user_id': userId,
+          'item_id': pharmacistId,
+          'item_type': 'pharmacist',
+          'highlighted': isFavorite ? 1 : 0,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update favorite status');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   void _toggleFavorite(int index) {
     setState(() {
       pharmacists[index]['isFavorite'] = !pharmacists[index]['isFavorite'];
     });
+    print('Toggled favorite for pharmacist ID: ${pharmacists[index]['id']}');
+    print('New favorite status: ${pharmacists[index]['isFavorite']}');
+    updateFavoriteStatus(
+        pharmacists[index]['id'], pharmacists[index]['isFavorite']);
   }
 
   @override
@@ -89,7 +138,8 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8.0),
                                       image: DecorationImage(
-                                        image: AssetImage(pharmacist['image']),
+                                        image: NetworkImage(
+                                            pharmacist['avatar'] ?? ''),
                                         fit: BoxFit.cover,
                                       ),
                                     ),

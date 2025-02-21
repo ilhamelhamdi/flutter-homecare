@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:m2health/main.dart';
+import 'package:m2health/const.dart';
 import 'package:m2health/widgets/add_concern_page.dart';
 import 'personal_cubit.dart';
 import 'personal_state.dart';
 import 'package:m2health/widgets/add_issue_page.dart';
 
-class PersonalPage extends StatelessWidget {
+class PersonalPage extends StatefulWidget {
+  @override
+  _PersonalPageState createState() => _PersonalPageState();
+}
+
+class _PersonalPageState extends State<PersonalPage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<PersonalCubit>().loadPersonalDetails();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,54 +131,66 @@ class PersonalPage extends StatelessWidget {
                 },
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 352,
-                  height: 58,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      showAddConcernPage(context);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF35C5CF)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    child: const Text(
-                      'Add an Issue',
-                      style: TextStyle(color: Color(0xFF35C5CF), fontSize: 20),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: 352,
-                  height: 58,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddIssuePage(),
+            BlocBuilder<PersonalCubit, PersonalState>(
+              builder: (context, state) {
+                final bool hasIssues =
+                    state is PersonalLoaded && state.issues.isNotEmpty;
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 352,
+                      height: 58,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          showAddConcernPage(context);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFF35C5CF)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFB2B9C4),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        child: const Text(
+                          'Add an Issue',
+                          style:
+                              TextStyle(color: Color(0xFF35C5CF), fontSize: 20),
+                        ),
                       ),
                     ),
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: 352,
+                      height: 58,
+                      child: ElevatedButton(
+                        onPressed: hasIssues
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddIssuePage(
+                                      issue: state.issues.first,
+                                    ),
+                                  ),
+                                );
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              hasIssues ? Const.tosca : const Color(0xFFB2B9C4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: const Text(
+                          'Next',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
           ],
         ),

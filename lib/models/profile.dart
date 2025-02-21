@@ -8,6 +8,7 @@ class Profile {
   final String username;
   final String email;
   final String homeAddress;
+  final String gender;
   final String createdAt;
   final String updatedAt;
 
@@ -21,6 +22,7 @@ class Profile {
     required this.username,
     required this.email,
     required this.homeAddress,
+    required this.gender,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -36,6 +38,7 @@ class Profile {
       username: json['username'],
       email: json['email'],
       homeAddress: json['home_address'],
+      gender: json['gender'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
+import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:m2health/route/app_router.dart';
@@ -32,6 +33,7 @@ void main() async {
         BlocProvider(create: (context) => AppointmentCubit(Dio())),
         BlocProvider(
             create: (context) => PersonalCubit()..loadPersonalDetails()),
+        BlocProvider(create: (context) => ProfileCubit(Dio())),
       ],
       child: ChangeNotifierProvider(
         create: (context) => AppLanguage(),
