@@ -8,6 +8,25 @@ class FavouritesPage extends StatefulWidget {
   _FavouritesPageState createState() => _FavouritesPageState();
 }
 
+class FavoriteProvider with ChangeNotifier {
+  final Map<int, bool> _favorites = {};
+
+  Map<int, bool> get favorites => _favorites;
+
+  void toggleFavorite(int id) {
+    if (_favorites.containsKey(id)) {
+      _favorites[id] = !_favorites[id]!;
+    } else {
+      _favorites[id] = true;
+    }
+    notifyListeners();
+  }
+
+  bool isFavorite(int id) {
+    return _favorites[id] ?? false;
+  }
+}
+
 class _FavouritesPageState extends State<FavouritesPage> {
   List<Map<String, dynamic>> pharmacists = [];
   bool isLoading = true;

@@ -19,7 +19,7 @@ class Favorite {
       userId: json['user_id'],
       itemId: json['item_id'],
       itemType: json['item_type'],
-      highlighted: json['highlighted'],
+      highlighted: json['highlighted'] == 1,
     );
   }
 }

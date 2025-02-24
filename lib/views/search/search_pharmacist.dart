@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/models/favorite.dart';
 
 class SearchPharmacistPage extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class SearchPharmacistPage extends StatefulWidget {
 
 class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
   List<Map<String, dynamic>> pharmacists = [];
+  List<Favorite> favoritePharmacists = [];
   bool isLoading = true;
 
   @override
@@ -21,12 +23,41 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
 
   Future<void> fetchPharmacists() async {
     try {
+      final userId = await Utils.getSpString(Const.USER_ID);
+      final token = await Utils.getSpString(Const.TOKEN);
+
+      // Fetch favorite pharmacists
+      final favoriteResponse = await Dio().get(
+        'http://localhost:3333/v1/favorites',
+        queryParameters: {
+          'user_id': userId,
+          'item_type': 'pharmacist',
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (favoriteResponse.statusCode == 200) {
+        favoritePharmacists =
+            List<Map<String, dynamic>>.from(favoriteResponse.data['data'])
+                .map((item) => Favorite.fromJson(item))
+                .toList();
+      } else {
+        throw Exception('Failed to load favorite pharmacists');
+      }
+
+      // Fetch all pharmacists
       final response =
           await Dio().get('http://localhost:3333/v1/pharmacist-services');
       if (response.statusCode == 200) {
         setState(() {
           pharmacists = List<Map<String, dynamic>>.from(response.data['data'])
               .map((pharmacist) {
+            final isFavorite = favoritePharmacists
+                .any((fav) => fav.itemId == pharmacist['id']);
             return {
               'id': pharmacist['id'] ?? 0,
               'name': pharmacist['name'] ?? '',
@@ -41,7 +72,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
               'user_id': pharmacist['user_id'] ?? 0,
               'created_at': pharmacist['created_at'] ?? '',
               'updated_at': pharmacist['updated_at'] ?? '',
-              'isFavorite': pharmacist['isFavorite'] ?? false,
+              'isFavorite': isFavorite,
             };
           }).toList();
           isLoading = false;
@@ -59,27 +90,58 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
 
   Future<void> updateFavoriteStatus(int pharmacistId, bool isFavorite) async {
     try {
-      final userId = await Utils.getSpString(
-          Const.USER_ID); // Get user ID from shared preferences
-      final token = await Utils.getSpString(
-          Const.TOKEN); // Get bearer token from shared preferences
+      final userId = await Utils.getSpString(Const.USER_ID);
+      final token = await Utils.getSpString(Const.TOKEN);
 
-      final response = await Dio().post(
-        'http://localhost:3333/v1/favorites',
-        data: {
+      if (isFavorite) {
+        final data = {
           'user_id': userId,
           'item_id': pharmacistId,
           'item_type': 'pharmacist',
-          'highlighted': isFavorite ? 1 : 0,
-        },
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-      if (response.statusCode != 200) {
-        throw Exception('Failed to update favorite status');
+          'highlighted': 1,
+        };
+        print('Updating favorite status with data: $data');
+
+        final response = await Dio().post(
+          'http://localhost:3333/v1/favorites',
+          data: data,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        print('Response status: ${response.statusCode}');
+        print('Response data: ${response.data}');
+
+        if (response.statusCode != 200) {
+          throw Exception('Failed to update favorite status');
+        }
+      } else {
+        final data = {
+          'user_id': userId,
+          'item_id': pharmacistId,
+          'item_type': 'pharmacist',
+        };
+        print('Deleting favorite with data: $data');
+
+        final response = await Dio().delete(
+          'http://localhost:3333/v1/favorites',
+          data: data,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        print('Response status: ${response.statusCode}');
+        print('Response data: ${response.data}');
+
+        if (response.statusCode != 200) {
+          throw Exception('Failed to delete favorite');
+        }
       }
     } catch (e) {
       print('Error: $e');
@@ -217,6 +279,27 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BookAppointmentPage()),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF35C5CF),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+          child: const Text(
+            'Book Appointment',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
