@@ -73,23 +73,43 @@ class _FavouritesPageState extends State<FavouritesPage> {
       final token = await Utils.getSpString(
           Const.TOKEN); // Get bearer token from shared preferences
 
-      final response = await Dio().post(
-        'http://localhost:3333/v1/favorites',
-        data: {
-          'user_id': userId,
-          'item_id': pharmacistId,
-          'item_type': 'pharmacist',
-          'highlighted': isFavorite ? 1 : 0,
-        },
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
+      if (isFavorite) {
+        final response = await Dio().post(
+          'http://localhost:3333/v1/favorites',
+          data: {
+            'user_id': userId,
+            'item_id': pharmacistId,
+            'item_type': 'pharmacist',
+            'highlighted': 1,
           },
-        ),
-      );
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to update favorite status');
+        if (response.statusCode != 200) {
+          throw Exception('Failed to update favorite status');
+        }
+      } else {
+        final response = await Dio().delete(
+          'http://localhost:3333/v1/favorites',
+          data: {
+            'user_id': userId,
+            'item_id': pharmacistId,
+            'item_type': 'pharmacist',
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        if (response.statusCode != 200) {
+          throw Exception('Failed to delete favorite');
+        }
       }
     } catch (e) {
       print('Error: $e');
@@ -97,11 +117,14 @@ class _FavouritesPageState extends State<FavouritesPage> {
   }
 
   void _toggleFavorite(int index) {
+    final isFavorite = !pharmacists[index]['isFavorite'];
     setState(() {
-      pharmacists[index]['isFavorite'] = !pharmacists[index]['isFavorite'];
+      pharmacists[index]['isFavorite'] = isFavorite;
+      if (!isFavorite) {
+        pharmacists.removeAt(index);
+      }
     });
-    updateFavoriteStatus(
-        pharmacists[index]['id'], pharmacists[index]['isFavorite']);
+    updateFavoriteStatus(pharmacists[index]['id'], isFavorite);
   }
 
   @override

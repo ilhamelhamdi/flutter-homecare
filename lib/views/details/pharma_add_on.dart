@@ -41,16 +41,8 @@ class _PaymentPharmaState extends State<PaymentPharma> {
 
   void _submitData() async {
     final token = await Utils.getSpString(Const.TOKEN);
-    final userId = await Utils.getSpString(Const.USER_ID);
 
     final data = {
-      "id": widget.issue.id,
-      "user_id": userId,
-      "title": widget.issue.title,
-      "description": widget.issue.description,
-      "images": widget.issue.images,
-      "mobility_status": widget.issue.mobilityStatus,
-      "related_health_record": widget.issue.relatedHealthRecord,
       "add_on": _selectedServices
           .asMap()
           .entries
@@ -58,15 +50,14 @@ class _PaymentPharmaState extends State<PaymentPharma> {
           .map((entry) => serviceTitles[entry.key])
           .join(', '),
       "estimated_budget": _estimatedBudget,
-      "created_at": widget.issue.createdAt.toIso8601String(),
       "updated_at": DateTime.now().toIso8601String(),
     };
 
     print('Data to be submitted: $data');
 
     try {
-      final response = await Dio().post(
-        '${Const.API_PERSONAL_CASES}',
+      final response = await Dio().put(
+        '${Const.API_PERSONAL_CASES}/${widget.issue.id}',
         data: data,
         options: Options(
           headers: {
@@ -84,7 +75,7 @@ class _PaymentPharmaState extends State<PaymentPharma> {
         );
       } else {
         // Handle error
-        print('Failed to submit data');
+        print('Failed to submit data: ${response.statusMessage}');
       }
     } catch (e) {
       // Handle error

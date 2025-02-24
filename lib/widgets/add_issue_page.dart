@@ -20,9 +20,6 @@ class AddIssuePage extends StatefulWidget {
 class _AddIssuePageState extends State<AddIssuePage> {
   late String _mobilityStatus;
   late String _selectedStatus;
-  late TextEditingController _titleController;
-  late TextEditingController _descriptionController;
-  late List<File> _images;
 
   final List<String> _statusOptions = [
     'Select Status',
@@ -38,58 +35,31 @@ class _AddIssuePageState extends State<AddIssuePage> {
     _selectedStatus = _statusOptions.contains(widget.issue?.relatedHealthRecord)
         ? widget.issue!.relatedHealthRecord
         : 'Select Status';
-    _titleController = TextEditingController(text: widget.issue?.title ?? '');
-    _descriptionController =
-        TextEditingController(text: widget.issue?.description ?? '');
-    _images =
-        []; // Initialize with empty list or load existing images if needed
   }
 
   Future<void> _submitData() async {
-    final issue = Issue(
-      id: 0,
-      userId: 1,
-      title: _titleController.text,
-      description: _descriptionController.text,
-      images: [], // Placeholder, will be updated after upload
-      mobilityStatus: _mobilityStatus,
-      relatedHealthRecord: _selectedStatus,
-      addOn: '',
-      estimatedBudget: 0,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
+    final issue = widget.issue;
+    if (issue == null) return;
 
-    print('Title: ${_titleController.text}');
-    print('Description: ${_descriptionController.text}');
-    print('Images: ${_images.map((image) => image.path).join(', ')}');
     print('Mobility Status: $_mobilityStatus');
     print('Related Health Record: $_selectedStatus');
 
     try {
       final token = await Utils.getSpString(Const.TOKEN);
-      final formData = FormData.fromMap({
-        'id': issue.id,
-        'user_id': issue.userId,
-        'title': issue.title,
-        'description': issue.description,
-        'mobility_status': issue.mobilityStatus,
-        'related_health_record': issue.relatedHealthRecord,
-        'add_on': issue.addOn,
-        'estimated_budget': issue.estimatedBudget,
-        'created_at': issue.createdAt.toIso8601String(),
-        'updated_at': issue.updatedAt.toIso8601String(),
-        'images': _images.isNotEmpty
-            ? await Future.wait(_images.map((image) async {
-                return await MultipartFile.fromFile(image.path,
-                    filename: image.path.split('/').last);
-              }))
-            : null,
-      });
+      final data = {
+        'mobility_status': _mobilityStatus,
+        'related_health_record': _selectedStatus,
+        // 'updated_at': DateTime.now().toIso8601String(),
+      };
 
-      final response = await Dio().post(
-        Const.API_PERSONAL_CASES,
-        data: formData,
+      print('Data to be submitted: $data');
+
+      final url = '${Const.API_PERSONAL_CASES}/${issue.id}';
+      print('Request URL: $url');
+
+      final response = await Dio().put(
+        url,
+        data: data,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -98,7 +68,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
       );
 
       if (response.statusCode == 200) {
-        print('Issue added successfully');
+        print('Issue updated successfully');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -108,7 +78,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
           ),
         );
       } else {
-        print('Failed to add issue: ${response.statusMessage}');
+        print('Failed to update issue: ${response.statusMessage}');
       }
     } catch (e) {
       print('Error: $e');
@@ -230,21 +200,21 @@ class _AddIssuePageState extends State<AddIssuePage> {
               ),
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                border: OutlineInputBorder(),
-              ),
-            ),
+            // TextField(
+            //   controller: _titleController,
+            //   decoration: const InputDecoration(
+            //     labelText: 'Title',
+            //     border: OutlineInputBorder(),
+            //   ),
+            // ),
+            // const SizedBox(height: 20),
+            // TextField(
+            //   controller: _descriptionController,
+            //   decoration: const InputDecoration(
+            //     labelText: 'Description',
+            //     border: OutlineInputBorder(),
+            //   ),
+            // ),
             const Spacer(),
             SizedBox(
               width: 352,
@@ -258,7 +228,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   ),
                 ),
                 child: const Text(
-                  'Add Issue',
+                  'Next',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ),
