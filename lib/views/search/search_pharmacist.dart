@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:m2health/cubit/pharmacist_profile/pharmacist_profile_page.dart';
+import 'package:m2health/views/search/pharma_profile_page.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
@@ -248,13 +248,17 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PharmacistProfilePage()),
+                                            builder: (context) =>
+                                                PharmacistProfilePage(
+                                              pharmacist: pharmacist,
+                                            ),
+                                          ),
                                         );
                                       },
-                                      child: const Text('Appointment',
-                                          style:
-                                              TextStyle(color: Colors.black)),
+                                      child: const Text(
+                                        'Appointment',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
                                     ),
                                     IconButton(
                                       icon: Icon(

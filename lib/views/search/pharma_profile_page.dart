@@ -3,6 +3,11 @@ import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
 
 class PharmacistProfilePage extends StatelessWidget {
+  final Map<String, dynamic> pharmacist;
+
+  const PharmacistProfilePage({Key? key, required this.pharmacist})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,8 +27,8 @@ class PharmacistProfilePage extends StatelessWidget {
                       height: 100,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/images_olla.png'),
+                        image: DecorationImage(
+                          image: NetworkImage(pharmacist['avatar']),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -40,9 +45,9 @@ class PharmacistProfilePage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Dr. Khanza Deliva',
-                  style: TextStyle(
+                Text(
+                  pharmacist['name'],
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -56,12 +61,12 @@ class PharmacistProfilePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Card(
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         Text(
@@ -72,49 +77,51 @@ class PharmacistProfilePage extends StatelessWidget {
                             color: Const.tosca,
                           ),
                         ),
-                        Text('Patients'),
+                        const Text('Patients'),
                       ],
                     ),
                   ),
                 ),
                 Card(
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         Text(
-                          '10Y++',
+                          '${pharmacist['experience']}Y++',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Const.tosca),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Const.tosca,
+                          ),
                         ),
-                        Text('Experience'),
+                        const Text('Experience'),
                       ],
                     ),
                   ),
                 ),
                 Card(
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         Row(
                           children: [
                             Text(
-                              '4.5',
+                              pharmacist['rating'].toString(),
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Const.tosca),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Const.tosca,
+                              ),
                             ),
-                            Icon(
+                            const Icon(
                               Icons.star,
                               color: Colors.yellow,
                             ),
                           ],
                         ),
-                        Text(
+                        const Text(
                           'Rating',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -139,8 +146,8 @@ class PharmacistProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Dr. Khanza Deliva is a highly experienced pharmacist with over 10 years of experience in the field. She has successfully treated over 180 patients and is known for her dedication and expertise.',
+            Text(
+              pharmacist['about'],
               textAlign: TextAlign.justify,
             ),
             const SizedBox(height: 16),
@@ -155,23 +162,23 @@ class PharmacistProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Row(
+            Row(
               children: [
-                Icon(Icons.calendar_today, color: Colors.grey),
-                SizedBox(width: 8),
-                Text('Monday - Friday, 08.00 AM - 21.00 PM'),
+                const Icon(Icons.calendar_today, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(pharmacist['days_hour']),
               ],
             ),
             const SizedBox(height: 8),
-            const Row(
+            Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.location_on,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
-                  'Caterpillar Hospital, Jack Road, Singapore 89191',
-                  style: TextStyle(color: Colors.blue),
+                  pharmacist['maps_location'],
+                  style: const TextStyle(color: Colors.blue),
                 ),
               ],
             ),
@@ -224,7 +231,7 @@ class PharmacistProfilePage extends StatelessWidget {
               children: [
                 const Text(
                   'Reviews',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
