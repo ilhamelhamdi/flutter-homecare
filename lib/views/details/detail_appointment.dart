@@ -4,7 +4,11 @@ import 'package:m2health/views/payment.dart';
 class DetailAppointmentPage extends StatefulWidget {
   final String pharmacistName;
 
-  DetailAppointmentPage({required this.pharmacistName});
+  DetailAppointmentPage(
+      {required this.pharmacistName,
+      required pharmacistRole,
+      required pharmacistLocation,
+      required pharmacistAvatar});
 
   @override
   _DetailAppointmentPageState createState() => _DetailAppointmentPageState();

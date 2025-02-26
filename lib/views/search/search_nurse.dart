@@ -504,7 +504,10 @@ class PharmacistProfilePage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => BookAppointmentPage()),
+              MaterialPageRoute(
+                  builder: (context) => BookAppointmentPage(
+                        pharmacist: {},
+                      )),
             );
           },
           style: ElevatedButton.styleFrom(

@@ -10,6 +10,16 @@ class PharmacistProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure all required fields are not null
+    final String avatar = pharmacist['avatar'] ?? '';
+    final String name = pharmacist['name'] ?? 'Unknown';
+    final String role = pharmacist['role'] ?? 'Pharmacist';
+    final String about = pharmacist['about'] ?? 'No information available';
+    final String daysHour = pharmacist['days_hour'] ?? 'Not specified';
+    final String mapsLocation = pharmacist['maps_location'] ?? 'Not specified';
+    final int experience = pharmacist['experience'] ?? 0;
+    final double rating = (pharmacist['rating'] ?? 0.0).toDouble();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pharmacist Details'),
@@ -28,7 +38,7 @@ class PharmacistProfilePage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         image: DecorationImage(
-                          image: NetworkImage(pharmacist['avatar']),
+                          image: NetworkImage(avatar),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -46,7 +56,7 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  pharmacist['name'],
+                  name,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -88,7 +98,7 @@ class PharmacistProfilePage extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          '${pharmacist['experience']}Y++',
+                          '$experience Y++',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -108,7 +118,7 @@ class PharmacistProfilePage extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              pharmacist['rating'].toString(),
+                              rating.toString(),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -147,7 +157,7 @@ class PharmacistProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              pharmacist['about'],
+              about,
               textAlign: TextAlign.justify,
             ),
             const SizedBox(height: 16),
@@ -166,7 +176,7 @@ class PharmacistProfilePage extends StatelessWidget {
               children: [
                 const Icon(Icons.calendar_today, color: Colors.grey),
                 const SizedBox(width: 8),
-                Text(pharmacist['days_hour']),
+                Text(daysHour),
               ],
             ),
             const SizedBox(height: 8),
@@ -177,7 +187,7 @@ class PharmacistProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  pharmacist['maps_location'],
+                  mapsLocation,
                   style: const TextStyle(color: Colors.blue),
                 ),
               ],
@@ -292,7 +302,20 @@ class PharmacistProfilePage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => BookAppointmentPage()),
+              MaterialPageRoute(
+                builder: (context) => BookAppointmentPage(
+                  pharmacist: {
+                    'avatar': avatar,
+                    'name': name,
+                    'role': role,
+                    'about': about,
+                    'days_hour': daysHour,
+                    'maps_location': mapsLocation,
+                    'experience': experience,
+                    'rating': rating,
+                  },
+                ),
+              ),
             );
           },
           style: ElevatedButton.styleFrom(

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:time_slot/time_slot.dart';
 import 'details/detail_appointment.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/widgets/time_slot_grid_view.dart';
 
 class BookAppointmentPage extends StatefulWidget {
+  final Map<String, dynamic> pharmacist;
+
+  const BookAppointmentPage({Key? key, required this.pharmacist})
+      : super(key: key);
+
   @override
   _BookAppointmentPageState createState() => _BookAppointmentPageState();
 }
@@ -17,6 +21,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    final pharmacist = widget.pharmacist;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -50,29 +56,29 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/images_olla.png'),
+                        image: DecorationImage(
+                          image: NetworkImage(pharmacist['avatar']),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
                     SizedBox(width: 16),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Khanza Deliva',
+                          pharmacist['name'],
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        Text('Pharmacist'),
+                        Text(pharmacist['role']),
                         Row(
                           children: [
                             Icon(Icons.location_on, color: Colors.teal),
                             SizedBox(width: 4),
-                            Text('Caterpillar Hospital, Singapore'),
+                            Text(pharmacist['maps_location']),
                           ],
                         ),
                       ],
@@ -184,8 +190,12 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    DetailAppointmentPage(pharmacistName: 'Khanza Deliva'),
+                builder: (context) => DetailAppointmentPage(
+                  pharmacistName: pharmacist['name'],
+                  pharmacistRole: pharmacist['role'],
+                  pharmacistLocation: pharmacist['maps_location'],
+                  pharmacistAvatar: pharmacist['avatar'],
+                ),
               ),
             );
             // Handle the next button press

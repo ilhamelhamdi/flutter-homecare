@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/views/search/pharma_checkout.dart';
 
 class FavouritesPage extends StatefulWidget {
   @override
@@ -209,8 +210,18 @@ class _FavouritesPageState extends State<FavouritesPage> {
                               Row(
                                 children: [
                                   TextButton(
-                                    onPressed: () {},
-                                    child: Text(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              PharmacistProfilePage(
+                                            pharmacist: pharmacist,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text(
                                       'Appointment',
                                       style: TextStyle(color: Colors.black),
                                     ),

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:m2health/views/search/pharma_profile_page.dart';
+import 'package:m2health/views/search/pharma_checkout.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
@@ -286,27 +286,30 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => BookAppointmentPage()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF35C5CF),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-          child: const Text(
-            'Book Appointment',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.all(16.0),
+      //   child: ElevatedButton(
+      //     onPressed: () {
+      //       Navigator.push(
+      //         context,
+      //         MaterialPageRoute(
+      //             builder: (context) => const BookAppointmentPage(
+      //                   pharmacist: {},
+      //                 )),
+      //       );
+      //     },
+      //     style: ElevatedButton.styleFrom(
+      //       backgroundColor: const Color(0xFF35C5CF),
+      //       shape: RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.circular(15),
+      //       ),
+      //     ),
+      //     child: const Text(
+      //       'Book Appointment',
+      //       style: TextStyle(color: Colors.white),
+      //     ),
+      //   ),
+      // ),
     );
   }
 }
