@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -30,6 +32,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         throw Exception('Token is null');
       }
 
+      final profileServiceData = jsonEncode(widget.pharmacist);
+
       final requestData = {
         'user_id': 1, // Replace with actual user ID
         'type': 'Pharmacist',
@@ -38,9 +42,9 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         'hour': DateFormat('HH:mm').format(selectTime),
         'summary': 'Summary',
         'pay_total': 100,
-        // 'profile_service_data':
-        //     (widget.pharmacist ?? {}).cast<String, dynamic>(),
+        'profile_service_data': profileServiceData,
       };
+
       print("Tipe data profile_service_data: ${widget.pharmacist.runtimeType}");
 
       // Check for null values in requestData

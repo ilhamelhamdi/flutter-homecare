@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'pharmacist_services.dart';
 
 class Appointment {
@@ -11,7 +13,7 @@ class Appointment {
   final int userId;
   final String createdAt;
   final String updatedAt;
-  final PharmacistServices profile;
+  final Map<String, dynamic> profileServiceData;
 
   Appointment({
     required this.id,
@@ -24,7 +26,7 @@ class Appointment {
     required this.userId,
     required this.createdAt,
     required this.updatedAt,
-    required this.profile,
+    required this.profileServiceData,
   });
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
@@ -39,9 +41,7 @@ class Appointment {
       userId: json['user_id'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
-      profile: PharmacistServices.fromJson(json['profile']),
+      profileServiceData: jsonDecode(json['profile_service_data']),
     );
   }
-
-  get profileServiceData => null;
 }

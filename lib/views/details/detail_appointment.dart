@@ -16,11 +16,11 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final profile = widget.appointment.profile;
+    final profile = widget.appointment.profileServiceData;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(profile.name),
+        title: Text(profile['name']),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -38,7 +38,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         image: DecorationImage(
-                          image: NetworkImage(profile.avatar),
+                          image: NetworkImage(profile['name']),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -48,7 +48,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          profile.name,
+                          profile['name'],
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -59,7 +59,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                           children: [
                             const Icon(Icons.location_on, color: Colors.blue),
                             const SizedBox(width: 4),
-                            Text(profile.mapsLocation),
+                            Text(profile['maps_location']),
                           ],
                         ),
                         const SizedBox(height: 8),
