@@ -56,7 +56,7 @@ class _SignInPageState extends State<SignInPage> {
           child: BlocConsumer<SignInCubit, SignInState>(
             listener: (context, state) {
               if (state is SignInSuccess) {
-                context.go(AppRoutes.home);
+                context.go('/dasboard');
               } else if (state is SignInError) {
                 showDialog(
                   context: context,

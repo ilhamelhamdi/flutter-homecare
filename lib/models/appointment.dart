@@ -1,3 +1,5 @@
+import 'pharmacist_services.dart';
+
 class Appointment {
   final int id;
   final String type;
@@ -9,6 +11,7 @@ class Appointment {
   final int userId;
   final String createdAt;
   final String updatedAt;
+  final PharmacistServices profile;
 
   Appointment({
     required this.id,
@@ -21,6 +24,7 @@ class Appointment {
     required this.userId,
     required this.createdAt,
     required this.updatedAt,
+    required this.profile,
   });
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,9 @@ class Appointment {
       userId: json['user_id'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
+      profile: PharmacistServices.fromJson(json['profile']),
     );
   }
+
+  get profileServiceData => null;
 }

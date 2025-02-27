@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:m2health/models/appointment.dart';
 import 'package:m2health/views/payment.dart';
 
 class DetailAppointmentPage extends StatefulWidget {
-  final String pharmacistName;
+  final Appointment appointment;
 
-  DetailAppointmentPage(
-      {required this.pharmacistName,
-      required pharmacistRole,
-      required pharmacistLocation,
-      required pharmacistAvatar});
+  DetailAppointmentPage({required this.appointment});
 
   @override
   _DetailAppointmentPageState createState() => _DetailAppointmentPageState();
@@ -19,9 +16,11 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    final profile = widget.appointment.profile;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.pharmacistName),
+        title: Text(profile.name),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -38,9 +37,8 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: const DecorationImage(
-                          image: AssetImage(
-                              'assets/images/images_olla.png'), // Replace with your image path
+                        image: DecorationImage(
+                          image: NetworkImage(profile.avatar),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -50,18 +48,18 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.pharmacistName,
+                          profile.name,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        const Text('Staff Nurse at Cardiology Department'),
-                        const Row(
+                        // Text(profile.role),
+                        Row(
                           children: [
-                            Icon(Icons.location_on, color: Colors.blue),
-                            SizedBox(width: 4),
-                            Text('Royal Hospital, Singapore'),
+                            const Icon(Icons.location_on, color: Colors.blue),
+                            const SizedBox(width: 4),
+                            Text(profile.mapsLocation),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -72,9 +70,9 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                             border: Border.all(color: Colors.yellow),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
-                            'Upcoming',
-                            style: TextStyle(color: Colors.orange),
+                          child: Text(
+                            widget.appointment.status,
+                            style: const TextStyle(color: Colors.orange),
                           ),
                         ),
                       ],
@@ -92,19 +90,19 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
               ),
             ),
             const SizedBox(height: 8),
-            const Row(
+            Row(
               children: [
-                Icon(Icons.calendar_today, color: Colors.grey),
-                SizedBox(width: 8),
-                Text('Monday, March 17, 2024'),
+                const Icon(Icons.calendar_today, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(widget.appointment.date),
               ],
             ),
             const SizedBox(height: 8),
-            const Row(
+            Row(
               children: [
-                Icon(Icons.access_time, color: Colors.grey),
-                SizedBox(width: 8),
-                Text('10:00 AM - 11:00 AM (60 Minutes)'),
+                const Icon(Icons.access_time, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(widget.appointment.hour),
               ],
             ),
             const SizedBox(height: 16),
