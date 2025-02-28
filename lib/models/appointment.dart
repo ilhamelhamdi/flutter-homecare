@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'pharmacist_services.dart';
-
 class Appointment {
   final int id;
   final String type;
@@ -31,17 +29,35 @@ class Appointment {
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
-      id: json['id'],
-      type: json['type'],
-      status: json['status'],
-      date: json['date'],
-      hour: json['hour'],
-      summary: json['summary'],
-      payTotal: (json['pay_total'] as num).toDouble(),
-      userId: json['user_id'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
-      profileServiceData: jsonDecode(json['profile_service_data']),
+      id: json['id'] ?? 0,
+      type: json['type'] ?? '',
+      status: json['status'] ?? '',
+      date: json['date'] ?? '',
+      hour: json['hour'] ?? '',
+      summary: json['summary'] ?? '',
+      payTotal: (json['pay_total'] as num?)?.toDouble() ?? 0.0,
+      userId: json['user_id'] ?? 0,
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
+      profileServiceData: json['profile_service_data'] != null
+          ? jsonDecode(json['profile_service_data'])
+          : {},
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'type': type,
+      'status': status,
+      'date': date,
+      'hour': hour,
+      'summary': summary,
+      'pay_total': payTotal,
+      'user_id': userId,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'profile_service_data': jsonEncode(profileServiceData),
+    };
   }
 }

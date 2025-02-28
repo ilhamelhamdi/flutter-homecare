@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/models/appointment.dart';
-import 'package:dio/dio.dart';
 
 class AppointmentPage extends StatefulWidget {
   static const String route = '/appointment';
@@ -110,6 +109,8 @@ class _AppointmentPageState extends State<AppointmentPage>
       itemCount: filteredAppointments.length,
       itemBuilder: (context, index) {
         final appointment = filteredAppointments[index];
+        final profile = appointment.profileServiceData;
+
         return Card(
           margin: const EdgeInsets.all(10),
           child: Padding(
@@ -118,17 +119,18 @@ class _AppointmentPageState extends State<AppointmentPage>
               children: [
                 Row(
                   children: [
-                    const CircleAvatar(
-                      backgroundImage: AssetImage(
-                          'assets/images/images_budi.png'), // Dummy avatar image
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(profile['avatar']),
                       radius: 30,
                     ),
                     const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Dr. Budi Sanjaya',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                          profile['name'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         Row(
                           children: [
                             const Text('Radiologist |'),
@@ -145,15 +147,17 @@ class _AppointmentPageState extends State<AppointmentPage>
                                         : const Color(0x1AE59500),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: Text(status,
-                                  style: TextStyle(
-                                    color: status == 'Completed'
-                                        ? Colors.green
-                                        : status == 'Cancelled' ||
-                                                status == 'Missed'
-                                            ? Colors.red
-                                            : const Color(0xFFE59500),
-                                  )),
+                              child: Text(
+                                status,
+                                style: TextStyle(
+                                  color: status == 'Completed'
+                                      ? Colors.green
+                                      : status == 'Cancelled' ||
+                                              status == 'Missed'
+                                          ? Colors.red
+                                          : const Color(0xFFE59500),
+                                ),
+                              ),
                             ),
                           ],
                         ),
