@@ -5,10 +5,10 @@ class Const {
   static const String URL_WEB_DETAIL_CASE = URL_WEB + '/cases-analysis/detail';
   static const String URL_WEB_DETAIL_PRODUCT = URL_WEB + '/product-detail';
   // static const String BASE_URL = 'http://192.168.50.100:3333';
+  // static const String BASE_URL = 'https://homecare-api.med-map.org';
+  static const String BASE_URL = 'http://192.168.1.5:3333';
   // static const String BASE_URL = 'https://api.med-map.org';
-  // static const String BASE_URL = 'http://192.168.1.3:3333';
-  static const String BASE_URL = 'https://api.med-map.org';
-  // static const String BASE_URL = 'https://api-flutter_homecare.mandatech.co.id';
+  // static const String BASE_URL = 'https://api-m2health.mandatech.co.id';
   // static const String BASE_URL = 'https://be-mdmap.mandatech.co.id/';
   static const String URL_API = BASE_URL + '/v1';
 
@@ -21,7 +21,12 @@ class Const {
   static const String API_PRODUCTS = URL_API + '/products/';
   static const String API_LOGIN = URL_API + '/auth/login';
   static const String API_REGISTER = URL_API + '/auth/register/';
+  // new API homecare
+  static const String API_APPOINTMENT = URL_API + '/appointments';
+  static const String API_PROFILE = URL_API + '/profiles';
+  static const String API_PERSONAL_CASES = URL_API + '/personal-cases';
 
+// end new api
   static const String URL_PRIVACY = URL_WEB + '/privacy-policy';
 
   static const String ROLE = 'role';
@@ -33,6 +38,7 @@ class Const {
   static const String NAME = 'name';
   static const String OBJ_PROFILE = 'obj_profile';
 
+  static const Color tosca = Color(0xFF00B0A7);
   static const Color primaryBlue = Color(0xFF4894FE);
   static const Color primaryTextColor = Color(0xFF414C6B);
   static const Color secondaryTextColor = Color(0xFFE4979E);

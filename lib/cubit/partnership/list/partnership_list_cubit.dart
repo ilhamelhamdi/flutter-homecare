@@ -4,8 +4,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/utils.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
 import 'package:omega_dio_logger/omega_dio_logger.dart';
 
 part 'partnership_list_state.dart';

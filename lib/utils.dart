@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/models/r_profile.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/models/r_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;

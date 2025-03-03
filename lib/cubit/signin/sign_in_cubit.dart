@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/models/r_profile.dart';
-import 'package:flutter_homecare/utils.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/models/r_profile.dart';
+import 'package:m2health/utils.dart';
 import 'package:omega_dio_logger/omega_dio_logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'sign_in_state.dart';
 
@@ -42,6 +44,11 @@ class SignInCubit extends Cubit<SignInState> {
       Utils.setSpString(Const.ROLE, response.data['user']['role']);
       Utils.setSpString(Const.USER_ID, response.data['user']['id'].toString());
 
+      // Simpan nama pengguna ke SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', response.data['user']['username']);
+      debugPrint('Username saved: ${response.data['user']['username']}');
+
       if (response.data['user']['role'] == 'admin') {
         emit(SignInSuccess());
       } else {
@@ -64,6 +71,11 @@ class SignInCubit extends Cubit<SignInState> {
 
       if (response.statusCode != 200) {
         emit(SignInError(response.data['message']));
+        return;
+      }
+
+      if (response.data['id'] == null) {
+        emit(SignInError('id_null_cok'));
         return;
       }
 

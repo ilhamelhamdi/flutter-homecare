@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/route/app_routes.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -64,7 +64,8 @@ class RequestCubit extends Cubit<RequestState> {
     emit(RequestLoading());
 
     try {
-      final response = await _dio.get('${Const.URL_API}/countries?page=1&limit=9999');
+      final response =
+          await _dio.get('${Const.URL_API}/countries?page=1&limit=9999');
 
       if (response.statusCode == 200) {
         List<Country> countries = (response.data['data'] as List)
@@ -83,7 +84,8 @@ class RequestCubit extends Cubit<RequestState> {
     emit(RequestLoading());
 
     try {
-      final response = await _dio.get('${Const.URL_API}/countries/$countryId/states?page=1&limit=999');
+      final response = await _dio
+          .get('${Const.URL_API}/countries/$countryId/states?page=1&limit=999');
 
       if (response.statusCode == 200) {
         List<City> states = (response.data['data'] as List)
@@ -98,11 +100,13 @@ class RequestCubit extends Cubit<RequestState> {
     }
   }
 
-  Future<void> submitForm(BuildContext context, String id, Map<String, dynamic> formData) async {
+  Future<void> submitForm(
+      BuildContext context, String id, Map<String, dynamic> formData) async {
     // print('cekFormData : ' + formData.toString());
     emit(RequestLoading());
     try {
-      final response = await _dio.post('${Const.API_PRODUCTS}/$id/demo-request', data: formData);
+      final response = await _dio.post('${Const.API_PRODUCTS}/$id/demo-request',
+          data: formData);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(
           msg: "Successfully Submitted",
@@ -126,9 +130,9 @@ class RequestCubit extends Cubit<RequestState> {
 
   String getSelectedCountryName() {
     if (state is CountriesLoaded && selectedCountryId != null) {
-      final country = (state as CountriesLoaded)
-          .countries
-          .firstWhere((country) => country.id.toString() == selectedCountryId, orElse: () => Country(id: 0, name: ''));
+      final country = (state as CountriesLoaded).countries.firstWhere(
+          (country) => country.id.toString() == selectedCountryId,
+          orElse: () => Country(id: 0, name: ''));
       return country.name;
     }
     return '';
@@ -136,9 +140,9 @@ class RequestCubit extends Cubit<RequestState> {
 
   String getSelectedStateName() {
     if (state is StatesLoaded && selectedStateId != null) {
-      final city = (state as StatesLoaded)
-          .states
-          .firstWhere((state) => state.id.toString() == selectedStateId, orElse: () => City(id: 0, name: '', countryId: 0));
+      final city = (state as StatesLoaded).states.firstWhere(
+          (state) => state.id.toString() == selectedStateId,
+          orElse: () => City(id: 0, name: '', countryId: 0));
       return city.name;
     }
     return '';

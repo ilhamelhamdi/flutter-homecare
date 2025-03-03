@@ -16,12 +16,12 @@ class DefaultPage extends StatelessWidget {
           children: [
             // Logo or Image
             // SvgPicture.asset(
-            //   'lib/assets/icons/flutter_homecare_logo.svg',
-            //   semanticsLabel: 'flutter_homecare_logo',
+            //   'lib/assets/icons/m2health_logo.svg',
+            //   semanticsLabel: 'm2health_logo',
             //   placeholderBuilder: (BuildContext context) =>
             //       CircularProgressIndicator(),
             // ),
-            Image.asset('assets/icons/flutter_homecare_banner.png',
+            Image.asset('assets/icons/m2health_banner.png',
                 // width: 100,
                 height:
                     50), // Replace 'assets/logo.png' with your logo image path
