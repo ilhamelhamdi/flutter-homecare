@@ -7,10 +7,14 @@ import 'package:m2health/widgets/bottombar.dart';
 // import 'package:navbar_router/navbar_router.dart';
 
 class PaymentPage extends StatefulWidget {
+  final int appointmentId;
+  final Map<String, dynamic> profileServiceData;
+
+  PaymentPage({required this.appointmentId, required this.profileServiceData});
+
   @override
   _PaymentPageState createState() => _PaymentPageState();
 }
-
 // void navbarVisibility(bool status) {
 //   NavbarNotifier.hideBottomNavBar = status;
 //   if (status == true) {
@@ -306,21 +310,41 @@ class PaymentSuccessDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.go('/dashboard');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  Const.tosca, // Set the button color to Const.tosca
-              minimumSize:
-                  const Size(150, 50), // Customize the width and height
-            ),
-            child: const Text(
-              'Return to Home',
-              style:
-                  TextStyle(color: Colors.white), // Set the text color to white
+          // ElevatedButton(
+          //   onPressed: () {
+          //     // Navigator.of(context).pop();
+          //     context.go('/dashboard');
+          //   },
+          //   style: ElevatedButton.styleFrom(
+          //     backgroundColor:
+          //         Const.tosca, // Set the button color to Const.tosca
+          //     minimumSize:
+          //         const Size(150, 50), // Customize the width and height
+          //   ),
+          //   child: const Text(
+          //     'Return to Home',
+          //     style:
+          //         TextStyle(color: Colors.white), // Set the text color to white
+          //   ),
+          // ),
+          SizedBox(
+            width: 150,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                context.go('/dasboard');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Const.tosca,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Return to Home',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],

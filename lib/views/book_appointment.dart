@@ -200,7 +200,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
               'hour': DateFormat('HH:mm').format(selectTime),
               'summary': 'Summary',
               'pay_total': 100,
-              'profile_service_data': widget.pharmacist,
+              'profile_services_data': widget.pharmacist,
             };
 
             Navigator.push(

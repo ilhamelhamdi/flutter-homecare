@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
+import 'package:m2health/views/payment.dart';
+import 'dart:convert';
 
 class DetailAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> appointmentData;
@@ -23,12 +24,16 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
         throw Exception('Token is null');
       }
 
+      // Print the data being submitted
+      print('Data being submitted: ${jsonEncode(widget.appointmentData)}');
+
       final response = await Dio().post(
         'http://localhost:3333/v1/appointments',
-        data: widget.appointmentData,
+        data: jsonEncode(widget.appointmentData), // Convert to JSON string
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json', // Set content type to JSON
           },
         ),
       );
@@ -38,6 +43,16 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
         if (responseData != null && responseData['data'] != null) {
           // Handle successful submission
           print('Appointment created successfully');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentPage(
+                appointmentId: responseData['data']['id'],
+                profileServiceData:
+                    widget.appointmentData['profile_services_data'],
+              ),
+            ),
+          );
         } else {
           throw Exception('Invalid response data');
         }
@@ -52,7 +67,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final profile = widget.appointmentData['profile_service_data'];
+    final profile = widget.appointmentData['profile_services_data'];
 
     return Scaffold(
       appBar: AppBar(

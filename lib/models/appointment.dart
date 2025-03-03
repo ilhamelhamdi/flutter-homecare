@@ -39,8 +39,8 @@ class Appointment {
       userId: json['user_id'] ?? 0,
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
-      profileServiceData: json['profile_service_data'] != null
-          ? jsonDecode(json['profile_service_data'])
+      profileServiceData: json['profile_services_data'] != null
+          ? jsonDecode(json['profile_services_data'])
           : {},
     );
   }
@@ -57,7 +57,7 @@ class Appointment {
       'user_id': userId,
       'created_at': createdAt,
       'updated_at': updatedAt,
-      'profile_service_data': jsonEncode(profileServiceData),
+      'profile_services_data': jsonEncode(profileServiceData),
     };
   }
 }

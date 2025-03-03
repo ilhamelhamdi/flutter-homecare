@@ -6,7 +6,7 @@ class Const {
   static const String URL_WEB_DETAIL_PRODUCT = URL_WEB + '/product-detail';
   // static const String BASE_URL = 'http://192.168.50.100:3333';
   // static const String BASE_URL = 'https://homecare-api.med-map.org';
-  static const String BASE_URL = 'http://192.168.1.10:3333';
+  static const String BASE_URL = 'http://192.168.1.5:3333';
   // static const String BASE_URL = 'https://api.med-map.org';
   // static const String BASE_URL = 'https://api-m2health.mandatech.co.id';
   // static const String BASE_URL = 'https://be-mdmap.mandatech.co.id/';
