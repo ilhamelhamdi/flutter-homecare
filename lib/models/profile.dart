@@ -29,18 +29,18 @@ class Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      id: json['id'],
-      userId: json['user_id'],
-      age: json['age'],
-      weight: (json['weight'] as num).toDouble(),
-      height: (json['height'] as num).toDouble(),
-      phoneNumber: json['phone_number'],
-      username: json['username'],
-      email: json['email'],
-      homeAddress: json['home_address'],
-      gender: json['gender'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      id: json['id'] ?? 0,
+      userId: json['user_id'] ?? 0,
+      age: json['age'] ?? 0,
+      weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
+      height: (json['height'] as num?)?.toDouble() ?? 0.0,
+      phoneNumber: json['phone_number'] ?? '',
+      username: json['username'] ?? '',
+      email: json['email'] ?? '',
+      homeAddress: json['home_address'] ?? '',
+      gender: json['gender'] ?? '',
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
     );
   }
 
@@ -55,6 +55,7 @@ class Profile {
       'username': username,
       'email': email,
       'home_address': homeAddress,
+      'gender': gender,
       'created_at': createdAt,
       'updated_at': updatedAt,
     };

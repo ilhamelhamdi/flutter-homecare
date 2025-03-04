@@ -2,10 +2,30 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/views/search/pharma_checkout.dart';
 
 class FavouritesPage extends StatefulWidget {
   @override
   _FavouritesPageState createState() => _FavouritesPageState();
+}
+
+class FavoriteProvider with ChangeNotifier {
+  final Map<int, bool> _favorites = {};
+
+  Map<int, bool> get favorites => _favorites;
+
+  void toggleFavorite(int id) {
+    if (_favorites.containsKey(id)) {
+      _favorites[id] = !_favorites[id]!;
+    } else {
+      _favorites[id] = true;
+    }
+    notifyListeners();
+  }
+
+  bool isFavorite(int id) {
+    return _favorites[id] ?? false;
+  }
 }
 
 class _FavouritesPageState extends State<FavouritesPage> {
@@ -73,23 +93,43 @@ class _FavouritesPageState extends State<FavouritesPage> {
       final token = await Utils.getSpString(
           Const.TOKEN); // Get bearer token from shared preferences
 
-      final response = await Dio().post(
-        'http://localhost:3333/v1/favorites',
-        data: {
-          'user_id': userId,
-          'item_id': pharmacistId,
-          'item_type': 'pharmacist',
-          'highlighted': isFavorite ? 1 : 0,
-        },
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
+      if (isFavorite) {
+        final response = await Dio().post(
+          'http://localhost:3333/v1/favorites',
+          data: {
+            'user_id': userId,
+            'item_id': pharmacistId,
+            'item_type': 'pharmacist',
+            'highlighted': 1,
           },
-        ),
-      );
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to update favorite status');
+        if (response.statusCode != 200) {
+          throw Exception('Failed to update favorite status');
+        }
+      } else {
+        final response = await Dio().delete(
+          'http://localhost:3333/v1/favorites',
+          data: {
+            'user_id': userId,
+            'item_id': pharmacistId,
+            'item_type': 'pharmacist',
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        if (response.statusCode != 200) {
+          throw Exception('Failed to delete favorite');
+        }
       }
     } catch (e) {
       print('Error: $e');
@@ -97,11 +137,14 @@ class _FavouritesPageState extends State<FavouritesPage> {
   }
 
   void _toggleFavorite(int index) {
+    final isFavorite = !pharmacists[index]['isFavorite'];
     setState(() {
-      pharmacists[index]['isFavorite'] = !pharmacists[index]['isFavorite'];
+      pharmacists[index]['isFavorite'] = isFavorite;
+      if (!isFavorite) {
+        pharmacists.removeAt(index);
+      }
     });
-    updateFavoriteStatus(
-        pharmacists[index]['id'], pharmacists[index]['isFavorite']);
+    updateFavoriteStatus(pharmacists[index]['id'], isFavorite);
   }
 
   @override
@@ -167,8 +210,18 @@ class _FavouritesPageState extends State<FavouritesPage> {
                               Row(
                                 children: [
                                   TextButton(
-                                    onPressed: () {},
-                                    child: Text(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              PharmacistProfilePage(
+                                            pharmacist: pharmacist,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text(
                                       'Appointment',
                                       style: TextStyle(color: Colors.black),
                                     ),

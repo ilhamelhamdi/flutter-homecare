@@ -29,6 +29,9 @@ class AppointmentCubit extends Cubit<AppointmentState> {
         final appointments = (response.data['data'] as List)
             .map((json) => Appointment.fromJson(json))
             .toList();
+
+        print('data yang muncul : $appointments');
+
         emit(AppointmentLoaded(appointments));
       } else {
         emit(AppointmentError('Failed to load appointments'));

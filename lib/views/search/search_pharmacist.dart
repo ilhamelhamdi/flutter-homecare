@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:m2health/views/search/pharma_checkout.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/models/favorite.dart';
 
 class SearchPharmacistPage extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class SearchPharmacistPage extends StatefulWidget {
 
 class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
   List<Map<String, dynamic>> pharmacists = [];
+  List<Favorite> favoritePharmacists = [];
   bool isLoading = true;
 
   @override
@@ -21,12 +24,41 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
 
   Future<void> fetchPharmacists() async {
     try {
+      final userId = await Utils.getSpString(Const.USER_ID);
+      final token = await Utils.getSpString(Const.TOKEN);
+
+      // Fetch favorite pharmacists
+      final favoriteResponse = await Dio().get(
+        'http://localhost:3333/v1/favorites',
+        queryParameters: {
+          'user_id': userId,
+          'item_type': 'pharmacist',
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (favoriteResponse.statusCode == 200) {
+        favoritePharmacists =
+            List<Map<String, dynamic>>.from(favoriteResponse.data['data'])
+                .map((item) => Favorite.fromJson(item))
+                .toList();
+      } else {
+        throw Exception('Failed to load favorite pharmacists');
+      }
+
+      // Fetch all pharmacists
       final response =
           await Dio().get('http://localhost:3333/v1/pharmacist-services');
       if (response.statusCode == 200) {
         setState(() {
           pharmacists = List<Map<String, dynamic>>.from(response.data['data'])
               .map((pharmacist) {
+            final isFavorite = favoritePharmacists
+                .any((fav) => fav.itemId == pharmacist['id']);
             return {
               'id': pharmacist['id'] ?? 0,
               'name': pharmacist['name'] ?? '',
@@ -41,7 +73,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
               'user_id': pharmacist['user_id'] ?? 0,
               'created_at': pharmacist['created_at'] ?? '',
               'updated_at': pharmacist['updated_at'] ?? '',
-              'isFavorite': pharmacist['isFavorite'] ?? false,
+              'isFavorite': isFavorite,
             };
           }).toList();
           isLoading = false;
@@ -59,27 +91,58 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
 
   Future<void> updateFavoriteStatus(int pharmacistId, bool isFavorite) async {
     try {
-      final userId = await Utils.getSpString(
-          Const.USER_ID); // Get user ID from shared preferences
-      final token = await Utils.getSpString(
-          Const.TOKEN); // Get bearer token from shared preferences
+      final userId = await Utils.getSpString(Const.USER_ID);
+      final token = await Utils.getSpString(Const.TOKEN);
 
-      final response = await Dio().post(
-        'http://localhost:3333/v1/favorites',
-        data: {
+      if (isFavorite) {
+        final data = {
           'user_id': userId,
           'item_id': pharmacistId,
           'item_type': 'pharmacist',
-          'highlighted': isFavorite ? 1 : 0,
-        },
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-      if (response.statusCode != 200) {
-        throw Exception('Failed to update favorite status');
+          'highlighted': 1,
+        };
+        print('Updating favorite status with data: $data');
+
+        final response = await Dio().post(
+          'http://localhost:3333/v1/favorites',
+          data: data,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        print('Response status: ${response.statusCode}');
+        print('Response data: ${response.data}');
+
+        if (response.statusCode != 200) {
+          throw Exception('Failed to update favorite status');
+        }
+      } else {
+        final data = {
+          'user_id': userId,
+          'item_id': pharmacistId,
+          'item_type': 'pharmacist',
+        };
+        print('Deleting favorite with data: $data');
+
+        final response = await Dio().delete(
+          'http://localhost:3333/v1/favorites',
+          data: data,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        print('Response status: ${response.statusCode}');
+        print('Response data: ${response.data}');
+
+        if (response.statusCode != 200) {
+          throw Exception('Failed to delete favorite');
+        }
       }
     } catch (e) {
       print('Error: $e');
@@ -185,13 +248,17 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PharmacistProfilePage()),
+                                            builder: (context) =>
+                                                PharmacistProfilePage(
+                                              pharmacist: pharmacist,
+                                            ),
+                                          ),
                                         );
                                       },
-                                      child: const Text('Appointment',
-                                          style:
-                                              TextStyle(color: Colors.black)),
+                                      child: const Text(
+                                        'Appointment',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
                                     ),
                                     IconButton(
                                       icon: Icon(
@@ -261,308 +328,6 @@ class StarRating extends StatelessWidget {
           );
         }
       }),
-    );
-  }
-}
-
-class PharmacistProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pharmacist Details'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Column(
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/images_olla.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Icon(
-                        Icons.circle,
-                        color: Colors.green,
-                        size: 20,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Dr. Khanza Deliva',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                const Text(
-                  'Pharmacist',
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          '180+',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Const.tosca,
-                          ),
-                        ),
-                        Text('Patients'),
-                      ],
-                    ),
-                  ),
-                ),
-                Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          '10Y++',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Const.tosca),
-                        ),
-                        Text('Experience'),
-                      ],
-                    ),
-                  ),
-                ),
-                Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '4.5',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Const.tosca),
-                            ),
-                            Icon(
-                              Icons.star,
-                              color: Colors.yellow,
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Rating',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'About Me',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Dr. Khanza Deliva is a highly experienced pharmacist with over 10 years of experience in the field. She has successfully treated over 180 patients and is known for her dedication and expertise.',
-              textAlign: TextAlign.justify,
-            ),
-            const SizedBox(height: 16),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Working Information',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Row(
-              children: [
-                Icon(Icons.calendar_today, color: Colors.grey),
-                SizedBox(width: 8),
-                Text('Monday - Friday, 08.00 AM - 21.00 PM'),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Row(
-              children: [
-                Icon(
-                  Icons.location_on,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'Caterpillar Hospital, Jack Road, Singapore 89191',
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Professional Certification',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            Column(
-              children: List.generate(3, (index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 112,
-                        height: 76,
-                        child:
-                            Image.asset('assets/images/cert${index + 1}.png'),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Certificate Title $index',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text('ID Number: 12345$index'),
-                            const Text('Issued: 2021'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Reviews',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Handle See All click
-                  },
-                  child: const Text('See All'),
-                ),
-              ],
-            ),
-            Column(
-              children: List.generate(3, (index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            backgroundImage:
-                                AssetImage('assets/images/review1.png'),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              'Reviewer $index',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          const Row(
-                            children: [
-                              Icon(Icons.star, color: Colors.yellow),
-                              Text('4.5'),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'This is a detailed review comment that can be seen in full. '
-                        'It provides insights and feedback about the pharmacist\'s services.',
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => BookAppointmentPage()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF35C5CF),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-          child: const Text(
-            'Book Appointment',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
     );
   }
 }

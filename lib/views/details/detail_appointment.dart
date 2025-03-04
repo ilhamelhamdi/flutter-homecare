@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
+import 'package:dio/dio.dart';
 import 'package:m2health/views/payment.dart';
+import 'dart:convert';
 
 class DetailAppointmentPage extends StatefulWidget {
-  final String pharmacistName;
+  final Map<String, dynamic> appointmentData;
 
-  DetailAppointmentPage({required this.pharmacistName});
+  DetailAppointmentPage({required this.appointmentData});
 
   @override
   _DetailAppointmentPageState createState() => _DetailAppointmentPageState();
@@ -13,11 +17,61 @@ class DetailAppointmentPage extends StatefulWidget {
 class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
   bool _isExpanded = false;
 
+  Future<void> _submitAppointment() async {
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+      if (token == null) {
+        throw Exception('Token is null');
+      }
+
+      // Print the data being submitted
+      print('Data being submitted: ${jsonEncode(widget.appointmentData)}');
+
+      final response = await Dio().post(
+        'http://localhost:3333/v1/appointments',
+        data: jsonEncode(widget.appointmentData), // Convert to JSON string
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json', // Set content type to JSON
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        if (responseData != null && responseData['data'] != null) {
+          // Handle successful submission
+          print('Appointment created successfully');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentPage(
+                appointmentId: responseData['data']['id'],
+                profileServiceData:
+                    widget.appointmentData['profile_services_data'],
+              ),
+            ),
+          );
+        } else {
+          throw Exception('Invalid response data');
+        }
+      } else {
+        print('Error: ${response.statusCode} - ${response.statusMessage}');
+        throw Exception('Failed to create appointment');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final profile = widget.appointmentData['profile_services_data'];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.pharmacistName),
+        title: Text(profile['name']),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -34,9 +88,8 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: const DecorationImage(
-                          image: AssetImage(
-                              'assets/images/images_olla.png'), // Replace with your image path
+                        image: DecorationImage(
+                          image: NetworkImage(profile['avatar']),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -46,18 +99,17 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.pharmacistName,
+                          profile['name'],
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        const Text('Staff Nurse at Cardiology Department'),
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.location_on, color: Colors.blue),
-                            SizedBox(width: 4),
-                            Text('Royal Hospital, Singapore'),
+                            const Icon(Icons.location_on, color: Colors.blue),
+                            const SizedBox(width: 4),
+                            Text(profile['maps_location']),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -68,9 +120,9 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                             border: Border.all(color: Colors.yellow),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
-                            'Upcoming',
-                            style: TextStyle(color: Colors.orange),
+                          child: Text(
+                            widget.appointmentData['status'],
+                            style: const TextStyle(color: Colors.orange),
                           ),
                         ),
                       ],
@@ -88,19 +140,19 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
               ),
             ),
             const SizedBox(height: 8),
-            const Row(
+            Row(
               children: [
-                Icon(Icons.calendar_today, color: Colors.grey),
-                SizedBox(width: 8),
-                Text('Monday, March 17, 2024'),
+                const Icon(Icons.calendar_today, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(widget.appointmentData['date']),
               ],
             ),
             const SizedBox(height: 8),
-            const Row(
+            Row(
               children: [
-                Icon(Icons.access_time, color: Colors.grey),
-                SizedBox(width: 8),
-                Text('10:00 AM - 11:00 AM (60 Minutes)'),
+                const Icon(Icons.access_time, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(widget.appointmentData['hour']),
               ],
             ),
             const SizedBox(height: 16),
@@ -309,22 +361,16 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
               width: double.infinity, // Set the width to fill the parent
               height: 50, // Set a fixed height
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => PaymentPage(),
-                    ),
-                  );
-                },
+                onPressed: _submitAppointment,
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF35C5CF),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
-                ),
-                child: const Text(
-                  'Pay',
-                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),

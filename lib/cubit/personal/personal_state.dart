@@ -7,7 +7,8 @@ class Issue {
   final int userId;
   final String title;
   final String description;
-  final List<String> images; // Change to list of strings
+  // final List<String> images; // Change to list of strings
+  List<String> images; // Change to list of strings
   final String mobilityStatus;
   final String relatedHealthRecord;
   final String addOn;
@@ -59,6 +60,16 @@ class Issue {
       }
     }
     return [];
+  }
+
+  void updateImageUrls() {
+    const String baseUrl = 'https://homecare-api.med-map.org';
+    images = images.map((image) {
+      if (image.startsWith('http://localhost:3334')) {
+        return image.replaceFirst('http://localhost:3334', baseUrl);
+      }
+      return image;
+    }).toList();
   }
 
   Map<String, dynamic> toJson() {

@@ -1,11 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:time_slot/time_slot.dart';
 import 'details/detail_appointment.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/widgets/time_slot_grid_view.dart';
+import 'package:dio/dio.dart';
+import 'package:m2health/utils.dart';
 
 class BookAppointmentPage extends StatefulWidget {
+  final Map<String, dynamic> pharmacist;
+
+  const BookAppointmentPage({Key? key, required this.pharmacist})
+      : super(key: key);
+
   @override
   _BookAppointmentPageState createState() => _BookAppointmentPageState();
 }
@@ -17,6 +26,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    final pharmacist = widget.pharmacist;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -50,29 +61,29 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/images_olla.png'),
+                        image: DecorationImage(
+                          image: NetworkImage(pharmacist['avatar']),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
                     SizedBox(width: 16),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Khanza Deliva',
+                          pharmacist['name'],
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        Text('Pharmacist'),
+                        Text(pharmacist['role']),
                         Row(
                           children: [
                             Icon(Icons.location_on, color: Colors.teal),
                             SizedBox(width: 4),
-                            Text('Caterpillar Hospital, Singapore'),
+                            Text(pharmacist['maps_location']),
                           ],
                         ),
                       ],
@@ -181,14 +192,25 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
+            final appointmentData = {
+              'user_id': 1, // Replace with actual user ID
+              'type': 'Pharmacist',
+              'status': 'Upcoming',
+              'date': DateFormat('yyyy-MM-dd').format(_selectedDay),
+              'hour': DateFormat('HH:mm').format(selectTime),
+              'summary': 'Summary',
+              'pay_total': 100,
+              'profile_services_data': widget.pharmacist,
+            };
+
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    DetailAppointmentPage(pharmacistName: 'Khanza Deliva'),
+                builder: (context) => DetailAppointmentPage(
+                  appointmentData: appointmentData,
+                ),
               ),
             );
-            // Handle the next button press
           },
           child: Text(
             'Next',
