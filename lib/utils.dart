@@ -386,3 +386,11 @@ class EmailValidator implements StringValidator {
     return ValidationResult(isValid: true);
   }
 }
+
+String getImageUrl(String imageUrl) {
+  if (Const.BASE_URL.contains('localhost')) {
+    return imageUrl.replaceFirst(
+        'https://homecare-api.med-map.org', 'http://localhost:3334');
+  }
+  return imageUrl;
+}

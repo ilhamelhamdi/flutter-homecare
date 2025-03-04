@@ -27,6 +27,7 @@ class PersonalCubit extends Cubit<PersonalState> {
       if (response.statusCode == 200) {
         final data = response.data['data'] as List;
         final issues = data.map((json) => Issue.fromJson(json)).toList();
+        issues.forEach((issue) => issue.updateImageUrls());
         print('Parsed issues: $issues');
         emit(PersonalLoaded(issues));
       } else {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart'; // Import the utils file
 import 'package:m2health/widgets/add_concern_page.dart';
 import 'personal_cubit.dart';
 import 'personal_state.dart';
@@ -111,7 +112,8 @@ class _PersonalPageState extends State<PersonalPage> {
                                             runSpacing: 8.0,
                                             children: issue.images.map((image) {
                                               return Image.network(
-                                                image,
+                                                getImageUrl(
+                                                    image), // Use the utility function
                                                 width: 100,
                                                 height: 100,
                                                 fit: BoxFit.cover,
