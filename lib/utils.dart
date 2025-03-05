@@ -387,10 +387,21 @@ class EmailValidator implements StringValidator {
   }
 }
 
+// String getImageUrl(String imageUrl) {
+//   if (Const.BASE_URL.contains('localhost')) {
+//     return imageUrl.replaceFirst(
+//         'https://homecare-api.med-map.org', 'http://localhost:3334');
+//   }
+//   return imageUrl;
+// }
+
 String getImageUrl(String imageUrl) {
-  if (Const.BASE_URL.contains('localhost')) {
+  if (imageUrl.contains('localhost:3334')) {
     return imageUrl.replaceFirst(
-        'https://homecare-api.med-map.org', 'http://localhost:3334');
+        'http://localhost:3334', 'https://homecare-api.med-map.org');
+  } else if (imageUrl.contains('localhost:3333')) {
+    return imageUrl.replaceFirst(
+        'http://localhost:3333', 'https://homecare-api.med-map.org');
   }
   return imageUrl;
 }

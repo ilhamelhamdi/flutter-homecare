@@ -23,7 +23,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
 
       if (response.statusCode == 200) {
-        final profileData = response.data['data'][0];
+        final profileData = response.data['data'];
         final profile = Profile.fromJson(profileData);
         emit(ProfileLoaded(profile));
       } else if (response.statusCode == 401) {

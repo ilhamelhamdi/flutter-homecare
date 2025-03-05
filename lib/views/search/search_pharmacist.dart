@@ -60,7 +60,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
             return {
               'id': pharmacist['id'] ?? 0,
               'name': pharmacist['name'] ?? '',
-              'avatar': pharmacist['avatar'] ?? '',
+              'avatar': getImageUrl(pharmacist['avatar'] ?? ''),
               'experience': pharmacist['experience'] ?? 0,
               'rating': (pharmacist['rating'] ?? 0.0).toDouble(),
               'about': pharmacist['about'] ?? '',
@@ -183,8 +183,9 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                 itemCount: pharmacists.length,
                 itemBuilder: (context, index) {
                   final pharmacist = pharmacists[index];
+                  final avatar = getImageUrl(pharmacist['avatar'] ?? '');
+                  print('avatar URL:  $avatar');
                   return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
@@ -199,8 +200,8 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8.0),
                                       image: DecorationImage(
-                                        image: NetworkImage(
-                                            pharmacist['avatar'] ?? ''),
+                                        image: NetworkImage(getImageUrl(
+                                            pharmacist['avatar'] ?? '')),
                                         fit: BoxFit.cover,
                                       ),
                                     ),

@@ -217,10 +217,9 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             const SizedBox(height: 8),
                             Text(
-                                'Age: ${state.profile.age ?? 'N/A'} | Weight: ${state.profile.weight ?? 'N/A'} KG | Height: ${state.profile.height ?? 'N/A'} cm'),
+                                'Age: ${state.profile.age} | Weight: ${state.profile.weight} KG | Height: ${state.profile.height} cm'),
                             const SizedBox(height: 8),
-                            Text(
-                                'Phone Number: ${state.profile.phoneNumber ?? 'N/A'}'),
+                            Text('Phone Number: ${state.profile.phoneNumber}'),
                             const SizedBox(height: 8),
                             Text(
                                 'Home Address (Primary): ${state.profile.homeAddress}'),
