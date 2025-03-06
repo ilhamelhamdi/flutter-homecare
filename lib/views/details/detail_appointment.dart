@@ -94,6 +94,12 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                 'No description') // Handle null safely
             .toList();
 
+        final addOns = data
+            .whereType<Map<String, dynamic>>() // Ensure every item is a map
+            .map((item) =>
+                item['add_on'] as String? ?? 'No add-on') // Handle null safely
+            .toList();
+
         setState(() {
           _personalCase = PersonalCase(
             id: 0,
@@ -102,7 +108,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
             images: [],
             mobilityStatus: '',
             relatedHealthRecord: '',
-            addOn: '',
+            addOn: addOns.isNotEmpty ? addOns.last : '',
             estimatedBudget: 0.0,
             userId: 0,
           );
@@ -131,7 +137,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
       print('Data being submitted: ${jsonEncode(widget.appointmentData)}');
 
       final response = await Dio().post(
-        'http://localhost:3333/v1/appointments',
+        Const.API_APPOINTMENT,
         data: jsonEncode(widget.appointmentData), // Convert to JSON string
         options: Options(
           headers: {
@@ -174,6 +180,10 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
   @override
   Widget build(BuildContext context) {
     final profile = widget.appointmentData['profile_services_data'];
+    final addOnServices = _personalCase?.addOn ?? '';
+    final serviceCost = 10; // Dummy cost for each service
+    final totalCost =
+        serviceCost; // Since add_on is a single string, total cost is serviceCost
 
     return Scaffold(
       appBar: AppBar(
@@ -389,10 +399,11 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Inject, Blood Glucose Check, Medication Administration, NGT Feeding',
+            Text(
+              addOnServices,
               style: TextStyle(fontSize: 16),
             ),
+            const SizedBox(height: 16),
             const SizedBox(height: 16),
             const Row(
               children: [
@@ -408,38 +419,14 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
               ],
             ),
             const SizedBox(height: 8),
-            const Column(
+            Column(
               children: [
                 Row(
                   children: [
                     SizedBox(width: 8),
-                    Text('Inject'),
+                    Text(addOnServices),
                     Spacer(),
-                    Text('\$250'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    SizedBox(width: 8),
-                    Text('Inject'),
-                    Spacer(),
-                    Text('\$250'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    SizedBox(width: 8),
-                    Text('Inject'),
-                    Spacer(),
-                    Text('\$250'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    SizedBox(width: 8),
-                    Text('Inject'),
-                    Spacer(),
-                    Text('\$250'),
+                    Text('\$$serviceCost'),
                   ],
                 ),
                 Divider(),
@@ -455,7 +442,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                     Spacer(),
                     Icon(Icons.attach_money, color: Colors.green),
                     Text(
-                      '\$250',
+                      '\$$totalCost',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
