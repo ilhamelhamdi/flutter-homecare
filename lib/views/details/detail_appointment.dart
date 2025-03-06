@@ -3,6 +3,8 @@ import 'package:m2health/const.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:m2health/views/payment.dart';
+import 'package:m2health/models/profile.dart';
+import 'package:m2health/models/personal_case.dart';
 import 'dart:convert';
 
 class DetailAppointmentPage extends StatefulWidget {
@@ -16,6 +18,80 @@ class DetailAppointmentPage extends StatefulWidget {
 
 class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
   bool _isExpanded = false;
+  Profile? _profile;
+  PersonalCase? _personalCase;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfile();
+    _fetchPersonalCase();
+  }
+
+  Future<void> _fetchProfile() async {
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+      if (token == null) {
+        throw Exception('Token is null');
+      }
+
+      final response = await Dio().get(
+        'http://localhost:3333/v1/profiles',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _profile = Profile.fromJson(response.data['data']);
+        });
+        print('Profile data: ${response.data['data']}');
+      } else {
+        throw Exception('Failed to load profile: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load profile: $e';
+      });
+      print('Error: $e');
+    }
+  }
+
+  Future<void> _fetchPersonalCase() async {
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+      if (token == null) {
+        throw Exception('Token is null');
+      }
+
+      final response = await Dio().get(
+        'http://localhost:3333/v1/personal-cases',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _personalCase = PersonalCase.fromJson(response.data['data']);
+        });
+        print('Personal case data: ${response.data['data']}');
+      } else {
+        throw Exception('Failed to load personal case: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load personal case: $e';
+      });
+      print('Error: $e');
+    }
+  }
 
   Future<void> _submitAppointment() async {
     try {
@@ -61,6 +137,9 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
         throw Exception('Failed to create appointment');
       }
     } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to create appointment: $e';
+      });
       print('Error: $e');
     }
   }
@@ -78,6 +157,14 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -164,97 +251,99 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
               ),
             ),
             const SizedBox(height: 8),
-            ListTile(
-              title: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 100, // Set a fixed width for the label
-                    child: const Text('Full Name: '),
-                  ),
-                  const Flexible(
-                    child: Text('John Doe'),
-                  ),
-                ],
+            if (_profile != null) ...[
+              ListTile(
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 100, // Set a fixed width for the label
+                      child: const Text('Full Name: '),
+                    ),
+                    Flexible(
+                      child: Text(_profile!.username),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            ListTile(
-              title: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 100, // Set a fixed width for the label
-                    child: const Text('Age: '),
-                  ),
-                  const Flexible(
-                    child: Text('30'),
-                  ),
-                ],
+              ListTile(
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 100, // Set a fixed width for the label
+                      child: const Text('Age: '),
+                    ),
+                    Flexible(
+                      child: Text(_profile!.age.toString()),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            ListTile(
-              title: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 100, // Set a fixed width for the label
-                    child: const Text('Gender: '),
-                  ),
-                  const Flexible(
-                    child: Text('Male'),
-                  ),
-                ],
+              ListTile(
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 100, // Set a fixed width for the label
+                      child: const Text('Gender: '),
+                    ),
+                    Flexible(
+                      child: Text(_profile!.gender),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            ListTile(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 100, // Set a fixed width for the label
-                        child: const Text('Problem: '),
-                      ),
-                      Flexible(
-                        child: Text(
-                          _isExpanded
-                              ? 'Chest Pain, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                              : 'Chest Pain, Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              ListTile(
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 100, // Set a fixed width for the label
+                          child: const Text('Problem: '),
+                        ),
+                        Flexible(
+                          child: Text(
+                            _isExpanded
+                                ? '${_personalCase?.description ?? ''} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                                : '${_personalCase?.description ?? ''} Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (!_isExpanded)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isExpanded = true;
+                          });
+                        },
+                        child: const Text(
+                          'View More',
+                          style: TextStyle(color: Colors.blue),
                         ),
                       ),
-                    ],
-                  ),
-                  if (!_isExpanded)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isExpanded = true;
-                        });
-                      },
-                      child: const Text(
-                        'View More',
-                        style: TextStyle(color: Colors.blue),
-                      ),
+                  ],
+                ),
+              ),
+              ListTile(
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 100, // Set a fixed width for the label
+                      child: const Text('Address: '),
                     ),
-                ],
+                    Flexible(
+                      child: Text(_profile!.homeAddress),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            ListTile(
-              title: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 100, // Set a fixed width for the label
-                    child: const Text('Address: '),
-                  ),
-                  const Flexible(
-                    child: Text('123 Main Street, Singapore'),
-                  ),
-                ],
-              ),
-            ),
+            ],
             const SizedBox(height: 16),
             Card(
               child: Container(
