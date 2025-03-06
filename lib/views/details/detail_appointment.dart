@@ -37,7 +37,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
       }
 
       final response = await Dio().get(
-        'http://localhost:3333/v1/profiles',
+        Const.API_PROFILE,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -69,7 +69,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
       }
 
       final response = await Dio().get(
-        'http://localhost:3333/v1/personal-cases',
+        Const.API_PERSONAL_CASES,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -78,10 +78,37 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
       );
 
       if (response.statusCode == 200) {
+        // Ensure response.data is a Map before accessing 'data'
+        if (response.data is! Map<String, dynamic>) {
+          throw Exception('Unexpected response format');
+        }
+
+        final Map<String, dynamic> responseData = response.data;
+        final List<dynamic> data =
+            responseData['data'] ?? []; // Handle missing 'data' key safely
+
+        final descriptions = data
+            .whereType<Map<String, dynamic>>() // Ensure every item is a map
+            .map((item) =>
+                item['description'] as String? ??
+                'No description') // Handle null safely
+            .toList();
+
         setState(() {
-          _personalCase = PersonalCase.fromJson(response.data['data']);
+          _personalCase = PersonalCase(
+            id: 0,
+            title: '',
+            description: descriptions.join(', '),
+            images: [],
+            mobilityStatus: '',
+            relatedHealthRecord: '',
+            addOn: '',
+            estimatedBudget: 0.0,
+            userId: 0,
+          );
         });
-        print('Personal case data: ${response.data['data']}');
+
+        print('Personal case data: ${descriptions.join(', ')}');
       } else {
         throw Exception('Failed to load personal case: ${response.statusCode}');
       }
@@ -308,8 +335,8 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                         Flexible(
                           child: Text(
                             _isExpanded
-                                ? '${_personalCase?.description ?? ''} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                                : '${_personalCase?.description ?? ''} Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                                ? '${_personalCase?.description ?? ''} '
+                                : '${_personalCase?.description ?? ''} ',
                           ),
                         ),
                       ],
