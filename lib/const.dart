@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Const {
-  static const String URL_WEB = 'https://med-map.org';
-  static const String URL_WEB_DETAIL_CASE = URL_WEB + '/cases-analysis/detail';
-  static const String URL_WEB_DETAIL_PRODUCT = URL_WEB + '/product-detail';
+  // static const String URL_WEB = 'https://med-map.org';
+  // static const String URL_WEB_DETAIL_CASE = URL_WEB + '/cases-analysis/detail';
+  // static const String URL_WEB_DETAIL_PRODUCT = URL_WEB + '/product-detail';
   // static const String BASE_URL = 'http://192.168.50.100:3333';
   static const String BASE_URL = 'https://homecare-api.med-map.org';
   // static const String BASE_URL = 'http://192.168.56.1:3333';
@@ -25,9 +25,11 @@ class Const {
   static const String API_APPOINTMENT = URL_API + '/appointments';
   static const String API_PROFILE = URL_API + '/profiles';
   static const String API_PERSONAL_CASES = URL_API + '/personal-cases';
-
+  static const String API_PHARMACIST_SERVICES =
+      URL_API + '/pharmacist-services';
+  static const String API_FAVORITES = URL_API + '/favorites';
 // end new api
-  static const String URL_PRIVACY = URL_WEB + '/privacy-policy';
+  // static const String URL_PRIVACY = URL_WEB + '/privacy-policy';
 
   static const String ROLE = 'role';
   static const String IS_LOGED_IN = 'is_logged_in';

@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:m2health/views/search/pharma_checkout.dart';
 import 'package:m2health/utils.dart';
-import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/models/favorite.dart';
 
@@ -29,7 +28,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
 
       // Fetch favorite pharmacists
       final favoriteResponse = await Dio().get(
-        'http://localhost:3333/v1/favorites',
+        Const.API_FAVORITES,
         queryParameters: {
           'user_id': userId,
           'item_type': 'pharmacist',
@@ -51,8 +50,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
       }
 
       // Fetch all pharmacists
-      final response =
-          await Dio().get('http://localhost:3333/v1/pharmacist-services');
+      final response = await Dio().get(Const.API_PHARMACIST_SERVICES);
       if (response.statusCode == 200) {
         setState(() {
           pharmacists = List<Map<String, dynamic>>.from(response.data['data'])
@@ -62,7 +60,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
             return {
               'id': pharmacist['id'] ?? 0,
               'name': pharmacist['name'] ?? '',
-              'avatar': pharmacist['avatar'] ?? '',
+              'avatar': getImageUrl(pharmacist['avatar'] ?? ''),
               'experience': pharmacist['experience'] ?? 0,
               'rating': (pharmacist['rating'] ?? 0.0).toDouble(),
               'about': pharmacist['about'] ?? '',
@@ -104,7 +102,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
         print('Updating favorite status with data: $data');
 
         final response = await Dio().post(
-          'http://localhost:3333/v1/favorites',
+          Const.API_FAVORITES,
           data: data,
           options: Options(
             headers: {
@@ -128,7 +126,7 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
         print('Deleting favorite with data: $data');
 
         final response = await Dio().delete(
-          'http://localhost:3333/v1/favorites',
+          Const.API_FAVORITES,
           data: data,
           options: Options(
             headers: {
@@ -185,8 +183,9 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                 itemCount: pharmacists.length,
                 itemBuilder: (context, index) {
                   final pharmacist = pharmacists[index];
+                  final avatar = getImageUrl(pharmacist['avatar'] ?? '');
+                  print('avatar URL:  $avatar');
                   return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
@@ -201,8 +200,8 @@ class _SearchPharmacistPageState extends State<SearchPharmacistPage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8.0),
                                       image: DecorationImage(
-                                        image: NetworkImage(
-                                            pharmacist['avatar'] ?? ''),
+                                        image: NetworkImage(getImageUrl(
+                                            pharmacist['avatar'] ?? '')),
                                         fit: BoxFit.cover,
                                       ),
                                     ),

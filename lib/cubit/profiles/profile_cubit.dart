@@ -23,9 +23,16 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
 
       if (response.statusCode == 200) {
-        final profileData = response.data['data'][0];
-        final profile = Profile.fromJson(profileData);
-        emit(ProfileLoaded(profile));
+        final profileData = response.data['data'];
+        if (profileData is List &&
+            profileData.isNotEmpty &&
+            profileData[0] is List &&
+            profileData[0].isNotEmpty) {
+          final profile = Profile.fromJson(profileData[0][0]);
+          emit(ProfileLoaded(profile));
+        } else {
+          emit(ProfileError('Unexpected response format'));
+        }
       } else if (response.statusCode == 401) {
         emit(ProfileUnauthenticated());
       } else {
