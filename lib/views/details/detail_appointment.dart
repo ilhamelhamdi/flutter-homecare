@@ -42,14 +42,41 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
           headers: {
             'Authorization': 'Bearer $token',
           },
+          responseType: ResponseType.json,
         ),
       );
 
       if (response.statusCode == 200) {
-        setState(() {
-          _profile = Profile.fromJson(response.data['data']);
-        });
-        print('Profile data: ${response.data['data']}');
+        dynamic data = response.data;
+
+        if (data is String) {
+          data = json.decode(data);
+        }
+
+        print('Fetched data: $data');
+        print('Data type: ${data.runtimeType}');
+
+        if (data is Map<String, dynamic> && data.containsKey('data')) {
+          final rawData = data['data'];
+
+          if (rawData is List && rawData.isNotEmpty) {
+            final firstList = rawData.first; // Ambil list pertama dari data
+
+            if (firstList is List && firstList.isNotEmpty) {
+              final profileMap =
+                  firstList.first; // Ambil objek pertama dari list dalam list
+
+              if (profileMap is Map<String, dynamic>) {
+                setState(() {
+                  _profile = Profile.fromJson(profileMap);
+                });
+                print('Profile data: $profileMap');
+                return;
+              }
+            }
+          }
+        }
+        throw Exception('Unexpected response format');
       } else {
         throw Exception('Failed to load profile: ${response.statusCode}');
       }
