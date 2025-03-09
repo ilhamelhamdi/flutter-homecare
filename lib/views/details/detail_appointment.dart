@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/main.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:m2health/views/payment.dart';
@@ -559,12 +560,25 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                 ElevatedButton(
                                   onPressed: () {
                                     // Handle the cancellation logic here
-                                    Navigator.of(context).pop();
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            HomePage(), // Replace with your homepage widget
+                                      ),
+                                      (Route<dynamic> route) =>
+                                          false, // Remove all previous routes
+                                    );
                                   },
                                   child: const Text('Yes, Cancel'),
                                   style: ElevatedButton.styleFrom(
-                                      // primary: Colors.red,
-                                      ),
+                                    backgroundColor: Colors
+                                        .red, // Set the background color to red
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

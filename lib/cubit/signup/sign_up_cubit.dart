@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
-import 'package:m2health/models/r_profile.dart';
 import 'package:m2health/utils.dart';
 import 'package:omega_dio_logger/omega_dio_logger.dart';
 
@@ -88,8 +87,6 @@ class SignUpCubit extends Cubit<SignUpState> {
         return;
       }
 
-      rProfile mData = rProfile.fromJson(response.data);
-      Utils.setProfile(mData);
       emit(SignUpSuccess());
     } catch (e) {
       emit(SignUpFailure(e.toString()));
