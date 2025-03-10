@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_details/edit_profile.dart';
+import 'package:m2health/cubit/profiles/profile_details/upload_pdf.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:m2health/cubit/profiles/profile_details/medical_record.dart';
 import 'package:m2health/cubit/profiles/profile_details/pharmagenomical.dart';
@@ -103,30 +104,16 @@ class ProfilePage extends StatelessWidget {
                                 },
                               ),
                               ListTile(
-                                leading: const Icon(Icons.biotech,
+                                leading: const Icon(Icons.upload_file_outlined,
                                     color: Color(0xFF35C5CF)),
-                                title: const Text('Lab Reports'),
+                                title: const Text('Upload Report'),
                                 trailing: const Icon(Icons.arrow_forward_ios),
                                 onTap: () {
-                                  // Handle Lab Reports tap
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.radio,
-                                    color: Color(0xFF35C5CF)),
-                                title: const Text('Radiology Reports'),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                onTap: () {
-                                  // Handle Radiology Reports tap
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.health_and_safety,
-                                    color: Color(0xFF35C5CF)),
-                                title: const Text('Health Screening'),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                onTap: () {
-                                  // Handle Health Screening tap
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => UploadPDFPage()),
+                                  );
                                 },
                               ),
                               ListTile(

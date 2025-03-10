@@ -3,12 +3,10 @@ import 'package:m2health/views/appointment.dart';
 import 'package:m2health/views/splashscreen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/cubit/locations/location_page.dart';
-import 'package:m2health/cubit/partnership/request_page.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:m2health/cubit/signup/sign_up_page.dart';
 import 'package:m2health/cubit/signin/sign_in_page.dart';
 // import 'package:m2health/cubit/submenu/submenu_page.dart';
-import 'package:m2health/cubit/partnership/list/partnership_list_page.dart';
 import 'package:m2health/cubit/pharmacist_profile/pharmacist_profile_page.dart';
 import 'package:m2health/cubit/personal/personal_page.dart';
 // import 'package:m2health/cubit/nursing/nursing_page.dart';
@@ -27,13 +25,6 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/locations',
       builder: (context, state) => LocationPage(),
-    ),
-    GoRoute(
-      path: AppRoutes.partnership,
-      builder: (context, state) {
-        final itemId = state.extra as int;
-        return RequestPage(itemId: itemId);
-      },
     ),
 
     // GoRoute(
@@ -66,12 +57,7 @@ final GoRouter router = GoRouter(
         return SignInPage();
       },
     ),
-    GoRoute(
-      path: AppRoutes.partnership_list,
-      builder: (context, state) {
-        return PartnershipListPage();
-      },
-    ),
+
     GoRoute(
       path: AppRoutes.profile,
       builder: (context, state) {
@@ -90,12 +76,6 @@ final GoRouter router = GoRouter(
         return PersonalPage();
       },
     ),
-    // GoRoute(
-    //   path: AppRoutes.nursing,
-    //   builder: (context, state) {
-    //     return NursingService();
-    //   },
-    // ),
   ],
   errorPageBuilder: (context, state) {
     return MaterialPage(child: HomePage());
