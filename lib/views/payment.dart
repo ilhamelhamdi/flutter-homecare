@@ -15,26 +15,14 @@ class PaymentPage extends StatefulWidget {
   @override
   _PaymentPageState createState() => _PaymentPageState();
 }
-// void navbarVisibility(bool status) {
-//   NavbarNotifier.hideBottomNavBar = status;
-//   if (status == true) {
-//     NavbarNotifier.hideBottomNavBar = false;
-//     if (NavbarNotifier.isNavbarHidden) {
-//       NavbarNotifier.hideBottomNavBar = false;
-//     }
-//   } else {
-//     NavbarNotifier.hideBottomNavBar = true;
-//     if (NavbarNotifier.isNavbarHidden) {
-//       NavbarNotifier.hideBottomNavBar = true;
-//     }
-//   }
-// }
 
 class _PaymentPageState extends State<PaymentPage> {
   String selectedPaymentMethod = '';
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> profile = widget.profileServiceData;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -52,44 +40,35 @@ class _PaymentPageState extends State<PaymentPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Stack(
-                      children: [
-                        Image.asset(
-                          'assets/images/images_olla.png', // Replace with your actual image path
-                          width: 50,
-                          height: 50,
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        image: DecorationImage(
+                          image: NetworkImage(profile['avatar']),
+                          fit: BoxFit.cover,
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 10,
-                            height: 10,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.green,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                     const SizedBox(width: 16),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Angela Xianxian',
-                          style: TextStyle(
+                          profile['name'],
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        Text('Staff Nurse'),
+                        Text(profile['role']),
                         Row(
                           children: [
-                            Icon(Icons.star_half, color: Colors.yellow),
-                            SizedBox(width: 4),
-                            Text('4.8 (153 reviews)'),
+                            const Icon(Icons.star_half, color: Colors.yellow),
+                            const SizedBox(width: 4),
+                            Text(
+                                '${profile['rating']} (${profile['reviews']} reviews)'),
                           ],
                         ),
                       ],
