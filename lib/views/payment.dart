@@ -153,7 +153,10 @@ class _PaymentPageState extends State<PaymentPage> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return PaymentSuccessDialog();
+                return PaymentSuccessDialog(
+                  totalCost: totalCost,
+                  pharmacistName: profile['name'],
+                );
               },
             );
           },
@@ -210,6 +213,11 @@ class _PaymentPageState extends State<PaymentPage> {
 }
 
 class PaymentSuccessDialog extends StatelessWidget {
+  final int totalCost;
+  final String pharmacistName;
+
+  PaymentSuccessDialog({required this.totalCost, required this.pharmacistName});
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -236,18 +244,19 @@ class PaymentSuccessDialog extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Your money has been successfully sent to Angela Xianxian.',
+          Text(
+            'Your money has been successfully sent to $pharmacistName.',
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          const Column(
+          Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Amount'),
+              const Text('Amount'),
               Text(
-                '\$220',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 34),
+                '\$$totalCost',
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 34),
               ),
             ],
           ),
@@ -276,7 +285,9 @@ class PaymentSuccessDialog extends StatelessWidget {
                 context: context,
                 isScrollControlled: true,
                 builder: (BuildContext context) {
-                  return FeedbackForm();
+                  return FeedbackForm(
+                    pharmacistName: pharmacistName,
+                  );
                 },
               );
             },
@@ -337,6 +348,10 @@ class PaymentSuccessDialog extends StatelessWidget {
 }
 
 class FeedbackForm extends StatefulWidget {
+  final String pharmacistName;
+
+  FeedbackForm({required this.pharmacistName});
+
   @override
   _FeedbackFormState createState() => _FeedbackFormState();
 }
@@ -392,7 +407,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
             const SizedBox(height: 8),
             Center(
               child: Text(
-                'You rated Angela $selectedStar stars',
+                'You rated ${widget.pharmacistName} $selectedStar stars',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -405,9 +420,9 @@ class _FeedbackFormState extends State<FeedbackForm> {
               maxLines: 3,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Give some tips to Angela Xianxian',
-              style: TextStyle(
+            Text(
+              'Give some tips to ${widget.pharmacistName}',
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
