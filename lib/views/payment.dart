@@ -19,6 +19,15 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   String selectedPaymentMethod = '';
 
+  final List<Map<String, dynamic>> services = [
+    {'name': 'Inject', 'cost': 250},
+    {'name': 'Blood Glucose Check', 'cost': 65},
+  ];
+
+  int get totalCost {
+    return services.fold(0, (sum, service) => sum + service['cost'] as int);
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> profile = widget.profileServiceData;
@@ -86,25 +95,20 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
             const SizedBox(height: 8),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Inject'),
-                Text('\$250'),
-              ],
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Blood Glucose Check'),
-                Text('\$65'),
-              ],
-            ),
+            ...services.map((service) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(service['name']),
+                  Text('\$${service['cost']}'),
+                ],
+              );
+            }).toList(),
             const Divider(),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Total',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -112,8 +116,8 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 ),
                 Text(
-                  '\$315',
-                  style: TextStyle(
+                  '\$$totalCost',
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
