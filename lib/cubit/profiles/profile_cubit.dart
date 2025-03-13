@@ -22,13 +22,29 @@ class ProfileCubit extends Cubit<ProfileState> {
         ),
       );
 
+      //   if (response.statusCode == 200) {
+      //     final profileData = response.data['data'];
+      //     if (profileData is List &&
+      //         profileData.isNotEmpty &&
+      //         profileData[0] is List &&
+      //         profileData[0].isNotEmpty) {
+      //       final profile = Profile.fromJson(profileData[0][0]);
+      //       emit(ProfileLoaded(profile));
+      //     } else {
+      //       emit(ProfileError('Unexpected response format'));
+      //     }
+      //   } else if (response.statusCode == 401) {
+      //     emit(ProfileUnauthenticated());
+      //   } else {
+      //     emit(ProfileError('Failed to load profile'));
+      //   }
+      // } catch (e) {
+      //   emit(ProfileError(e.toString()));
+      // }
       if (response.statusCode == 200) {
         final profileData = response.data['data'];
-        if (profileData is List &&
-            profileData.isNotEmpty &&
-            profileData[0] is List &&
-            profileData[0].isNotEmpty) {
-          final profile = Profile.fromJson(profileData[0][0]);
+        if (profileData is Map<String, dynamic>) {
+          final profile = Profile.fromJson(profileData);
           emit(ProfileLoaded(profile));
         } else {
           emit(ProfileError('Unexpected response format'));
