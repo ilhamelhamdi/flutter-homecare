@@ -5,7 +5,6 @@ import 'package:m2health/const.dart';
 import 'package:m2health/utils.dart';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class MedicalRecordsPage extends StatefulWidget {
@@ -470,7 +469,8 @@ class MedicalRecordDetailPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PDFScreen(url: record['file_url']),
+                      builder: (context) =>
+                          FileViewerScreen(url: record['file_url']),
                     ),
                   );
                 },
@@ -490,34 +490,34 @@ class MedicalRecordDetailPage extends StatelessWidget {
   }
 }
 
-class PDFScreen extends StatefulWidget {
+class FileViewerScreen extends StatefulWidget {
   final String? path; // For local files
   final String? url; // For remote files
 
-  PDFScreen({this.path, this.url});
+  FileViewerScreen({this.path, this.url});
 
   @override
-  _PDFScreenState createState() => _PDFScreenState();
+  _FileViewerScreenState createState() => _FileViewerScreenState();
 }
 
-class _PDFScreenState extends State<PDFScreen> {
-  late Future<Uint8List> _pdfBytesFuture;
+class _FileViewerScreenState extends State<FileViewerScreen> {
+  late Future<Uint8List> _fileBytesFuture;
 
   @override
   void initState() {
     super.initState();
     if (widget.url != null) {
-      // Download PDF from URL
-      _pdfBytesFuture = _downloadPDF(widget.url!);
+      // Download file from URL
+      _fileBytesFuture = _downloadFile(widget.url!);
     } else if (widget.path != null) {
-      // Load PDF from local file
-      _pdfBytesFuture = _loadLocalPDF(widget.path!);
+      // Load file from local path
+      _fileBytesFuture = _loadLocalFile(widget.path!);
     } else {
-      throw Exception("No PDF source provided.");
+      throw Exception("No file source provided.");
     }
   }
 
-  Future<Uint8List> _downloadPDF(String url) async {
+  Future<Uint8List> _downloadFile(String url) async {
     final response = await Dio().get<List<int>>(
       url,
       options: Options(responseType: ResponseType.bytes),
@@ -525,7 +525,7 @@ class _PDFScreenState extends State<PDFScreen> {
     return Uint8List.fromList(response.data!);
   }
 
-  Future<Uint8List> _loadLocalPDF(String path) async {
+  Future<Uint8List> _loadLocalFile(String path) async {
     File file = File(path);
     return await file.readAsBytes();
   }
@@ -534,16 +534,24 @@ class _PDFScreenState extends State<PDFScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('PDF Preview'),
+        title: Text('File Preview'),
       ),
       body: FutureBuilder<Uint8List>(
-        future: _pdfBytesFuture,
+        future: _fileBytesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
-              return SfPdfViewer.memory(snapshot.data!);
+              final fileBytes = snapshot.data!;
+              if (widget.url != null && widget.url!.endsWith('.pdf') ||
+                  widget.path != null && widget.path!.endsWith('.pdf')) {
+                return SfPdfViewer.memory(fileBytes);
+              } else {
+                return Center(
+                  child: Image.memory(fileBytes),
+                );
+              }
             } else {
-              return Center(child: Text('Failed to load PDF'));
+              return Center(child: Text('Failed to load file'));
             }
           } else {
             return Center(child: CircularProgressIndicator());
