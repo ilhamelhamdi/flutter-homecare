@@ -135,7 +135,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
             description: descriptions.join(', '),
             images: [],
             mobilityStatus: '',
-            relatedHealthRecord: '',
+            relatedHealthRecord: {},
             addOn: addOns.isNotEmpty ? addOns.last : '',
             estimatedBudget: 0.0,
             userId: 0,

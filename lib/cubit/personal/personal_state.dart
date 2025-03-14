@@ -10,7 +10,8 @@ class Issue {
   // final List<String> images; // Change to list of strings
   List<String> images; // Change to list of strings
   final String mobilityStatus;
-  final String relatedHealthRecord;
+  // final String relatedHealthRecord;
+  final Map<String, dynamic> relatedHealthRecord; // Changed to Map
   final String addOn;
   final double estimatedBudget;
   final DateTime createdAt;
@@ -38,7 +39,10 @@ class Issue {
       description: json['description'] ?? '',
       images: _parseImages(json['images']),
       mobilityStatus: json['mobility_status'] ?? '',
-      relatedHealthRecord: json['related_health_record'] ?? '',
+      // relatedHealthRecord: json['related_health_record'] ?? '',
+      relatedHealthRecord: json['related_health_record'] is Map
+          ? Map<String, dynamic>.from(json['related_health_record'])
+          : {}, // Convert to
       addOn: json['add_on'] ?? '',
       estimatedBudget: (json['estimated_budget'] as num?)?.toDouble() ?? 0.0,
       createdAt: DateTime.parse(
