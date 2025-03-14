@@ -14,7 +14,47 @@ class UploadPDFPage extends StatefulWidget {
 
 class _UploadPDFPageState extends State<UploadPDFPage> {
   List<File> _pdfFiles = [];
+  List<Map<String, dynamic>> _uploadedFiles = [];
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUploadedFiles();
+  }
+
+  Future<void> _fetchUploadedFiles() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final token = await Utils.getSpString(Const.TOKEN);
+      final response = await Dio().get(
+        Const.API_MEDICAL_RECORDS,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _uploadedFiles =
+              List<Map<String, dynamic>>.from(response.data['data']);
+        });
+      } else {
+        throw Exception('Failed to fetch uploaded files');
+      }
+    } catch (e) {
+      print('Error fetching uploaded files: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   Future<void> _pickPDF() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -82,6 +122,7 @@ class _UploadPDFPageState extends State<UploadPDFPage> {
         );
         setState(() {
           _pdfFiles.remove(file);
+          _fetchUploadedFiles(); // Refresh the list of uploaded files
         });
 
         // Check if file_url is present in the response
@@ -157,6 +198,49 @@ class _UploadPDFPageState extends State<UploadPDFPage> {
     }
   }
 
+  Future<void> _deletePDF(String fileId) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final token = await Utils.getSpString(Const.TOKEN);
+      final response = await Dio().delete(
+        '${Const.API_MEDICAL_RECORDS}/$fileId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('PDF deleted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _fetchUploadedFiles(); // Refresh the list of uploaded files
+      } else {
+        throw Exception('Failed to delete PDF');
+      }
+    } catch (e) {
+      print('Error deleting PDF: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting PDF: $e'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 5),
+        ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   Future<void> _storeFileUrl(String fileUrl) async {
     // Implement the logic to store the file URL in medical records
     // This could involve making another API call to save the file URL
@@ -212,6 +296,43 @@ class _UploadPDFPageState extends State<UploadPDFPage> {
                   child: ElevatedButton(
                     onPressed: _pickPDF,
                     child: Text('Add PDF'),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Uploaded PDFs',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _uploadedFiles.length,
+                    itemBuilder: (context, index) {
+                      final file = _uploadedFiles[index];
+                      return ListTile(
+                        title: Text(file['title']),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.preview),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PDFScreen(url: file['file_url']),
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () => _deletePDF(file['id']),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],

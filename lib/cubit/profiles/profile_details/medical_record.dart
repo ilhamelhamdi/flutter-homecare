@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:dio/dio.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class MedicalRecordsPage extends StatefulWidget {
   @override
@@ -7,63 +14,186 @@ class MedicalRecordsPage extends StatefulWidget {
 }
 
 class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
-  List<String> records = [
-    'Arboviral Encephalitis',
-    'Dengue Fever',
-    'Malaria',
-    'Tuberculosis',
-    'Hepatitis B',
-    'Influenza',
-    'COVID-19'
-  ];
-
+  List<Map<String, dynamic>> records = [];
   int? _editingIndex;
   bool _isAddingNewRecord = false;
+  bool isLoading = false;
+  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _diseaseNameController = TextEditingController();
   final TextEditingController _diseaseHistoryController =
       TextEditingController();
-  List<bool> _specialConsiderations = List.generate(6, (_) => false);
+  final TextEditingController _symptomsController = TextEditingController();
+  final TextEditingController _specialConsiderationController =
+      TextEditingController();
+  final TextEditingController _treatmentInfoController =
+      TextEditingController();
+  File? _selectedFile;
 
-  void _modifyRecord(int index) {
-    setState(() {
-      _editingIndex = index;
-      _diseaseNameController.text = records[index];
-      _diseaseHistoryController.clear();
-      _specialConsiderations = List.generate(6, (_) => false);
-    });
+  @override
+  void initState() {
+    super.initState();
+    _fetchMedicalRecords();
   }
 
-  void _removeRecord(int index) {
-    setState(() {
-      records.removeAt(index);
-      if (_editingIndex == index) {
-        _editingIndex = null;
-      }
-    });
-  }
+  Future<void> _fetchMedicalRecords() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-  void _submitModification() {
-    setState(() {
-      if (_editingIndex != null) {
-        records[_editingIndex!] = _diseaseNameController.text;
-        _editingIndex = null;
+      final token = await Utils.getSpString(Const.TOKEN);
+      final response = await Dio().get(
+        Const.API_MEDICAL_RECORDS,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          records = List<Map<String, dynamic>>.from(response.data['data']);
+        });
       } else {
-        records.add(_diseaseNameController.text);
+        throw Exception('Failed to fetch medical records');
       }
-      _diseaseNameController.clear();
-      _diseaseHistoryController.clear();
-      _specialConsiderations = List.generate(6, (_) => false);
-    });
+    } catch (e) {
+      print('Error fetching medical records: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
-  void _addNewRecord() {
-    setState(() {
-      records.add(_diseaseNameController.text);
-      _diseaseNameController.clear();
-      _diseaseHistoryController.clear();
-      _specialConsiderations = List.generate(6, (_) => false);
-      _isAddingNewRecord = false;
-    });
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        _selectedFile = File(result.files.single.path!);
+      });
+    }
+  }
+
+  Future<void> _submitRecord() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final token = await Utils.getSpString(Const.TOKEN);
+      final filePath = _selectedFile?.path.replaceAll(r'\', '/');
+      FormData formData = FormData.fromMap({
+        'title': _titleController.text,
+        'disease_name': _diseaseNameController.text,
+        'disease_history': _diseaseHistoryController.text,
+        'symptoms': _symptomsController.text,
+        'special_consideration': _specialConsiderationController.text,
+        'treatment_info': _treatmentInfoController.text,
+        if (_selectedFile != null)
+          'file_url': await MultipartFile.fromFile(
+            filePath!,
+            filename: _selectedFile!.path.split('/').last,
+          ),
+      });
+
+      final response = await Dio().post(
+        Const.API_MEDICAL_RECORDS,
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'multipart/form-data',
+          },
+          validateStatus: (status) {
+            return status! < 500; // Accept all status codes less than 500
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Medical record submitted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _fetchMedicalRecords();
+        _clearForm();
+      } else {
+        throw Exception('Failed to submit medical record');
+      }
+    } catch (e) {
+      print('Error submitting medical record: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error submitting medical record: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _deleteRecord(int recordId) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final token = await Utils.getSpString(Const.TOKEN);
+      final response = await Dio().delete(
+        '${Const.API_MEDICAL_RECORDS}/$recordId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Medical record deleted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _fetchMedicalRecords();
+      } else {
+        throw Exception('Failed to delete medical record');
+      }
+    } catch (e) {
+      print('Error deleting medical record: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting medical record: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void _clearForm() {
+    _titleController.clear();
+    _diseaseNameController.clear();
+    _diseaseHistoryController.clear();
+    _symptomsController.clear();
+    _specialConsiderationController.clear();
+    _treatmentInfoController.clear();
+    _selectedFile = null;
+    _isAddingNewRecord = false;
   }
 
   @override
@@ -81,77 +211,78 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: records.length + (_isAddingNewRecord ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (_isAddingNewRecord && index == records.length) {
-            return _buildForm();
-          }
-          int recordIndex = index;
-          return Card(
-            elevation: 4,
-            shadowColor: Colors.black,
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ListTile(
-              title: Text(records[recordIndex]),
-              subtitle: const Text('Last updated: 08-09-2024'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MedicalRecordDetailPage(
-                      title: records[recordIndex],
-                      diseaseName: records[recordIndex],
-                      diseaseHistory:
-                          'Sample disease history for ${records[recordIndex]}',
-                      symptoms: const [
-                        'Symptom 1',
-                        'Symptom 2',
-                        'Symptom 3',
-                        'Symptom 4',
-                      ],
-                    ),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: records.length + (_isAddingNewRecord ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (_isAddingNewRecord && index == records.length) {
+                        return _buildForm();
+                      }
+                      final record = records[index];
+                      return Card(
+                        elevation: 4,
+                        shadowColor: Colors.black,
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ListTile(
+                          title: Text(record['title']),
+                          subtitle:
+                              Text('Last updated: ${record['updated_at']}'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MedicalRecordDetailPage(record: record),
+                              ),
+                            );
+                          },
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () => _deleteRecord(record['id']),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-              trailing: PopupMenuButton<String>(
-                onSelected: (String value) {
-                  if (value == 'Modify') {
-                    _modifyRecord(recordIndex);
-                  } else if (value == 'Remove') {
-                    _removeRecord(recordIndex);
-                  }
-                },
-                itemBuilder: (BuildContext context) {
-                  return {'Modify', 'Remove'}.map((String choice) {
-                    return PopupMenuItem<String>(
-                      value: choice,
-                      child: Text(choice),
-                    );
-                  }).toList();
-                },
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _isAddingNewRecord = true;
+                      });
+                    },
+                    child: Text('Add Medical Record'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
             ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _isAddingNewRecord = true;
-          });
-        },
-        backgroundColor: Const.tosca,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+        ],
       ),
       bottomNavigationBar: _isAddingNewRecord
           ? BottomAppBar(
               child: ElevatedButton(
-                onPressed: _addNewRecord,
+                onPressed: _submitRecord,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Const.tosca, // Warna tosca
                 ),
@@ -177,6 +308,11 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const Divider(),
             TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(labelText: 'Title'),
+            ),
+            const SizedBox(height: 8),
+            TextField(
               controller: _diseaseNameController,
               decoration: const InputDecoration(labelText: 'Disease Name'),
             ),
@@ -188,34 +324,39 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
               decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
-            const Text('Patient with Special Consideration'),
-            Wrap(
-              spacing: 8.0,
-              children: List.generate(6, (index) {
-                return FilterChip(
-                  label: Text('Consideration ${index + 1}'),
-                  selected: _specialConsiderations[index],
-                  onSelected: (bool selected) {
-                    setState(() {
-                      _specialConsiderations[index] = selected;
-                    });
-                  },
-                );
-              }),
+            const Text('Symptoms'),
+            TextField(
+              controller: _symptomsController,
+              maxLines: 2,
+              decoration: const InputDecoration(border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 8),
+            const Text('Special Consideration'),
+            TextField(
+              controller: _specialConsiderationController,
+              maxLines: 2,
+              decoration: const InputDecoration(border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 8),
+            const Text('Treatment Information'),
+            TextField(
+              controller: _treatmentInfoController,
+              maxLines: 2,
+              decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Treatment Information'),
+                const Text('File (PDF/Image)'),
                 ElevatedButton(
-                  onPressed: () {
-                    // Handle add treatment information
-                  },
-                  child: const Text('+ Add'),
+                  onPressed: _pickFile,
+                  child: const Text('Pick File'),
                 ),
               ],
             ),
+            if (_selectedFile != null)
+              Text('Selected file: ${_selectedFile!.path.split('/').last}'),
           ],
         ),
       ),
@@ -224,25 +365,17 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
 }
 
 class MedicalRecordDetailPage extends StatelessWidget {
-  final String title;
-  final String diseaseName;
-  final String diseaseHistory;
-  final List<String> symptoms;
+  final Map<String, dynamic> record;
 
-  const MedicalRecordDetailPage({
-    Key? key,
-    required this.title,
-    required this.diseaseName,
-    required this.diseaseHistory,
-    required this.symptoms,
-  }) : super(key: key);
+  const MedicalRecordDetailPage({Key? key, required this.record})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          title,
+          record['title'],
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -267,7 +400,7 @@ class MedicalRecordDetailPage extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      diseaseName,
+                      record['disease_name'],
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
@@ -283,7 +416,7 @@ class MedicalRecordDetailPage extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      diseaseHistory,
+                      record['disease_history'],
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
@@ -291,29 +424,15 @@ class MedicalRecordDetailPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'My Symptoms of $diseaseName include:',
+                'My Symptoms of ${record['disease_name']} include:',
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 10),
-              ...symptoms.map((symptom) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          '• ',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Expanded(
-                          child: Text(
-                            symptom,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
+              Text(
+                record['symptoms'],
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 20),
               const Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,144 +455,100 @@ class MedicalRecordDetailPage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               const SizedBox(height: 10),
-              ..._buildTreatmentList(context),
+              Text(
+                record['treatment_info'],
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'File URL',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PDFScreen(url: record['file_url']),
+                    ),
+                  );
+                },
+                child: Text(
+                  record['file_url'],
+                  style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline),
+                ),
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  List<Widget> _buildTreatmentList(BuildContext context) {
-    final treatments = [
-      'Lenvatinib (Lenvima)',
-      'Sorafenib (Nexavar)',
-      'Sunitinib (Sutent)',
-      'Pazopanib (Votrient)',
-      'Cabozantinib (Cabometyx)',
-    ];
-
-    return treatments.map((treatment) {
-      return GestureDetector(
-        onTap: () {
-          _showTreatmentDetail(context, treatment);
-        },
-        child: Container(
-          width: 355,
-          height: 65,
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
-          padding: const EdgeInsets.all(12.0),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Text(
-            treatment,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-      );
-    }).toList();
-  }
-
-  void _showTreatmentDetail(BuildContext context, String treatment) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TreatmentDetailPage(treatmentName: treatment),
       ),
     );
   }
 }
 
-class TreatmentDetailPage extends StatelessWidget {
-  final String treatmentName;
+class PDFScreen extends StatefulWidget {
+  final String? path; // For local files
+  final String? url; // For remote files
 
-  const TreatmentDetailPage({Key? key, required this.treatmentName})
-      : super(key: key);
+  PDFScreen({this.path, this.url});
+
+  @override
+  _PDFScreenState createState() => _PDFScreenState();
+}
+
+class _PDFScreenState extends State<PDFScreen> {
+  late Future<Uint8List> _pdfBytesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.url != null) {
+      // Download PDF from URL
+      _pdfBytesFuture = _downloadPDF(widget.url!);
+    } else if (widget.path != null) {
+      // Load PDF from local file
+      _pdfBytesFuture = _loadLocalPDF(widget.path!);
+    } else {
+      throw Exception("No PDF source provided.");
+    }
+  }
+
+  Future<Uint8List> _downloadPDF(String url) async {
+    final response = await Dio().get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes),
+    );
+    return Uint8List.fromList(response.data!);
+  }
+
+  Future<Uint8List> _loadLocalPDF(String path) async {
+    File file = File(path);
+    return await file.readAsBytes();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          treatmentName,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text('PDF Preview'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Treatment Information',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 10),
-              _buildInfoRow('Therapeutic Drugs:', 'Lenvatinib (Lenvima)'),
-              _buildInfoRow('Dosage:', '24 mg'),
-              _buildInfoRow('Frequency:', 'Once daily'),
-              _buildInfoRow('Treatment Start:', '01-01-2022'),
-              _buildInfoRow('Treatment End:', '01-01-2023'),
-              _buildInfoRow('Disease Status before treatment:', 'Stable'),
-              _buildInfoRow('Current disease status:', 'Improving'),
-              const SizedBox(height: 20),
-              const Text(
-                'Description of treatment efficacy:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'The treatment has shown significant improvement in reducing tumor size and alleviating symptoms.',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Description of side effect:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Mild nausea and fatigue observed during the first few weeks of treatment.',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Problem to be addressed:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Monitor for potential liver toxicity and adjust dosage if necessary.',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
+      body: FutureBuilder<Uint8List>(
+        future: _pdfBytesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return SfPdfViewer.memory(snapshot.data!);
+            } else {
+              return Center(child: Text('Failed to load PDF'));
+            }
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
