@@ -40,4 +40,25 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       emit(AppointmentError(e.toString()));
     }
   }
+
+  Future<void> deleteAppointment(int appointmentId) async {
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+      final response = await _dio.delete(
+        '${Const.API_APPOINTMENT}/$appointmentId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        fetchAppointments(); // Refresh the list of appointments
+      } else {
+        throw Exception('Failed to delete appointment');
+      }
+    } catch (e) {
+      emit(AppointmentError(e.toString()));
+    }
+  }
 }

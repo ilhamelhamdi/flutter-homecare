@@ -3,10 +3,12 @@ import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
+import 'package:m2health/views/dashboard.dart';
 import 'package:m2health/views/payment.dart';
 import 'package:m2health/models/profile.dart';
 import 'package:m2health/models/personal_case.dart';
 import 'dart:convert';
+import 'package:m2health/route/app_routes.dart';
 
 class DetailAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> appointmentData;
@@ -38,48 +40,28 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
       }
 
       final response = await Dio().get(
-        Const.API_PROFILE,
+        '${Const.URL_API}/profiles',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
           },
-          responseType: ResponseType.json,
         ),
       );
 
       if (response.statusCode == 200) {
-        dynamic data = response.data;
-
-        if (data is String) {
-          data = json.decode(data);
+        final profileData = response.data['data'];
+        if (profileData is Map<String, dynamic>) {
+          final profile = Profile.fromJson(profileData);
+          setState(() {
+            _profile = profile;
+          });
+        } else {
+          throw Exception('Unexpected response format');
         }
-
-        print('Fetched data: $data');
-        print('Data type: ${data.runtimeType}');
-
-        if (data is Map<String, dynamic> && data.containsKey('data')) {
-          final rawData = data['data'];
-
-          if (rawData is List && rawData.isNotEmpty) {
-            final firstList = rawData.first; // Ambil list pertama dari data
-
-            if (firstList is List && firstList.isNotEmpty) {
-              final profileMap =
-                  firstList.first; // Ambil objek pertama dari list dalam list
-
-              if (profileMap is Map<String, dynamic>) {
-                setState(() {
-                  _profile = Profile.fromJson(profileMap);
-                });
-                print('Profile data: $profileMap');
-                return;
-              }
-            }
-          }
-        }
-        throw Exception('Unexpected response format');
+      } else if (response.statusCode == 401) {
+        throw Exception('Unauthorized');
       } else {
-        throw Exception('Failed to load profile: ${response.statusCode}');
+        throw Exception('Failed to load profile');
       }
     } catch (e) {
       setState(() {
@@ -558,28 +540,47 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                   child: const Text('No'),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    // Handle the cancellation logic here
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            HomePage(), // Replace with your homepage widget
-                                      ),
-                                      (Route<dynamic> route) =>
-                                          false, // Remove all previous routes
-                                    );
+                                  onPressed: () async {
+                                    // First, close the dialog and wait for it to complete
+                                    Navigator.of(context).pop();
+
+                                    // Add a short delay to ensure the dialog closing animation completes
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 300));
+
+                                    // Then navigate to Dashboard and replace all routes
+                                    if (context.mounted) {
+                                      await Navigator.of(context)
+                                          .pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) => Dashboard()),
+                                        (Route<dynamic> route) => false,
+                                      );
+
+                                      // Ensure context is mounted before accessing it again
+                                      if (context.mounted) {
+                                        // Use a post-frame callback to ensure the UI is stable
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          try {
+                                            // Show the bottom app bar
+                                            MyApp.showBottomAppBar(context);
+                                          } catch (e) {
+                                            debugPrint(
+                                                "Error showing bottom app bar: $e");
+                                          }
+                                        });
+                                      }
+                                    }
                                   },
                                   child: const Text('Yes, Cancel'),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors
-                                        .red, // Set the background color to red
+                                    backgroundColor: Colors.red,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                   ),
-                                ),
+                                )
                               ],
                             ),
                           ],

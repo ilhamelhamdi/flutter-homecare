@@ -266,7 +266,10 @@ class _AppointmentPageState extends State<AppointmentPage>
                         children: [
                           OutlinedButton(
                             onPressed: () {
-                              // Handle cancel booking
+                              final appointmentId = appointment.id;
+                              context
+                                  .read<AppointmentCubit>()
+                                  .deleteAppointment(appointmentId);
                             },
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Colors.red),
@@ -275,7 +278,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                               ),
                             ),
                             child: const Text(
-                              'Cancel Booking',
+                              'Cancel Bookings',
                               style: TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
@@ -321,7 +324,10 @@ class _AppointmentPageState extends State<AppointmentPage>
                         children: [
                           OutlinedButton(
                             onPressed: () {
-                              // Handle cancel booking
+                              final appointmentId = appointment.id;
+                              context
+                                  .read<AppointmentCubit>()
+                                  .deleteAppointment(appointmentId);
                             },
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Colors.red),
