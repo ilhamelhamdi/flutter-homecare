@@ -326,7 +326,8 @@ class PaymentSuccessDialog extends StatelessWidget {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                context.go('/dasboard');
+                Navigator.of(context).pop();
+                context.go('/');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Const.tosca,

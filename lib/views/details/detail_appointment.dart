@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
-import 'package:m2health/views/dashboard.dart';
 import 'package:m2health/views/payment.dart';
 import 'package:m2health/models/profile.dart';
 import 'package:m2health/models/personal_case.dart';
 import 'dart:convert';
-import 'package:m2health/route/app_routes.dart';
 
 class DetailAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> appointmentData;
@@ -540,38 +539,9 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                   child: const Text('No'),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () async {
-                                    // First, close the dialog and wait for it to complete
+                                  onPressed: () {
                                     Navigator.of(context).pop();
-
-                                    // Add a short delay to ensure the dialog closing animation completes
-                                    await Future.delayed(
-                                        const Duration(milliseconds: 300));
-
-                                    // Then navigate to Dashboard and replace all routes
-                                    if (context.mounted) {
-                                      await Navigator.of(context)
-                                          .pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) => Dashboard()),
-                                        (Route<dynamic> route) => false,
-                                      );
-
-                                      // Ensure context is mounted before accessing it again
-                                      if (context.mounted) {
-                                        // Use a post-frame callback to ensure the UI is stable
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback((_) {
-                                          try {
-                                            // Show the bottom app bar
-                                            MyApp.showBottomAppBar(context);
-                                          } catch (e) {
-                                            debugPrint(
-                                                "Error showing bottom app bar: $e");
-                                          }
-                                        });
-                                      }
-                                    }
+                                    context.go('/');
                                   },
                                   child: const Text('Yes, Cancel'),
                                   style: ElevatedButton.styleFrom(
