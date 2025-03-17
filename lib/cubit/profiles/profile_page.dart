@@ -103,19 +103,19 @@ class ProfilePage extends StatelessWidget {
                                   );
                                 },
                               ),
-                              ListTile(
-                                leading: const Icon(Icons.upload_file_outlined,
-                                    color: Color(0xFF35C5CF)),
-                                title: const Text('Upload Report'),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UploadPDFPage()),
-                                  );
-                                },
-                              ),
+                              // ListTile(
+                              //   leading: const Icon(Icons.upload_file_outlined,
+                              //       color: Color(0xFF35C5CF)),
+                              //   title: const Text('Upload Report'),
+                              //   trailing: const Icon(Icons.arrow_forward_ios),
+                              //   onTap: () {
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //           builder: (context) => UploadPDFPage()),
+                              //     );
+                              //   },
+                              // ),
                               ListTile(
                                 leading: const Icon(Icons.local_pharmacy,
                                     color: Color(0xFF35C5CF)),

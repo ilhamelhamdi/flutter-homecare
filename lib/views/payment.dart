@@ -15,26 +15,23 @@ class PaymentPage extends StatefulWidget {
   @override
   _PaymentPageState createState() => _PaymentPageState();
 }
-// void navbarVisibility(bool status) {
-//   NavbarNotifier.hideBottomNavBar = status;
-//   if (status == true) {
-//     NavbarNotifier.hideBottomNavBar = false;
-//     if (NavbarNotifier.isNavbarHidden) {
-//       NavbarNotifier.hideBottomNavBar = false;
-//     }
-//   } else {
-//     NavbarNotifier.hideBottomNavBar = true;
-//     if (NavbarNotifier.isNavbarHidden) {
-//       NavbarNotifier.hideBottomNavBar = true;
-//     }
-//   }
-// }
 
 class _PaymentPageState extends State<PaymentPage> {
   String selectedPaymentMethod = '';
 
+  final List<Map<String, dynamic>> services = [
+    {'name': 'Inject', 'cost': 250},
+    {'name': 'Blood Glucose Check', 'cost': 65},
+  ];
+
+  int get totalCost {
+    return services.fold(0, (sum, service) => sum + service['cost'] as int);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> profile = widget.profileServiceData;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -52,44 +49,35 @@ class _PaymentPageState extends State<PaymentPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Stack(
-                      children: [
-                        Image.asset(
-                          'assets/images/images_olla.png', // Replace with your actual image path
-                          width: 50,
-                          height: 50,
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        image: DecorationImage(
+                          image: NetworkImage(profile['avatar']),
+                          fit: BoxFit.cover,
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 10,
-                            height: 10,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.green,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                     const SizedBox(width: 16),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Angela Xianxian',
-                          style: TextStyle(
+                          profile['name'],
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        Text('Staff Nurse'),
+                        Text(profile['role']),
                         Row(
                           children: [
-                            Icon(Icons.star_half, color: Colors.yellow),
-                            SizedBox(width: 4),
-                            Text('4.8 (153 reviews)'),
+                            const Icon(Icons.star_half, color: Colors.yellow),
+                            const SizedBox(width: 4),
+                            Text(
+                                '${profile['rating']} (${profile['reviews']} reviews)'),
                           ],
                         ),
                       ],
@@ -107,25 +95,20 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
             const SizedBox(height: 8),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Inject'),
-                Text('\$250'),
-              ],
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Blood Glucose Check'),
-                Text('\$65'),
-              ],
-            ),
+            ...services.map((service) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(service['name']),
+                  Text('\$${service['cost']}'),
+                ],
+              );
+            }).toList(),
             const Divider(),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Total',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -133,8 +116,8 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                 ),
                 Text(
-                  '\$315',
-                  style: TextStyle(
+                  '\$$totalCost',
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -170,7 +153,10 @@ class _PaymentPageState extends State<PaymentPage> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return PaymentSuccessDialog();
+                return PaymentSuccessDialog(
+                  totalCost: totalCost,
+                  pharmacistName: profile['name'],
+                );
               },
             );
           },
@@ -227,6 +213,11 @@ class _PaymentPageState extends State<PaymentPage> {
 }
 
 class PaymentSuccessDialog extends StatelessWidget {
+  final int totalCost;
+  final String pharmacistName;
+
+  PaymentSuccessDialog({required this.totalCost, required this.pharmacistName});
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -253,18 +244,19 @@ class PaymentSuccessDialog extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Your money has been successfully sent to Angela Xianxian.',
+          Text(
+            'Your money has been successfully sent to $pharmacistName.',
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          const Column(
+          Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Amount'),
+              const Text('Amount'),
               Text(
-                '\$220',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 34),
+                '\$$totalCost',
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 34),
               ),
             ],
           ),
@@ -293,7 +285,9 @@ class PaymentSuccessDialog extends StatelessWidget {
                 context: context,
                 isScrollControlled: true,
                 builder: (BuildContext context) {
-                  return FeedbackForm();
+                  return FeedbackForm(
+                    pharmacistName: pharmacistName,
+                  );
                 },
               );
             },
@@ -332,7 +326,8 @@ class PaymentSuccessDialog extends StatelessWidget {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                context.go('/dasboard');
+                Navigator.of(context).pop();
+                context.go('/');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Const.tosca,
@@ -354,6 +349,10 @@ class PaymentSuccessDialog extends StatelessWidget {
 }
 
 class FeedbackForm extends StatefulWidget {
+  final String pharmacistName;
+
+  FeedbackForm({required this.pharmacistName});
+
   @override
   _FeedbackFormState createState() => _FeedbackFormState();
 }
@@ -409,7 +408,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
             const SizedBox(height: 8),
             Center(
               child: Text(
-                'You rated Angela $selectedStar stars',
+                'You rated ${widget.pharmacistName} $selectedStar stars',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -422,9 +421,9 @@ class _FeedbackFormState extends State<FeedbackForm> {
               maxLines: 3,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Give some tips to Angela Xianxian',
-              style: TextStyle(
+            Text(
+              'Give some tips to ${widget.pharmacistName}',
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),

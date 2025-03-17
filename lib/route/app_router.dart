@@ -12,14 +12,14 @@ import 'package:m2health/cubit/personal/personal_page.dart';
 // import 'package:m2health/cubit/nursing/nursing_page.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/views/dashboard.dart';
+import 'package:path/path.dart';
 import 'app_routes.dart';
 
 final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) =>
-          SplashScreen(), // Set SplashScreen as the initial route
+      builder: (context, state) => HomePage(),
     ),
 
     GoRoute(

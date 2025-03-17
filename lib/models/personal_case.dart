@@ -4,7 +4,8 @@ class PersonalCase {
   final String description;
   final List<String> images; // Change to list of strings
   final String mobilityStatus;
-  final String relatedHealthRecord;
+  // final String relatedHealthRecord;
+  final Map<String, dynamic> relatedHealthRecord;
   final String addOn;
   final double estimatedBudget;
   final int userId;
@@ -31,7 +32,10 @@ class PersonalCase {
           ? [json['images']]
           : List<String>.from(json['images'] ?? []),
       mobilityStatus: json['mobility_status'] ?? '',
-      relatedHealthRecord: json['related_health_record'] ?? '',
+      // relatedHealthRecord: json['related_health_record'] ?? '',
+      relatedHealthRecord: json['related_health_record'] is Map
+          ? Map<String, dynamic>.from(json['related_health_record'])
+          : {},
       addOn: json['add_on'] ?? '',
       estimatedBudget: (json['estimated_budget'] as num?)?.toDouble() ?? 0.0,
     );

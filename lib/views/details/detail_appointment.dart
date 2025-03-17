@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/utils.dart';
@@ -38,48 +39,28 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
       }
 
       final response = await Dio().get(
-        Const.API_PROFILE,
+        '${Const.URL_API}/profiles',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
           },
-          responseType: ResponseType.json,
         ),
       );
 
       if (response.statusCode == 200) {
-        dynamic data = response.data;
-
-        if (data is String) {
-          data = json.decode(data);
+        final profileData = response.data['data'];
+        if (profileData is Map<String, dynamic>) {
+          final profile = Profile.fromJson(profileData);
+          setState(() {
+            _profile = profile;
+          });
+        } else {
+          throw Exception('Unexpected response format');
         }
-
-        print('Fetched data: $data');
-        print('Data type: ${data.runtimeType}');
-
-        if (data is Map<String, dynamic> && data.containsKey('data')) {
-          final rawData = data['data'];
-
-          if (rawData is List && rawData.isNotEmpty) {
-            final firstList = rawData.first; // Ambil list pertama dari data
-
-            if (firstList is List && firstList.isNotEmpty) {
-              final profileMap =
-                  firstList.first; // Ambil objek pertama dari list dalam list
-
-              if (profileMap is Map<String, dynamic>) {
-                setState(() {
-                  _profile = Profile.fromJson(profileMap);
-                });
-                print('Profile data: $profileMap');
-                return;
-              }
-            }
-          }
-        }
-        throw Exception('Unexpected response format');
+      } else if (response.statusCode == 401) {
+        throw Exception('Unauthorized');
       } else {
-        throw Exception('Failed to load profile: ${response.statusCode}');
+        throw Exception('Failed to load profile');
       }
     } catch (e) {
       setState(() {
@@ -135,7 +116,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
             description: descriptions.join(', '),
             images: [],
             mobilityStatus: '',
-            relatedHealthRecord: '',
+            relatedHealthRecord: {},
             addOn: addOns.isNotEmpty ? addOns.last : '',
             estimatedBudget: 0.0,
             userId: 0,
@@ -559,27 +540,17 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    // Handle the cancellation logic here
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            HomePage(), // Replace with your homepage widget
-                                      ),
-                                      (Route<dynamic> route) =>
-                                          false, // Remove all previous routes
-                                    );
+                                    Navigator.of(context).pop();
+                                    context.go('/');
                                   },
                                   child: const Text('Yes, Cancel'),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors
-                                        .red, // Set the background color to red
+                                    backgroundColor: Colors.red,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                   ),
-                                ),
+                                )
                               ],
                             ),
                           ],

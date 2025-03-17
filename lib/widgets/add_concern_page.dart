@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,38 +29,48 @@ class _AddConcernPageState extends State<AddConcernPage> {
     final description = _descriptionController.text;
 
     if (issueTitle.isEmpty || description.isEmpty) {
-      print('Error: Issue title and description are required.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Issue title and description are required.'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
     try {
-      final token = await Utils.getSpString(Const.TOKEN); // Retrieve the token
+      final token = await Utils.getSpString(Const.TOKEN);
 
-      // Create FormData
+      // Create FormData without the related_health_record_id field for now
       FormData formData = FormData.fromMap({
         "user_id": 1,
         "title": issueTitle,
         "description": description,
         "mobility_status": "wheel",
-        "related_health_record": "Health Record",
+        "related_health_record_id": 33, // Make it null to make it optional
         "add_on": "additional",
         "estimated_budget": 1000,
-        "created_at": DateTime.now().toIso8601String(),
-        "updated_at": DateTime.now().toIso8601String(),
       });
 
       // Add images to FormData
       for (File image in _images) {
         formData.files.add(
           MapEntry(
-            "images[]", // Adjust according to backend API
-            await MultipartFile.fromFile(image.path,
-                filename: image.path.split('/').last),
+            "images[]",
+            await MultipartFile.fromFile(
+              image.path,
+              filename: image.path.split('/').last,
+            ),
           ),
         );
       }
 
-      // Send data to backend
+      // Debug: Print the request data
+      print('Sending request with data:');
+      print('Headers: Bearer $token');
+      print('FormData fields: ${formData.fields}');
+      print('FormData files: ${formData.files}');
+
       final response = await Dio().post(
         '${Const.API_PERSONAL_CASES}',
         data: formData,
@@ -71,20 +79,88 @@ class _AddConcernPageState extends State<AddConcernPage> {
             'Authorization': 'Bearer $token',
             'Content-Type': 'multipart/form-data',
           },
+          validateStatus: (status) {
+            return status! < 500; // Accept all status codes less than 500
+          },
         ),
       );
 
-      if (response.statusCode == 200) {
-        print('Data submitted successfully');
+      // Debug: Print the response
+      print('Response status code: ${response.statusCode}');
+      print('Response data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Issue submitted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PersonalPage()),
         );
+      } else if (response.statusCode == 422) {
+        // Handle validation errors but allow continuing for now
+        final errorMessage = response.data['message'] ?? 'Validation failed';
+        final errors = response.data['errors'];
+        print('Validation errors: $errors');
+
+        if (errors != null &&
+            errors
+                .any((error) => error['field'] == 'related_health_record_id')) {
+          // Only show a warning for this specific error
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+                  Text('Note: Related health record is currently optional'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+
+          // Navigate to the next page anyway
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => PersonalPage()),
+          );
+        } else {
+          // Show error for other validation issues
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       } else {
-        print('Failed to submit data: ${response.statusMessage}');
+        throw Exception('Failed to submit data: ${response.statusMessage}');
       }
+    } on DioException catch (e) {
+      print('DioError Type: ${e.type}');
+      print('DioError Message: ${e.message}');
+      print('DioError Response: ${e.response?.data}');
+
+      String errorMessage = 'Error submitting issue: ';
+      if (e.response?.data != null && e.response?.data['message'] != null) {
+        errorMessage += e.response?.data['message'];
+      } else {
+        errorMessage += e.message ?? 'Unknown error';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
     } catch (e) {
-      print('Error: $e');
+      print('General Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Unexpected error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -112,7 +188,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Tell us your concern',
+                  'Tell us your concerns',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -127,7 +203,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
               child: TextField(
                 controller: _issueTitleController,
                 decoration: InputDecoration(
-                  hintText: 'Issue Title',
+                  hintText: 'Issue Titless',
                   hintStyle:
                       const TextStyle(color: Color(0xFFD0D0D0), fontSize: 12),
                   border: OutlineInputBorder(
