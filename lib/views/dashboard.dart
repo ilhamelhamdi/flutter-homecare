@@ -86,7 +86,7 @@ class _DashboardState extends State<Dashboard> {
   Future<void> _loadUserName() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userName = prefs.getString('username') ?? 'Awokwok';
+      userName = prefs.getString('username') ?? 'User';
     });
     debugPrint('Username loaded: $userName');
   }
@@ -505,7 +505,7 @@ class _DashboardState extends State<Dashboard> {
                       title: const Text('Health Profile',
                           style: TextStyle(
                               fontSize: 18, color: Color(0xFF35C5CF))),
-                      subtitle: const Text('Anna Bella.'),
+                      subtitle: Text(userName ?? 'User'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
