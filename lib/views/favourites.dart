@@ -46,7 +46,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
           Const.TOKEN); // Get bearer token from shared preferences
 
       final response = await Dio().get(
-        'http://localhost:3333/v1/favorites',
+        Const.API_FAVORITES,
         queryParameters: {
           'user_id': userId,
           'item_type': 'pharmacist',
@@ -95,7 +95,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
 
       if (isFavorite) {
         final response = await Dio().post(
-          'http://localhost:3333/v1/favorites',
+          Const.API_FAVORITES,
           data: {
             'user_id': userId,
             'item_id': pharmacistId,
@@ -114,7 +114,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
         }
       } else {
         final response = await Dio().delete(
-          'http://localhost:3333/v1/favorites',
+          Const.API_FAVORITES,
           data: {
             'user_id': userId,
             'item_id': pharmacistId,
