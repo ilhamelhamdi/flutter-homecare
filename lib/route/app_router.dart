@@ -19,6 +19,7 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
+      name: 'home',
       builder: (context, state) => HomePage(),
     ),
 

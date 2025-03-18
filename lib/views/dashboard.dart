@@ -206,6 +206,7 @@ class _DashboardState extends State<Dashboard> {
           appBar: AppBar(
             toolbarHeight: 180,
             elevation: 2,
+            automaticallyImplyLeading: false,
             flexibleSpace: Container(
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
