@@ -19,7 +19,8 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => SplashScreen(),
+      name: 'home',
+      builder: (context, state) => HomePage(),
     ),
 
     GoRoute(

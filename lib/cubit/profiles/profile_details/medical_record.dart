@@ -80,6 +80,19 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
   }
 
   Future<void> _submitRecord() async {
+    // Validate mandatory fields first
+    if (_titleController.text.trim().isEmpty ||
+        _diseaseNameController.text.trim().isEmpty ||
+        _diseaseHistoryController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Title, Disease Name and Disease History are required'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     try {
       setState(() {
         isLoading = true;
@@ -87,19 +100,37 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
 
       final token = await Utils.getSpString(Const.TOKEN);
       final filePath = _selectedFile?.path.replaceAll(r'\', '/');
-      FormData formData = FormData.fromMap({
+
+      // Only include non-empty fields in the form data
+      Map<String, dynamic> formFields = {
         'title': _titleController.text,
         'disease_name': _diseaseNameController.text,
         'disease_history': _diseaseHistoryController.text,
-        'symptoms': _symptomsController.text,
-        'special_consideration': _specialConsiderationController.text,
-        'treatment_info': _treatmentInfoController.text,
-        if (_selectedFile != null)
-          'file_url': await MultipartFile.fromFile(
-            filePath!,
-            filename: _selectedFile!.path.split('/').last,
-          ),
-      });
+      };
+
+      // Add optional fields only if they have content
+      if (_symptomsController.text.isNotEmpty) {
+        formFields['symptoms'] = _symptomsController.text;
+      }
+
+      if (_specialConsiderationController.text.isNotEmpty) {
+        formFields['special_consideration'] =
+            _specialConsiderationController.text;
+      }
+
+      if (_treatmentInfoController.text.isNotEmpty) {
+        formFields['treatment_info'] = _treatmentInfoController.text;
+      }
+
+      // Add file if selected
+      if (_selectedFile != null) {
+        formFields['file_url'] = await MultipartFile.fromFile(
+          filePath!,
+          filename: _selectedFile!.path.split('/').last,
+        );
+      }
+
+      FormData formData = FormData.fromMap(formFields);
 
       final response = await Dio().post(
         Const.API_MEDICAL_RECORDS,
@@ -308,36 +339,45 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
             const Divider(),
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(
+                labelText: 'Title *',
+                hintText: 'Enter record title',
+              ),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _diseaseNameController,
-              decoration: const InputDecoration(labelText: 'Disease Name'),
+              decoration: const InputDecoration(
+                labelText: 'Disease Name *',
+                hintText: 'Enter disease name',
+              ),
             ),
             const SizedBox(height: 8),
-            const Text('Disease History Description'),
+            const Text('Disease History Description *'),
             TextField(
               controller: _diseaseHistoryController,
               maxLines: 4,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter disease history (required)',
+              ),
             ),
             const SizedBox(height: 8),
-            const Text('Symptoms'),
+            const Text('Symptoms (Optional)'),
             TextField(
               controller: _symptomsController,
               maxLines: 2,
               decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
-            const Text('Special Consideration'),
+            const Text('Special Consideration (Optional)'),
             TextField(
               controller: _specialConsiderationController,
               maxLines: 2,
               decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
-            const Text('Treatment Information'),
+            const Text('Treatment Information (Optional)'),
             TextField(
               controller: _treatmentInfoController,
               maxLines: 2,
@@ -347,7 +387,7 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('File (PDF/Image)'),
+                const Text('File (PDF/Image) (Optional)'),
                 ElevatedButton(
                   onPressed: _pickFile,
                   child: const Text('Pick File'),
@@ -356,6 +396,11 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
             ),
             if (_selectedFile != null)
               Text('Selected file: ${_selectedFile!.path.split('/').last}'),
+            const SizedBox(height: 8),
+            const Text(
+              '* Required fields',
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
           ],
         ),
       ),
@@ -374,7 +419,7 @@ class MedicalRecordDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          record['title'],
+          record['title'] ?? 'Medical Record',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -399,7 +444,7 @@ class MedicalRecordDetailPage extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      record['disease_name'],
+                      record['disease_name'] ?? 'Not specified',
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
@@ -415,73 +460,90 @@ class MedicalRecordDetailPage extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      record['disease_history'],
+                      record['disease_history'] ?? 'Not specified',
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Text(
-                'My Symptoms of ${record['disease_name']} include:',
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                record['symptoms'],
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 20),
-              const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Patient With\nSpecial\nConsideration: ',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Kidney Disease',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Treatment Information',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                record['treatment_info'],
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'File URL',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          FileViewerScreen(url: record['file_url']),
-                    ),
-                  );
-                },
-                child: Text(
-                  record['file_url'],
+
+              // Only show symptoms if not null
+              if (record['symptoms'] != null) ...[
+                const SizedBox(height: 20),
+                Text(
+                  'My Symptoms of ${record['disease_name']} include:',
                   style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline),
+                      fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-              ),
+                const SizedBox(height: 10),
+                Text(
+                  record['symptoms'] ?? '',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+
+              // Only show special consideration if not null
+              if (record['special_consideration'] != null) ...[
+                const SizedBox(height: 20),
+                const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Patient With\nSpecial\nConsideration: ',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Kidney Disease',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              // Only show treatment info if not null
+              if (record['treatment_info'] != null) ...[
+                const SizedBox(height: 20),
+                const Text(
+                  'Treatment Information',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  record['treatment_info'] ?? 'None provided',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+
+              // Show file URL if available
+              if (record['file_url'] != null) ...[
+                const SizedBox(height: 20),
+                const Text(
+                  'File URL',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FileViewerScreen(url: record['file_url']),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    record['file_url'],
+                    style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

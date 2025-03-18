@@ -8,6 +8,7 @@ import 'package:m2health/views/payment.dart';
 import 'package:m2health/models/profile.dart';
 import 'package:m2health/models/personal_case.dart';
 import 'dart:convert';
+import 'package:m2health/route/app_router.dart';
 
 class DetailAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> appointmentData;
@@ -540,8 +541,13 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop();
-                                    context.go('/');
+                                    Navigator.pop(context);
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomePage(),
+                                      ),
+                                    );
                                   },
                                   child: const Text('Yes, Cancel'),
                                   style: ElevatedButton.styleFrom(

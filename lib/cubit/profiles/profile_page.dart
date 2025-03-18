@@ -26,14 +26,44 @@ class ProfilePage extends StatelessWidget {
         ),
         body: BlocListener<ProfileCubit, ProfileState>(
           listener: (context, state) {
-            if (state is ProfileLoaded) {
-              context.read<ProfileCubit>().fetchProfile();
+            if (state is ProfileUnauthenticated) {
+              // Show dialog to inform user they need to login
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    title: const Text('Authentication Required'),
+                    content: const Text(
+                      'Your session has expired or you are not logged in. Please sign in to continue.',
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Sign In'),
+                        onPressed: () {
+                          // Close dialog and navigate to sign-in page
+                          Navigator.of(dialogContext).pop();
+                          GoRouter.of(context).go(AppRoutes.signIn);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             }
           },
           child: BlocBuilder<ProfileCubit, ProfileState>(
             builder: (context, state) {
               if (state is ProfileLoading) {
                 return const Center(child: CircularProgressIndicator());
+              } else if (state is ProfileUnauthenticated) {
+                // Already handled in listener, show a message while redirecting
+                return const Center(
+                  child: Text(
+                    'Authentication required. Redirecting to sign-in...',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                );
               } else if (state is ProfileLoaded) {
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
