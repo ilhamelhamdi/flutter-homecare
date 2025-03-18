@@ -596,15 +596,16 @@ class FeedbackDetails extends StatelessWidget {
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Scaffold(
-                          body: AppointmentPage(),
-                          bottomNavigationBar: CustomBottomAppBar(),
-                        ),
+                        builder: (context) => AppointmentPage(),
                       ),
-                    );
+                    ).then((_) {
+                      // Show the bottom navigation bar after navigation completes
+                      MyApp.showBottomAppBar(context);
+                    });
                   },
                   child: const Text(
                     'View Detail',

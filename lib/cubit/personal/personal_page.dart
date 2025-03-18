@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/personal/personal_case_detail_page.dart';
 import 'package:m2health/utils.dart'; // Import the utils file
 import 'package:m2health/widgets/add_concern_page.dart';
 import 'personal_cubit.dart';
@@ -72,58 +73,71 @@ class _PersonalPageState extends State<PersonalPage> {
                               itemCount: issues.length,
                               itemBuilder: (context, index) {
                                 final issue = issues[index];
-                                return Card(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              PersonalCaseDetailPage(
+                                                  personalCase: issue.toJson()),
+                                        ),
+                                      );
+                                    },
+                                    child: Card(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              issue.title,
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  issue.title,
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(Icons.delete,
+                                                      color: Colors.red),
+                                                  onPressed: () {
+                                                    context
+                                                        .read<PersonalCubit>()
+                                                        .deleteIssue(index);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(issue.description),
+                                            const SizedBox(height: 8),
+                                            if (issue.images.isNotEmpty)
+                                              Wrap(
+                                                spacing: 8.0,
+                                                runSpacing: 8.0,
+                                                children:
+                                                    issue.images.map((image) {
+                                                  return Image.network(
+                                                    getImageUrl(
+                                                        image), // Use the utility function
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                }).toList(),
                                               ),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete,
-                                                  color: Colors.red),
-                                              onPressed: () {
-                                                context
-                                                    .read<PersonalCubit>()
-                                                    .deleteIssue(index);
-                                              },
-                                            ),
                                           ],
                                         ),
-                                        const SizedBox(height: 8),
-                                        Text(issue.description),
-                                        const SizedBox(height: 8),
-                                        if (issue.images.isNotEmpty)
-                                          Wrap(
-                                            spacing: 8.0,
-                                            runSpacing: 8.0,
-                                            children: issue.images.map((image) {
-                                              return Image.network(
-                                                getImageUrl(
-                                                    image), // Use the utility function
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              );
-                                            }).toList(),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                );
+                                      ),
+                                    ));
                               },
                             ),
                     );
