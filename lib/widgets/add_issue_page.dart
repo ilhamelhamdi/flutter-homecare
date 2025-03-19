@@ -105,14 +105,6 @@ class _AddIssuePageState extends State<AddIssuePage> {
 
       if (response.statusCode == 200) {
         print('Issue updated successfully');
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PaymentPharma(
-              issue: issue,
-            ),
-          ),
-        );
       } else {
         print('Failed to update issue: ${response.statusMessage}');
       }
@@ -124,8 +116,9 @@ class _AddIssuePageState extends State<AddIssuePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PaymentPharma(
+        builder: (context) => AddOn(
           issue: issue,
+          serviceType: widget.serviceType, // Pass the required serviceType
         ),
       ),
     );

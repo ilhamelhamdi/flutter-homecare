@@ -7,27 +7,59 @@ import '../search/search_pharmacist.dart';
 import 'package:m2health/widgets/image_preview.dart';
 import 'dart:io';
 
-class PaymentPharma extends StatefulWidget {
-  final Issue issue;
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
 
-  PaymentPharma({required this.issue});
+class AddOn extends StatefulWidget {
+  final Issue issue;
+  final String serviceType; // Add serviceType parameter
+
+  AddOn({required this.issue, required this.serviceType}); // Update constructor
 
   @override
-  _PaymentPharmaState createState() => _PaymentPharmaState();
+  _AddOnState createState() => _AddOnState();
 }
 
-class _PaymentPharmaState extends State<PaymentPharma> {
-  List<bool> _selectedServices = List<bool>.generate(5, (index) => false);
-
-  List<String> serviceTitles = [
-    'Analyze patient physiological data,\ninitial drug treatment plan, and patient treatment response',
-    'Analyze specific treatment problems:\npoor response to treatment;poor\npatient medication compliance;\ndrug side effect; drug interactions',
-    'Drug therapy adjustment made to\nphysicians by the pharmacist when\napropriate',
-    'Diet History & Evaluations',
-    'Follow-up the therapy and ensure\npositive outcomes and reduces adverse effects',
-  ];
+class _AddOnState extends State<AddOn> {
+  late List<bool> _selectedServices;
+  late List<String> serviceTitles;
 
   double _estimatedBudget = 145.0; // Initial estimated budget
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize services based on serviceType
+    if (widget.serviceType == "Pharma") {
+      serviceTitles = [
+        'Analyze patient physiological data,\ninitial drug treatment plan, and patient treatment response',
+        'Analyze specific treatment problems:\npoor response to treatment;poor\npatient medication compliance;\ndrug side effect; drug interactions',
+        'Drug therapy adjustment made to\nphysicians by the pharmacist when\nappropriate',
+        'Diet History & Evaluations',
+        'Follow-up the therapy and ensure\npositive outcomes and reduces adverse effects',
+      ];
+    } else if (widget.serviceType == "Nurse") {
+      serviceTitles = [
+        'Medical Escort',
+        'Inject',
+        'Blood Glucose Check',
+        'Medication Administration',
+        'NGT Feeding',
+        'Oral Suctioning',
+        'PEG Feeding',
+        'Stoma Bag Drainage',
+        'Tracheostomy Suctioning',
+        'Urine Bag Drainage',
+      ];
+    }
+
+    // Initialize the selection state for services
+    _selectedServices =
+        List<bool>.generate(serviceTitles.length, (index) => false);
+  }
 
   void _updateEstimatedBudget() {
     // Update the estimated budget based on selected services
@@ -67,12 +99,12 @@ class _PaymentPharmaState extends State<PaymentPharma> {
       );
 
       if (response.statusCode == 200) {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => SearchPharmacistPage(),
           ),
-        );
+        ); // Navigate back after successful submission
       } else {
         // Handle error
         print('Failed to submit data: ${response.statusMessage}');
@@ -84,55 +116,64 @@ class _PaymentPharmaState extends State<PaymentPharma> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pharmacist Services',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text(
+          widget.serviceType == "Pharma"
+              ? 'Pharmacist Add-On Services'
+              : 'Nursing Add-On Services',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            for (int i = 0; i < serviceTitles.length; i++)
-              Card(
-                child: ListTile(
-                  leading: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedServices[i] = !_selectedServices[i];
-                        _updateEstimatedBudget();
-                      });
-                    },
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: _selectedServices[i]
-                            ? const Color(0xFF35C5CF)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: const Color(0xFF35C5CF)),
+            Expanded(
+              child: ListView.builder(
+                itemCount: serviceTitles.length,
+                itemBuilder: (context, i) {
+                  return Card(
+                    child: ListTile(
+                      leading: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedServices[i] = !_selectedServices[i];
+                            _updateEstimatedBudget();
+                          });
+                        },
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: _selectedServices[i]
+                                ? const Color(0xFF35C5CF)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: const Color(0xFF35C5CF)),
+                          ),
+                          child: _selectedServices[i]
+                              ? const Icon(Icons.check,
+                                  color: Colors.white, size: 16)
+                              : null,
+                        ),
                       ),
-                      child: _selectedServices[i]
-                          ? const Icon(Icons.check,
-                              color: Colors.white, size: 16)
-                          : null,
+                      title: Text(
+                        serviceTitles[i],
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.visible,
+                      ),
+                      trailing: const Icon(Icons.info_outline_rounded,
+                          color: Colors.grey),
                     ),
-                  ),
-                  title: Text(
-                    serviceTitles[i],
-                    style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold), // Set the font size
-                    overflow:
-                        TextOverflow.visible, // Ensure the text is fully shown
-                  ),
-                  trailing: const Icon(Icons.info_outline_rounded,
-                      color: Colors.grey),
-                ),
+                  );
+                },
               ),
-            const Spacer(),
+            ),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
