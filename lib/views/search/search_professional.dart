@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:m2health/views/search/pharma_checkout.dart';
+import 'package:m2health/views/search/professional_details.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/models/favorite.dart';
@@ -263,8 +263,9 @@ class _SearchPageState extends State<SearchPage> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      PharmacistProfilePage(
-                                                    pharmacist: professional,
+                                                      ProfessionalProfilePage(
+                                                    professional: professional,
+                                                    role: "Pharmacist",
                                                   ),
                                                 ),
                                               );
