@@ -9,6 +9,17 @@ import 'personal_state.dart';
 import 'package:m2health/widgets/add_issue_page.dart';
 
 class PersonalPage extends StatefulWidget {
+  final String title; // Add title parameter
+  final String serviceType; // Add serviceType parameter
+  final Function(dynamic)? onItemTap; // Add onItemTap parameter (optional)
+
+  const PersonalPage({
+    Key? key,
+    required this.title, // Add title to constructor
+    required this.serviceType,
+    this.onItemTap,
+  }) : super(key: key);
+
   @override
   _PersonalPageState createState() => _PersonalPageState();
 }
@@ -24,9 +35,11 @@ class _PersonalPageState extends State<PersonalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Personal Case Detail',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        title: Text(
+          widget.serviceType == "Pharma"
+              ? "Pharmacist Services Case"
+              : "Nurse Services Case",
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
       body: Padding(

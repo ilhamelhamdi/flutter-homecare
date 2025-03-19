@@ -165,12 +165,15 @@ class _PharmaState extends State<PharmaServices> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PersonalPage(),
+                              builder: (context) => PersonalPage(
+                                title: "Pharma Services Case",
+                                serviceType: "Pharma",
+                                onItemTap: (item) {
+                                  // Handle item tap
+                                },
+                              ),
                             ),
-                          ).then((_) {
-                            // Show the bottom navigation bar when returning
-                            // navbarVisibility(false);
-                          });
+                          );
                           return;
                         case 1:
                           // navbarVisibility(true);
@@ -178,12 +181,15 @@ class _PharmaState extends State<PharmaServices> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PersonalPage(),
+                              builder: (context) => PersonalPage(
+                                title: "Pharma Services Case",
+                                serviceType: "Pharma",
+                                onItemTap: (item) {
+                                  // Handle item tap
+                                },
+                              ),
                             ),
-                          ).then((_) {
-                            // Show the bottom navigation bar when returning
-                            // navbarVisibility(false);
-                          });
+                          );
                           return;
                         case 2:
                           // navbarVisibility(true);

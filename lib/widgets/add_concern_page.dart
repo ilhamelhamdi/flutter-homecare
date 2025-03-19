@@ -96,10 +96,10 @@ class _AddConcernPageState extends State<AddConcernPage> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => PersonalPage()),
-        );
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => PersonalPage()),
+        // );
       } else if (response.statusCode == 422) {
         // Handle validation errors but allow continuing for now
         final errorMessage = response.data['message'] ?? 'Validation failed';
@@ -119,10 +119,10 @@ class _AddConcernPageState extends State<AddConcernPage> {
           );
 
           // Navigate to the next page anyway
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => PersonalPage()),
-          );
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => PersonalPage()),
+          // );
         } else {
           // Show error for other validation issues
           ScaffoldMessenger.of(context).showSnackBar(

@@ -74,7 +74,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: AppRoutes.personal,
       builder: (context, state) {
-        return PersonalPage();
+        return PersonalPage(
+          title: 'Personal Page',
+          serviceType: 'Default Service',
+        );
       },
     ),
   ],
