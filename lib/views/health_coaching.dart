@@ -160,28 +160,28 @@ class _PharmaState extends State<HealthCoaching> {
                         case 0:
                           // navbarVisibility(true);
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PersonalPage(),
-                            ),
-                          ).then((_) {
-                            // Show the bottom navigation bar when returning
-                            // navbarVisibility(false);
-                          });
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => PersonalPage(),
+                          //   ),
+                          // ).then((_) {
+                          //   // Show the bottom navigation bar when returning
+                          //   // navbarVisibility(false);
+                          // });
                           return;
                         case 1:
                           // navbarVisibility(true);
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PersonalPage(),
-                            ),
-                          ).then((_) {
-                            // Show the bottom navigation bar when returning
-                            // navbarVisibility(false);
-                          });
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => PersonalPage(),
+                          //   ),
+                          // ).then((_) {
+                          //   // Show the bottom navigation bar when returning
+                          //   // navbarVisibility(false);
+                          // });
                           return;
                         case 2:
                           route = AppRoutes.home;

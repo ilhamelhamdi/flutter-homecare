@@ -176,11 +176,11 @@ class ChatPharma extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PersonalPage()),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => PersonalPage()),
+                            // );
                           },
                           child: const Text(
                             "Request help from the Pharmacist",

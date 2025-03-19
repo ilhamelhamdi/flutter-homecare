@@ -141,18 +141,18 @@ class _NursingState extends State<NursingService> {
                       String route;
                       switch (index) {
                         case 0:
-                          // navbarVisibility(true);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => NursingDetailsPage(
-                                  // item: tender,
-                                  ),
+                              builder: (context) => PersonalPage(
+                                title: "Nurse Services Case",
+                                serviceType: "Nurse",
+                                onItemTap: (item) {
+                                  // Handle item tap
+                                },
+                              ),
                             ),
-                          ).then((_) {
-                            // Show the bottom navigation bar when returning
-                            // navbarVisibility(false);
-                          });
+                          );
                           return;
                         case 1:
                           // navbarVisibility(true);
