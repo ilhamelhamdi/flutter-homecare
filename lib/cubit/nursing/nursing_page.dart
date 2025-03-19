@@ -140,13 +140,14 @@ class _NursingState extends State<NursingService> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => PersonalPage(
-                                        // item: tender,
-                                        ),
+                                      title: "Pharma Services Case",
+                                      serviceType: "Pharma",
+                                      onItemTap: (item) {
+                                        // Handle item tap
+                                      },
+                                    ),
                                   ),
-                                ).then((_) {
-                                  // Show the bottom navigation bar when returning
-                                  // navbarVisibility(false);
-                                });
+                                );
                                 return;
                               case 1:
                                 // navbarVisibility(true);
@@ -154,13 +155,14 @@ class _NursingState extends State<NursingService> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => PersonalPage(
-                                        // item: tender,
-                                        ),
+                                      title: "Pharma Services Case",
+                                      serviceType: "Pharma",
+                                      onItemTap: (item) {
+                                        // Handle item tap
+                                      },
+                                    ),
                                   ),
-                                ).then((_) {
-                                  // Show the bottom navigation bar when returning
-                                  // navbarVisibility(false);
-                                });
+                                );
                                 return;
                               default:
                                 route = AppRoutes.home;
