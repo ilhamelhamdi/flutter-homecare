@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
 import 'package:m2health/utils.dart';
-import '../search/search_pharmacist.dart';
+import '../search/search_professional.dart';
 import 'package:m2health/widgets/image_preview.dart';
 import 'dart:io';
 
@@ -102,7 +102,9 @@ class _AddOnState extends State<AddOn> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SearchPharmacistPage(),
+            builder: (context) => SearchPage(
+              serviceType: widget.serviceType,
+            ),
           ),
         ); // Navigate back after successful submission
       } else {
