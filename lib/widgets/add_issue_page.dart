@@ -5,7 +5,7 @@ import 'package:m2health/const.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
 import 'package:m2health/utils.dart';
-import 'package:m2health/views/details/pharma_add_on.dart';
+import 'package:m2health/views/details/add_on.dart';
 import 'dart:io';
 
 class AddIssuePage extends StatefulWidget {
