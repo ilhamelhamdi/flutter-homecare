@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
-import 'package:m2health/views/appointment.dart';
+import 'package:m2health/cubit/appointment/appointment.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/widgets/bottombar.dart';
 // import 'package:navbar_router/navbar_router.dart';
@@ -596,15 +596,16 @@ class FeedbackDetails extends StatelessWidget {
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Scaffold(
-                          body: AppointmentPage(),
-                          bottomNavigationBar: CustomBottomAppBar(),
-                        ),
+                        builder: (context) => AppointmentPage(),
                       ),
-                    );
+                    ).then((_) {
+                      // Show the bottom navigation bar after navigation completes
+                      MyApp.showBottomAppBar(context);
+                    });
                   },
                   child: const Text(
                     'View Detail',
