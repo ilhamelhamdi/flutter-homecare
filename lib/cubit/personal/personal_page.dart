@@ -199,6 +199,7 @@ class _PersonalPageState extends State<PersonalPage> {
                                   MaterialPageRoute(
                                     builder: (context) => AddIssuePage(
                                       issue: state.issues.first,
+                                      serviceType: widget.serviceType,
                                     ),
                                   ),
                                 );

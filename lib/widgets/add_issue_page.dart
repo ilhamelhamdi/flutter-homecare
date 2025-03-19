@@ -10,8 +10,9 @@ import 'dart:io';
 
 class AddIssuePage extends StatefulWidget {
   final Issue? issue;
+  final String serviceType; // Add serviceType parameter
 
-  AddIssuePage({this.issue});
+  AddIssuePage({this.issue, required this.serviceType});
 
   @override
   _AddIssuePageState createState() => _AddIssuePageState();
@@ -134,9 +135,9 @@ class _AddIssuePageState extends State<AddIssuePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Personal Case Detail',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        title: Text(
+          '${widget.serviceType} - Add Issue', // Dynamic title
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       body: Stack(
