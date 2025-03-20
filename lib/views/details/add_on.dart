@@ -26,7 +26,7 @@ class _AddOnState extends State<AddOn> {
   late List<bool> _selectedServices;
   late List<String> serviceTitles;
 
-  double _estimatedBudget = 145.0; // Initial estimated budget
+  double _estimatedBudget = 0.0; // Initial estimated budget
 
   @override
   void initState() {
@@ -63,10 +63,10 @@ class _AddOnState extends State<AddOn> {
 
   void _updateEstimatedBudget() {
     // Update the estimated budget based on selected services
-    _estimatedBudget = 145.0; // Base budget
+    _estimatedBudget = 0.0; // Base budget
     for (int i = 0; i < _selectedServices.length; i++) {
       if (_selectedServices[i]) {
-        _estimatedBudget += 50.0; // Add 50 for each selected service
+        _estimatedBudget += 10.0; // Add 50 for each selected service
       }
     }
   }

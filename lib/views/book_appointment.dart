@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'details/detail_appointment.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/widgets/time_slot_grid_view.dart';
-import 'package:dio/dio.dart';
-import 'package:m2health/utils.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> pharmacist;

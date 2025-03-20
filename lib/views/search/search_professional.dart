@@ -169,6 +169,8 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final String role = widget.serviceType == "Pharma" ? "Pharmacist" : "Nurse";
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -265,7 +267,7 @@ class _SearchPageState extends State<SearchPage> {
                                                   builder: (context) =>
                                                       ProfessionalProfilePage(
                                                     professional: professional,
-                                                    role: "Pharmacist",
+                                                    role: role,
                                                   ),
                                                 ),
                                               );
