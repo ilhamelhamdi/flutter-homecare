@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
+import 'package:m2health/cubit/appointment/appointment_page.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
@@ -542,16 +543,62 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                   child: const Text('No'),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    final appointmentId =
-                                        widget.appointmentData['id'] ??
-                                            0; // Tambahkan nilai default
-                                    context
-                                        .read<AppointmentCubit>()
-                                        .cancelAppointment(appointmentId);
-                                    Navigator.pop(context); // Close the dialog
-                                    Navigator.pop(
-                                        context); // Return to the previous page
+                                  onPressed: () async {
+                                    try {
+                                      final token =
+                                          await Utils.getSpString(Const.TOKEN);
+                                      if (token == null) {
+                                        throw Exception('Token is null');
+                                      }
+
+                                      // Print the data being submitted
+                                      print(
+                                          'Data being submitted: ${jsonEncode(widget.appointmentData)}');
+
+                                      final response = await Dio().post(
+                                        Const.API_APPOINTMENT,
+                                        data: jsonEncode(widget
+                                            .appointmentData), // Convert to JSON string
+                                        options: Options(
+                                          headers: {
+                                            'Authorization': 'Bearer $token',
+                                            'Content-Type':
+                                                'application/json', // Set content type to JSON
+                                          },
+                                        ),
+                                      );
+
+                                      if (response.statusCode == 200) {
+                                        final responseData = response.data;
+                                        if (responseData != null &&
+                                            responseData['data'] != null) {
+                                          // Handle successful submission
+                                          print(
+                                              'Appointment created successfully');
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AppointmentPage(),
+                                            ),
+                                          );
+                                        } else {
+                                          throw Exception(
+                                              'Invalid response data');
+                                        }
+                                      } else {
+                                        print(
+                                            'Error: ${response.statusCode} - ${response.statusMessage}');
+                                        throw Exception(
+                                            'Failed to create appointment');
+                                      }
+                                    } catch (e) {
+                                      setState(() {
+                                        _errorMessage =
+                                            'Failed to create appointment: $e';
+                                      });
+                                      print('Error: $e');
+                                    }
                                   },
                                   child: const Text('Yes, Cancel'),
                                   style: ElevatedButton.styleFrom(
