@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
@@ -541,13 +543,15 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HomePage(),
-                                      ),
-                                    );
+                                    final appointmentId =
+                                        widget.appointmentData['id'] ??
+                                            0; // Tambahkan nilai default
+                                    context
+                                        .read<AppointmentCubit>()
+                                        .cancelAppointment(appointmentId);
+                                    Navigator.pop(context); // Close the dialog
+                                    Navigator.pop(
+                                        context); // Return to the previous page
                                   },
                                   child: const Text('Yes, Cancel'),
                                   style: ElevatedButton.styleFrom(
@@ -556,7 +560,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ],
@@ -566,8 +570,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Colors.red, // Set the background color to red
+                  backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
