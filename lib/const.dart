@@ -28,6 +28,7 @@ class Const {
   static const String API_PERSONAL_CASES = URL_API + '/personal-cases';
   static const String API_PHARMACIST_SERVICES =
       URL_API + '/pharmacist-services';
+  static const String API_NURSE_SERVICES = URL_API + '/nurse-services';
   static const String API_FAVORITES = URL_API + '/favorites';
 // end new api
   // static const String URL_PRIVACY = URL_WEB + '/privacy-policy';

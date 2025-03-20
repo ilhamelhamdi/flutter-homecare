@@ -60,4 +60,32 @@ class Appointment {
       'profile_services_data': jsonEncode(profileServiceData),
     };
   }
+
+  Appointment copyWith({
+    int? id,
+    String? type,
+    String? status,
+    String? date,
+    String? hour,
+    String? summary,
+    double? payTotal,
+    int? userId,
+    String? createdAt,
+    String? updatedAt,
+    Map<String, dynamic>? profileServiceData,
+  }) {
+    return Appointment(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      status: status ?? this.status,
+      date: date ?? this.date,
+      hour: hour ?? this.hour,
+      summary: summary ?? this.summary,
+      payTotal: payTotal ?? this.payTotal,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      profileServiceData: profileServiceData ?? this.profileServiceData,
+    );
+  }
 }

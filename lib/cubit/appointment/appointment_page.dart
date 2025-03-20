@@ -4,6 +4,7 @@ import 'package:m2health/const.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/cubit/appointment/appointment_detail.dart';
 import 'package:m2health/models/appointment.dart';
+import 'package:intl/intl.dart';
 
 class AppointmentPage extends StatefulWidget {
   static const String route = '/appointment';
@@ -155,7 +156,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                           ),
                           Row(
                             children: [
-                              const Text('Radiologist |'),
+                              Text('${appointment.type} |'),
                               const SizedBox(width: 5),
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -183,7 +184,9 @@ class _AppointmentPageState extends State<AppointmentPage>
                               ),
                             ],
                           ),
-                          Text('${appointment.date} | ${appointment.hour}'),
+                          Text(
+                            '${DateFormat('EEEE').format(DateTime.parse(appointment.date))}, ${DateFormat('dd MMMM yyyy').format(DateTime.parse(appointment.date))} | ${appointment.hour}',
+                          ),
                         ],
                       ),
                     ],
@@ -349,7 +352,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                                 final appointmentId = appointment.id;
                                 context
                                     .read<AppointmentCubit>()
-                                    .deleteAppointment(appointmentId);
+                                    .cancelAppointment(appointmentId);
                               },
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(color: Colors.red),

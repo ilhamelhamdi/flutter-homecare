@@ -2,27 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:m2health/views/book_appointment.dart';
 import 'package:m2health/const.dart';
 
-class PharmacistProfilePage extends StatelessWidget {
-  final Map<String, dynamic> pharmacist;
+class ProfessionalProfilePage extends StatelessWidget {
+  final Map<String, dynamic>
+      professional; // Works for both Pharmacist and Nurse
+  final String role; // Role: "Pharmacist" or "Nurse"
 
-  const PharmacistProfilePage({Key? key, required this.pharmacist})
-      : super(key: key);
+  const ProfessionalProfilePage({
+    Key? key,
+    required this.professional,
+    required this.role,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Ensure all required fields are not null
-    final String avatar = pharmacist['avatar'] ?? '';
-    final String name = pharmacist['name'] ?? 'Unknown';
-    final String role = pharmacist['role'] ?? 'Pharmacist';
-    final String about = pharmacist['about'] ?? 'No information available';
-    final String daysHour = pharmacist['days_hour'] ?? 'Not specified';
-    final String mapsLocation = pharmacist['maps_location'] ?? 'Not specified';
-    final int experience = pharmacist['experience'] ?? 0;
-    final double rating = (pharmacist['rating'] ?? 0.0).toDouble();
+    final String avatar = professional['avatar'] ?? '';
+    final String name = professional['name'] ?? 'Unknown';
+    final String about = professional['about'] ?? 'No information available';
+    final String daysHour = professional['days_hour'] ?? 'Not specified';
+    final String mapsLocation =
+        professional['maps_location'] ?? 'Not specified';
+    final int experience = professional['experience'] ?? 0;
+    final double rating = (professional['rating'] ?? 0.0).toDouble();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pharmacist Details'),
+        title: Text(
+          '$role Details', // Dynamic title
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -62,9 +70,9 @@ class PharmacistProfilePage extends StatelessWidget {
                     fontSize: 18,
                   ),
                 ),
-                const Text(
-                  'Pharmacist',
-                  style: TextStyle(
+                Text(
+                  role, // Dynamic role
+                  style: const TextStyle(
                     fontSize: 16,
                   ),
                 ),
@@ -80,7 +88,7 @@ class PharmacistProfilePage extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          '180+',
+                          '180+', // Example data
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -286,7 +294,7 @@ class PharmacistProfilePage extends StatelessWidget {
                       const SizedBox(height: 8),
                       const Text(
                         'This is a detailed review comment that can be seen in full. '
-                        'It provides insights and feedback about the pharmacist\'s services.',
+                        'It provides insights and feedback about the professional\'s services.',
                       ),
                     ],
                   ),

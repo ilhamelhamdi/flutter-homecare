@@ -5,13 +5,14 @@ import 'package:m2health/const.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
 import 'package:m2health/utils.dart';
-import 'package:m2health/views/details/pharma_add_on.dart';
+import 'package:m2health/views/details/add_on.dart';
 import 'dart:io';
 
 class AddIssuePage extends StatefulWidget {
   final Issue? issue;
+  final String serviceType; // Add serviceType parameter
 
-  AddIssuePage({this.issue});
+  AddIssuePage({this.issue, required this.serviceType});
 
   @override
   _AddIssuePageState createState() => _AddIssuePageState();
@@ -104,14 +105,6 @@ class _AddIssuePageState extends State<AddIssuePage> {
 
       if (response.statusCode == 200) {
         print('Issue updated successfully');
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PaymentPharma(
-              issue: issue,
-            ),
-          ),
-        );
       } else {
         print('Failed to update issue: ${response.statusMessage}');
       }
@@ -123,8 +116,9 @@ class _AddIssuePageState extends State<AddIssuePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PaymentPharma(
+        builder: (context) => AddOn(
           issue: issue,
+          serviceType: widget.serviceType, // Pass the required serviceType
         ),
       ),
     );
@@ -134,9 +128,9 @@ class _AddIssuePageState extends State<AddIssuePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Personal Case Detail',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        title: Text(
+          '${widget.serviceType} - Add Issue', // Dynamic title
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       body: Stack(

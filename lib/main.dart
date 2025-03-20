@@ -13,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:navbar_router/navbar_router.dart';
 
 import 'const.dart';
-import 'cubit/appointment/appointment.dart';
+import 'cubit/appointment/appointment_page.dart';
 import 'views/medical_store.dart';
 import './AppLanguage.dart';
 import './app_localzations.dart';
