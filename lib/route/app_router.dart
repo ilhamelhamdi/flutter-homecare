@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:m2health/cubit/appointment/appointment.dart';
+import 'package:m2health/cubit/appointment/appointment_page.dart';
 import 'package:m2health/views/splashscreen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/cubit/locations/location_page.dart';

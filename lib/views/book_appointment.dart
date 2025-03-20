@@ -190,7 +190,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
           onPressed: () {
             final appointmentData = {
               'user_id': 1, // Replace with actual user ID
-              'type': 'Pharmacist',
+              'type': widget.pharmacist['role'],
               'status': 'Upcoming',
               'date': DateFormat('yyyy-MM-dd').format(_selectedDay),
               'hour': DateFormat('HH:mm').format(selectTime),

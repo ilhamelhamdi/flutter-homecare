@@ -8,7 +8,7 @@ import 'package:m2health/cubit/profiles/profile_details/medical_record.dart';
 import 'package:m2health/cubit/profiles/profile_details/pharmagenomical.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/utils.dart';
-import 'package:m2health/cubit/appointment/appointment.dart';
+import 'package:m2health/cubit/appointment/appointment_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 

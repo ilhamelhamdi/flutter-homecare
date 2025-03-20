@@ -62,11 +62,45 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     }
   }
 
+  // Future<void> cancelAppointment(int appointmentId) async {
+  //   try {
+  //     final token = await Utils.getSpString(Const.TOKEN);
+  //     final response = await _dio.put(
+  //       '${Const.API_APPOINTMENT}/$appointmentId', // Assuming this endpoint updates the appointment
+  //       data: {'status': 'Cancelled'}, // Update the status to "Cancelled"
+  //       options: Options(
+  //         headers: {
+  //           'Authorization': 'Bearer $token',
+  //         },
+  //       ),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       if (state is AppointmentLoaded) {
+  //         final currentState = state as AppointmentLoaded;
+  //         final updatedAppointments =
+  //             currentState.appointments.map((appointment) {
+  //           if (appointment.id == appointmentId) {
+  //             return appointment.copyWith(status: 'Cancelled'); // Update status
+  //           }
+  //           return appointment;
+  //         }).toList();
+
+  //         emit(AppointmentLoaded(updatedAppointments));
+  //       }
+  //     } else {
+  //       throw Exception('Failed to cancel appointment');
+  //     }
+  //   } catch (e) {
+  //     emit(AppointmentError(e.toString()));
+  //   }
+  // }
+
   Future<void> cancelAppointment(int appointmentId) async {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
       final response = await _dio.put(
-        '${Const.API_APPOINTMENT}/$appointmentId', // Assuming this endpoint updates the appointment
+        '${Const.API_APPOINTMENT}/$appointmentId',
         data: {'status': 'Cancelled'}, // Update the status to "Cancelled"
         options: Options(
           headers: {
