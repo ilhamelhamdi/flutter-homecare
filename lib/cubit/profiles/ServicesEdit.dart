@@ -132,77 +132,6 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
     }
   }
 
-  // Future<void> _saveServiceTitles(String serviceType) async {
-  //   try {
-  //     final token = await Utils.getSpString(Const.TOKEN);
-  //     final data = serviceType == 'pharma' ? pharmaServices : nurseServices;
-
-  //     final response = await Dio().put(
-  //       '${Const.URL_API}/service-titles/$serviceType',
-  //       data: {'titles': data},
-  //       options: Options(
-  //         headers: {
-  //           'Authorization': 'Bearer $token',
-  //           'Content-Type': 'application/json',
-  //         },
-  //       ),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //             content:
-  //                 Text('$serviceType service titles updated successfully')),
-  //       );
-  //     } else {
-  //       throw Exception('Failed to update service titles');
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Error updating service titles: $e')),
-  //     );
-  //   }
-  // }
-
-  // Future<void> _saveServiceTitles(String serviceType) async {
-  //   try {
-  //     final token = await Utils.getSpString(Const.TOKEN);
-  //     final serviceData =
-  //         serviceType == 'pharma' ? pharmaServices : nurseServices;
-
-  //     // Add service_type to each item
-  //     final servicesWithType = serviceData
-  //         .map((service) => {...service, 'service_type': serviceType})
-  //         .toList();
-
-  //     final response = await Dio().put(
-  //       '${Const.URL_API}/service-titles/$serviceType',
-  //       data: {'services': servicesWithType}, // Changed 'titles' to 'services'
-  //       options: Options(
-  //         headers: {
-  //           'Authorization': 'Bearer $token',
-  //           'Content-Type': 'application/json',
-  //         },
-  //       ),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //             content:
-  //                 Text('$serviceType service titles updated successfully')),
-  //       );
-  //     } else {
-  //       throw Exception('Failed to update service titles');
-  //     }
-  //   } catch (e) {
-  //     print('Error updating service titles: $e');
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Error updating service titles: $e')),
-  //     );
-  //   }
-  // }
-
   Future<void> _saveServiceTitles(String serviceType) async {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
@@ -287,14 +216,62 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
     });
   }
 
-  void _removeService(String serviceType, int index) {
-    setState(() {
-      if (serviceType == 'pharma') {
-        pharmaServices.removeAt(index);
+  void _removeService(String serviceType, int index) async {
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+      final serviceData =
+          serviceType == 'pharma' ? pharmaServices : nurseServices;
+
+      // Check if the service has an ID (i.e., it exists on the server)
+      final serviceId = serviceData[index]['id'];
+      if (serviceId != null) {
+        // Send DELETE request to the backend
+        final response = await Dio().delete(
+          '${Const.URL_API}/service-titles/$serviceId', // Correct URL
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        if (response.statusCode == 200) {
+          // Remove the service from the local list
+          setState(() {
+            serviceData.removeAt(index);
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Service removed successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          throw Exception('Failed to remove service');
+        }
       } else {
-        nurseServices.removeAt(index);
+        // If the service doesn't have an ID, just remove it locally
+        setState(() {
+          serviceData.removeAt(index);
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Service removed locally'),
+            backgroundColor: Colors.orange,
+          ),
+        );
       }
-    });
+    } catch (e) {
+      print('Error removing service: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error removing service: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

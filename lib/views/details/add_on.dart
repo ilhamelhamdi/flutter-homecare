@@ -17,7 +17,8 @@ class AddOn extends StatefulWidget {
 
 class _AddOnState extends State<AddOn> {
   late List<bool> _selectedServices;
-  late List<String> serviceTitles;
+  late List<Map<String, dynamic>>
+      serviceData; // Store full service data with prices
 
   double _estimatedBudget = 0.0; // Initial estimated budget
 
@@ -50,11 +51,9 @@ class _AddOnState extends State<AddOn> {
             List<Map<String, dynamic>>.from(response.data['data']);
 
         setState(() {
-          serviceTitles = servicesData
-              .map((service) => service['title'] as String)
-              .toList();
+          serviceData = servicesData; // Store full service data
           _selectedServices =
-              List<bool>.generate(serviceTitles.length, (index) => false);
+              List<bool>.generate(serviceData.length, (index) => false);
         });
       } else {
         // Fall back to default values if API fails
@@ -68,41 +67,48 @@ class _AddOnState extends State<AddOn> {
   }
 
   void _initializeDefaultServiceTitles() {
-    // Initialize services based on serviceType
     if (widget.serviceType == "Pharma") {
-      serviceTitles = [
-        'Analyze patient physiological data,\ninitial drug treatment plan, and patient treatment response',
-        'Analyze specific treatment problems:\npoor response to treatment;poor\npatient medication compliance;\ndrug side effect; drug interactions',
-        'Drug therapy adjustment made to\nphysicians by the pharmacist when\nappropriate',
-        'Diet History & Evaluations',
-        'Follow-up the therapy and ensure\npositive outcomes and reduces adverse effects',
+      serviceData = [
+        {
+          'id': 1,
+          'title': 'Medication Review',
+          'price': 15.0
+        }, // Use 15.0 instead of 15
+        {'id': 2, 'title': 'Prescription Consultation', 'price': 10.0},
+        {'id': 3, 'title': 'Medication Management Plan', 'price': 25.0},
       ];
     } else if (widget.serviceType == "Nurse") {
-      serviceTitles = [
-        'Medical Escort',
-        'Inject',
-        'Blood Glucose Check',
-        'Medication Administration',
-        'NGT Feeding',
-        'Oral Suctioning',
-        'PEG Feeding',
-        'Stoma Bag Drainage',
-        'Tracheostomy Suctioning',
-        'Urine Bag Drainage',
+      serviceData = [
+        {'id': 1, 'title': 'Medical Escort', 'price': 20.0},
+        {'id': 2, 'title': 'Inject', 'price': 15.0},
+        {'id': 3, 'title': 'Blood Glucose Check', 'price': 10.0},
       ];
     }
 
-    // Initialize the selection state for services
     _selectedServices =
-        List<bool>.generate(serviceTitles.length, (index) => false);
+        List<bool>.generate(serviceData.length, (index) => false);
   }
 
+  // void _updateEstimatedBudget() {
+  //   // Update the estimated budget based on selected services
+  //   _estimatedBudget = 0.0; // Reset budget
+  //   for (int i = 0; i < _selectedServices.length; i++) {
+  //     if (_selectedServices[i]) {
+  //       _estimatedBudget +=
+  //           serviceData[i]['price'] as double; // Use actual price
+  //     }
+  //   }
+  // }
+
   void _updateEstimatedBudget() {
-    // Update the estimated budget based on selected services
-    _estimatedBudget = 0.0; // Base budget
+    // Reset budget
+    _estimatedBudget = 0.0;
+
     for (int i = 0; i < _selectedServices.length; i++) {
       if (_selectedServices[i]) {
-        _estimatedBudget += 10.0; // Add 50 for each selected service
+        // Safely cast price to double
+        final price = serviceData[i]['price'];
+        _estimatedBudget += (price is int ? price.toDouble() : price) as double;
       }
     }
   }
@@ -115,7 +121,7 @@ class _AddOnState extends State<AddOn> {
           .asMap()
           .entries
           .where((entry) => entry.value)
-          .map((entry) => serviceTitles[entry.key])
+          .map((entry) => serviceData[entry.key]['title'])
           .join(', '),
       "estimated_budget": _estimatedBudget,
       "updated_at": DateTime.now().toIso8601String(),
@@ -154,7 +160,6 @@ class _AddOnState extends State<AddOn> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -171,7 +176,7 @@ class _AddOnState extends State<AddOn> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: serviceTitles.length,
+                itemCount: serviceData.length,
                 itemBuilder: (context, i) {
                   return Card(
                     child: ListTile(
@@ -199,10 +204,17 @@ class _AddOnState extends State<AddOn> {
                         ),
                       ),
                       title: Text(
-                        serviceTitles[i],
+                        serviceData[i]['title'] as String,
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
                         overflow: TextOverflow.visible,
+                      ),
+                      subtitle: Text(
+                        '\$${serviceData[i]['price']}',
+                        style: const TextStyle(
+                          color: Color(0xFF35C5CF),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       trailing: const Icon(Icons.info_outline_rounded,
                           color: Colors.grey),
