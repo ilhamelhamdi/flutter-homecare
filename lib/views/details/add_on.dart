@@ -4,13 +4,6 @@ import 'package:m2health/const.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
 import 'package:m2health/utils.dart';
 import '../search/search_professional.dart';
-import 'package:m2health/widgets/image_preview.dart';
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:m2health/const.dart';
-import 'package:m2health/utils.dart';
 
 class AddOn extends StatefulWidget {
   final Issue issue;
@@ -31,7 +24,50 @@ class _AddOnState extends State<AddOn> {
   @override
   void initState() {
     super.initState();
+    _fetchServiceTitles();
+  }
 
+  Future<void> _fetchServiceTitles() async {
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+
+      // Determine endpoint based on service type
+      final endpoint = widget.serviceType == "Pharma"
+          ? '${Const.URL_API}/service-titles/pharma'
+          : '${Const.URL_API}/service-titles/nurse';
+
+      final response = await Dio().get(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        final servicesData =
+            List<Map<String, dynamic>>.from(response.data['data']);
+
+        setState(() {
+          serviceTitles = servicesData
+              .map((service) => service['title'] as String)
+              .toList();
+          _selectedServices =
+              List<bool>.generate(serviceTitles.length, (index) => false);
+        });
+      } else {
+        // Fall back to default values if API fails
+        _initializeDefaultServiceTitles();
+      }
+    } catch (e) {
+      print('Error fetching service titles: $e');
+      // Fall back to default values if API fails
+      _initializeDefaultServiceTitles();
+    }
+  }
+
+  void _initializeDefaultServiceTitles() {
     // Initialize services based on serviceType
     if (widget.serviceType == "Pharma") {
       serviceTitles = [
