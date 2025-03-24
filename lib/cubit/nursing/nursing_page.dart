@@ -5,7 +5,6 @@ import 'package:m2health/cubit/nursing/nursing_cubit.dart';
 import 'package:m2health/cubit/nursing/nursing_state.dart';
 import 'package:m2health/cubit/personal/personal_page.dart';
 import 'package:m2health/route/app_routes.dart';
-import 'package:m2health/main.dart';
 
 class NursingService extends StatefulWidget {
   @override

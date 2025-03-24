@@ -5,6 +5,7 @@ import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/cubit/appointment/appointment_detail.dart';
 import 'package:m2health/models/appointment.dart';
 import 'package:intl/intl.dart';
+import 'package:m2health/views/book_appointment.dart';
 
 class AppointmentPage extends StatefulWidget {
   static const String route = '/appointment';
@@ -327,7 +328,25 @@ class _AppointmentPageState extends State<AppointmentPage>
                               ),
                               child: OutlinedButton(
                                 onPressed: () {
-                                  // Handle reschedule
+                                  final appointmentId =
+                                      appointment.id; // Get the appointment ID
+                                  final profile =
+                                      appointment.profileServiceData;
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BookAppointmentPage(
+                                        pharmacist: profile,
+                                        appointmentId:
+                                            appointmentId, // Pass the appointment ID
+                                        initialDate: DateTime.parse(
+                                            appointment.date), // Pre-fill date
+                                        initialTime: DateFormat('HH:mm').parse(
+                                            appointment.hour), // Pre-fill time
+                                      ),
+                                    ),
+                                  );
                                 },
                                 style: OutlinedButton.styleFrom(
                                   side: const BorderSide(
@@ -461,7 +480,25 @@ class _AppointmentPageState extends State<AppointmentPage>
                               ),
                               child: OutlinedButton(
                                 onPressed: () {
-                                  // Handle reschedule
+                                  final appointmentId =
+                                      appointment.id; // Get the appointment ID
+                                  final profile =
+                                      appointment.profileServiceData;
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BookAppointmentPage(
+                                        pharmacist: profile,
+                                        appointmentId:
+                                            appointmentId, // Pass the appointment ID
+                                        initialDate: DateTime.parse(
+                                            appointment.date), // Pre-fill date
+                                        initialTime: DateFormat('HH:mm').parse(
+                                            appointment.hour), // Pre-fill time
+                                      ),
+                                    ),
+                                  );
                                 },
                                 style: OutlinedButton.styleFrom(
                                   side: const BorderSide(
