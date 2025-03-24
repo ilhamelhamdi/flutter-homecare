@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/cubit/profiles/ServicesEdit.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_details/edit_profile.dart';
 import 'package:m2health/cubit/profiles/profile_details/upload_pdf.dart';
@@ -65,6 +67,7 @@ class ProfilePage extends StatelessWidget {
                   ),
                 );
               } else if (state is ProfileLoaded) {
+                final isAdmin = Utils.getSpString(Const.ROLE) == 'admin';
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -168,6 +171,22 @@ class ProfilePage extends StatelessWidget {
                                 trailing: const Icon(Icons.arrow_forward_ios),
                                 onTap: () {
                                   // Handle Pharma Profile tap
+                                },
+                              ),
+                              // if (isAdmin)
+                              ListTile(
+                                leading: const Icon(Icons.edit_note,
+                                    color: Color(0xFF35C5CF)),
+                                title: const Text('Edit Service Titles'),
+                                trailing: const Icon(Icons.arrow_forward_ios),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ServiceTitlesEditPage(),
+                                    ),
+                                  );
                                 },
                               ),
                             ],

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
+import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+
 class PharmagenomicsProfilePage extends StatefulWidget {
   @override
   _PharmagenomicsProfilePageState createState() =>
@@ -64,76 +67,131 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pharmagenomics Profile'),
+        title: const Text(
+          'Pharmagenomics Profile',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: _data.length,
-              itemBuilder: (context, index) {
-                final profile = _data[index];
-                return Card(
-                  margin: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Gene: ${profile['gene']}'),
-                        Text('Genotype: ${profile['genotype']}'),
-                        Text('Phenotype: ${profile['phenotype']}'),
-                      ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: _data.length,
+                itemBuilder: (context, index) {
+                  final profile = _data[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () => _editProfile(profile),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Full PDF Report',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        _pdfFileName ?? 'No PDF uploaded',
-                        overflow: TextOverflow.ellipsis,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildProfileRow('Gene', profile['gene']!),
+                          const SizedBox(height: 8),
+                          _buildProfileRow('Genotype', profile['genotype']!),
+                          const SizedBox(height: 8),
+                          _buildProfileRow('Phenotype', profile['phenotype']!),
+                          const SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: ElevatedButton.icon(
+                              onPressed: () => _editProfile(profile),
+                              icon: const Icon(Icons.edit, size: 16),
+                              label: const Text('Edit'),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                textStyle: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        _pickPdf();
-                      },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Full PDF Report',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: _removePdf,
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _pdfFileName ?? 'No PDF uploaded',
+                            style: const TextStyle(fontSize: 14),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add, color: Colors.blue),
+                          onPressed: _pickPdf,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: _removePdf,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addNewProfile,
         child: const Icon(Icons.add),
         backgroundColor: Colors.blue,
       ),
+    );
+  }
+
+  Widget _buildProfileRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 100,
+          child: Text(
+            '$label:',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -153,7 +211,6 @@ class _EditPharmagenomicsProfilePageState
   late TextEditingController _geneController;
   late TextEditingController _genotypeController;
   late TextEditingController _phenotypeController;
-  late TextEditingController _medicationGuidanceController;
 
   @override
   void initState() {
@@ -163,8 +220,6 @@ class _EditPharmagenomicsProfilePageState
         TextEditingController(text: widget.profile['genotype']);
     _phenotypeController =
         TextEditingController(text: widget.profile['phenotype']);
-    _medicationGuidanceController =
-        TextEditingController(text: 'Sample Medication Guidance');
   }
 
   @override
@@ -172,7 +227,6 @@ class _EditPharmagenomicsProfilePageState
     _geneController.dispose();
     _genotypeController.dispose();
     _phenotypeController.dispose();
-    _medicationGuidanceController.dispose();
     super.dispose();
   }
 
@@ -195,32 +249,29 @@ class _EditPharmagenomicsProfilePageState
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _geneController,
-              decoration: const InputDecoration(labelText: 'Gene'),
-            ),
-            TextField(
-              controller: _genotypeController,
-              decoration: const InputDecoration(labelText: 'Genotype'),
-            ),
-            TextField(
-              controller: _phenotypeController,
-              decoration: const InputDecoration(labelText: 'Phenotype'),
-            ),
-            TextField(
-              controller: _medicationGuidanceController,
-              maxLines: 4,
-              decoration: const InputDecoration(
-                labelText: 'Medication Guidance',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16.0),
+            _buildInputField('Gene', _geneController),
+            const SizedBox(height: 16),
+            _buildInputField('Genotype', _genotypeController),
+            const SizedBox(height: 16),
+            _buildInputField('Phenotype', _phenotypeController),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _saveChanges,
               child: const Text('Save'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField(String label, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     );

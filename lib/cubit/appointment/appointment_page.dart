@@ -35,6 +35,7 @@ class _AppointmentPageState extends State<AppointmentPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -350,9 +351,85 @@ class _AppointmentPageState extends State<AppointmentPage>
                             OutlinedButton(
                               onPressed: () {
                                 final appointmentId = appointment.id;
-                                context
-                                    .read<AppointmentCubit>()
-                                    .cancelAppointment(appointmentId);
+
+                                // Show confirmation dialog
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.all(16.0),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: IconButton(
+                                              icon: const Icon(Icons.close),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ),
+                                          const Icon(Icons.warning_outlined,
+                                              size: 50, color: Colors.red),
+                                          const SizedBox(height: 16),
+                                          const Text(
+                                            'Are you sure to cancel this booking?',
+                                            style: TextStyle(
+                                              color: Colors.blue,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          const Text(
+                                            'You can rebook it later from the canceled appointment menu.',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(); // Close dialog
+                                                },
+                                                child: const Text('No'),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  // Close dialog and cancel the appointment
+                                                  Navigator.of(context).pop();
+                                                  context
+                                                      .read<AppointmentCubit>()
+                                                      .cancelAppointment(
+                                                          appointmentId);
+                                                },
+                                                child:
+                                                    const Text('Yes, Cancel'),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.red,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(color: Colors.red),
