@@ -600,7 +600,7 @@ class FeedbackDetails extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AppointmentPage(),
+                        builder: (context) => HomePage(),
                       ),
                     ).then((_) {
                       // Show the bottom navigation bar after navigation completes
