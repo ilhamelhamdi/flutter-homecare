@@ -7,20 +7,20 @@ import '../search/search_professional.dart';
 
 class AddOn extends StatefulWidget {
   final Issue issue;
-  final String serviceType; // Add serviceType parameter
+  final String serviceType;
 
-  AddOn({required this.issue, required this.serviceType}); // Update constructor
+  AddOn({required this.issue, required this.serviceType});
 
   @override
   _AddOnState createState() => _AddOnState();
 }
 
 class _AddOnState extends State<AddOn> {
+  bool isLoading = true;
   late List<bool> _selectedServices;
-  late List<Map<String, dynamic>>
-      serviceData; // Store full service data with prices
-
-  double _estimatedBudget = 0.0; // Initial estimated budget
+  List<Map<String, dynamic>>?
+      serviceData; // Nullable to handle uninitialized state
+  double _estimatedBudget = 0.0;
 
   @override
   void initState() {
@@ -51,17 +51,16 @@ class _AddOnState extends State<AddOn> {
             List<Map<String, dynamic>>.from(response.data['data']);
 
         setState(() {
-          serviceData = servicesData; // Store full service data
+          serviceData = servicesData;
           _selectedServices =
-              List<bool>.generate(serviceData.length, (index) => false);
+              List<bool>.generate(serviceData!.length, (index) => false);
+          isLoading = false;
         });
       } else {
-        // Fall back to default values if API fails
         _initializeDefaultServiceTitles();
       }
     } catch (e) {
       print('Error fetching service titles: $e');
-      // Fall back to default values if API fails
       _initializeDefaultServiceTitles();
     }
   }
@@ -69,11 +68,7 @@ class _AddOnState extends State<AddOn> {
   void _initializeDefaultServiceTitles() {
     if (widget.serviceType == "Pharma") {
       serviceData = [
-        {
-          'id': 1,
-          'title': 'Medication Review',
-          'price': 15.0
-        }, // Use 15.0 instead of 15
+        {'id': 1, 'title': 'Medication Review', 'price': 15.0},
         {'id': 2, 'title': 'Prescription Consultation', 'price': 10.0},
         {'id': 3, 'title': 'Medication Management Plan', 'price': 25.0},
       ];
@@ -86,28 +81,19 @@ class _AddOnState extends State<AddOn> {
     }
 
     _selectedServices =
-        List<bool>.generate(serviceData.length, (index) => false);
+        List<bool>.generate(serviceData!.length, (index) => false);
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  // void _updateEstimatedBudget() {
-  //   // Update the estimated budget based on selected services
-  //   _estimatedBudget = 0.0; // Reset budget
-  //   for (int i = 0; i < _selectedServices.length; i++) {
-  //     if (_selectedServices[i]) {
-  //       _estimatedBudget +=
-  //           serviceData[i]['price'] as double; // Use actual price
-  //     }
-  //   }
-  // }
-
   void _updateEstimatedBudget() {
-    // Reset budget
     _estimatedBudget = 0.0;
 
     for (int i = 0; i < _selectedServices.length; i++) {
       if (_selectedServices[i]) {
-        // Safely cast price to double
-        final price = serviceData[i]['price'];
+        final price = serviceData![i]['price'];
         _estimatedBudget += (price is int ? price.toDouble() : price) as double;
       }
     }
@@ -121,7 +107,7 @@ class _AddOnState extends State<AddOn> {
           .asMap()
           .entries
           .where((entry) => entry.value)
-          .map((entry) => serviceData[entry.key]['title'])
+          .map((entry) => serviceData![entry.key]['title'])
           .join(', '),
       "estimated_budget": _estimatedBudget,
       "updated_at": DateTime.now().toIso8601String(),
@@ -148,19 +134,49 @@ class _AddOnState extends State<AddOn> {
               serviceType: widget.serviceType,
             ),
           ),
-        ); // Navigate back after successful submission
+        );
       } else {
-        // Handle error
         print('Failed to submit data: ${response.statusMessage}');
       }
     } catch (e) {
-      // Handle error
       print('Error: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.serviceType == "Pharma"
+                ? 'Pharmacist Add-On Services'
+                : 'Nursing Add-On Services',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (serviceData == null || serviceData!.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.serviceType == "Pharma"
+                ? 'Pharmacist Add-On Services'
+                : 'Nursing Add-On Services',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        body: const Center(
+          child: Text('No services available'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -176,7 +192,7 @@ class _AddOnState extends State<AddOn> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: serviceData.length,
+                itemCount: serviceData!.length,
                 itemBuilder: (context, i) {
                   return Card(
                     child: ListTile(
@@ -204,13 +220,13 @@ class _AddOnState extends State<AddOn> {
                         ),
                       ),
                       title: Text(
-                        serviceData[i]['title'] as String,
+                        serviceData![i]['title'] as String,
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
                         overflow: TextOverflow.visible,
                       ),
                       subtitle: Text(
-                        '\$${serviceData[i]['price']}',
+                        '\$${serviceData![i]['price']}',
                         style: const TextStyle(
                           color: Color(0xFF35C5CF),
                           fontWeight: FontWeight.bold,
@@ -227,27 +243,14 @@ class _AddOnState extends State<AddOn> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Estimated Budget',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(width: 5),
-                    const Icon(Icons.info_outline_rounded, color: Colors.grey),
-                  ],
+                const Text(
+                  'Estimated Budget',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      '\$$_estimatedBudget',
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w900),
-                    ),
-                    const SizedBox(width: 5),
-                  ],
+                Text(
+                  '\$$_estimatedBudget',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w900),
                 ),
               ],
             ),

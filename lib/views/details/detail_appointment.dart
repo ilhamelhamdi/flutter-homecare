@@ -581,7 +581,10 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                               builder: (context) =>
                                                   AppointmentPage(),
                                             ),
-                                          );
+                                          ).then((_) {
+                                            // Show the bottom navigation bar after navigation completes
+                                            MyApp.showBottomAppBar(context);
+                                          });
                                         } else {
                                           throw Exception(
                                               'Invalid response data');
