@@ -426,125 +426,203 @@ class MedicalRecordDetailPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Patient Current Status',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                textAlign: TextAlign.left,
-              ),
-              const SizedBox(height: 10),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Disease name: ',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Expanded(
-                    child: Text(
-                      record['disease_name'] ?? 'Not specified',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Disease history: ',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Expanded(
-                    child: Text(
-                      record['disease_history'] ?? 'Not specified',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
-
-              // Only show symptoms if not null
-              if (record['symptoms'] != null) ...[
-                const SizedBox(height: 20),
-                Text(
-                  'My Symptoms of ${record['disease_name']} include:',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  record['symptoms'] ?? '',
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
-
-              // Only show special consideration if not null
-              if (record['special_consideration'] != null) ...[
-                const SizedBox(height: 20),
-                const Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Patient With\nSpecial\nConsideration: ',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Kidney Disease',
-                        style: TextStyle(fontSize: 16),
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Card 1: Patient Current Status
+                Container(
+                  width: MediaQuery.of(context).size.width < 372
+                      ? MediaQuery.of(context).size.width
+                      : 372, // Fixed width or screen width
+                  child: Card(
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Patient Current Status',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Disease Name:',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              Text(
+                                record['disease_name'] ?? 'Not specified',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Disease History:',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              Text(
+                                record['disease_history'] ?? 'Not specified',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ],
-
-              // Only show treatment info if not null
-              if (record['treatment_info'] != null) ...[
-                const SizedBox(height: 20),
-                const Text(
-                  'Treatment Information',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  record['treatment_info'] ?? 'None provided',
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
-
-              // Show file URL if available
-              if (record['file_url'] != null) ...[
-                const SizedBox(height: 20),
-                const Text(
-                  'File URL',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            FileViewerScreen(url: record['file_url']),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    record['file_url'],
-                    style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline),
                   ),
                 ),
+
+                // Card 2: Symptoms
+                if (record['symptoms'] != null)
+                  Container(
+                    width: MediaQuery.of(context).size.width < 372
+                        ? MediaQuery.of(context).size.width
+                        : 372,
+                    child: Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Symptoms',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              record['symptoms'] ?? '',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Card 3: Patient with Special Consideration
+                if (record['special_consideration'] != null)
+                  Container(
+                    width: MediaQuery.of(context).size.width < 372
+                        ? MediaQuery.of(context).size.width
+                        : 372,
+                    child: Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Patient with Special Consideration',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              record['special_consideration'] ??
+                                  'Kidney Disease',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Card 4: Symptoms
+                Container(
+                  width: MediaQuery.of(context).size.width < 372
+                      ? MediaQuery.of(context).size.width
+                      : 372,
+                  child: Card(
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Symptoms',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            record['symptoms'] ?? 'No symptoms provided',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Card 5: File URL
+                if (record['file_url'] != null)
+                  Container(
+                    width: MediaQuery.of(context).size.width < 372
+                        ? MediaQuery.of(context).size.width
+                        : 372,
+                    child: Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'File URL',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FileViewerScreen(
+                                            url: record['file_url']),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('View'),
+                                ),
+                                const SizedBox(width: 10),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Utils.launchURL(
+                                        context, record['file_url']);
+                                  },
+                                  child: const Text('Download'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
               ],
-            ],
+            ),
           ),
         ),
       ),
