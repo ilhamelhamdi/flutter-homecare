@@ -594,6 +594,24 @@ class MedicalRecordDetailPage extends StatelessWidget {
                             const SizedBox(height: 10),
                             Row(
                               children: [
+                                Icon(
+                                  (record['file_url'] != null &&
+                                          record['file_url']
+                                              .toString()
+                                              .toLowerCase()
+                                              .endsWith('.pdf'))
+                                      ? Icons.picture_as_pdf
+                                      : Icons.insert_drive_file,
+                                  color: (record['file_url'] != null &&
+                                          record['file_url']
+                                              .toString()
+                                              .toLowerCase()
+                                              .endsWith('.pdf'))
+                                      ? Colors.red
+                                      : Colors.blueGrey,
+                                  size: 32,
+                                ),
+                                const SizedBox(width: 12),
                                 ElevatedButton(
                                   onPressed: () {
                                     Navigator.push(
