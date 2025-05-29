@@ -237,7 +237,6 @@ class _DashboardState extends State<Dashboard> {
                             style: const TextStyle(
                               color: Color(0xFF232F55),
                               fontSize: 20,
-                              fontFamily: 'Inter',
                               fontWeight: FontWeight.w700,
                               height: 0,
                             ),
@@ -415,7 +414,6 @@ class _DashboardState extends State<Dashboard> {
                             style: const TextStyle(
                               color: Color(0xFF232F55),
                               fontSize: 20,
-                              fontFamily: 'Inter',
                               fontWeight: FontWeight.w700,
                               height: 0,
                             ),
@@ -518,7 +516,6 @@ class CircularIconWithTitle extends StatelessWidget {
             style: TextStyle(
               color: titleColor,
               fontSize: 12,
-              fontFamily: 'Inter',
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -578,7 +575,6 @@ class RectangularIconWithTitle extends StatelessWidget {
               style: TextStyle(
                 color: titleColor,
                 fontSize: 12,
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w700,
               ),
             ),

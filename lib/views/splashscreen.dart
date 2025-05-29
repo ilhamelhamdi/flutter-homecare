@@ -18,7 +18,7 @@ class SplashScreen extends StatelessWidget {
               height: 30, // Sesuaikan ukuran ikon
             ),
             const SizedBox(width: 10),
-            const Text('MedMap Care',
+            const Text('M2Health Care',
                 style:
                     TextStyle(fontWeight: FontWeight.bold, color: Const.tosca)),
           ],

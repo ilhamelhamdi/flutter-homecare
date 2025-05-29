@@ -21,17 +21,17 @@ class PersonalCaseDetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Title Card
-              Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'Title: ${personalCase['title']}',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
+              // Card(
+              //   margin: const EdgeInsets.symmetric(vertical: 8.0),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(16.0),
+              //     child: Text(
+              //       'Title: ${personalCase['title']}',
+              //       style: const TextStyle(
+              //           fontSize: 18, fontWeight: FontWeight.bold),
+              //     ),
+              //   ),
+              // ),
 
               // Description Card
               Card(
@@ -72,23 +72,23 @@ class PersonalCaseDetailPage extends StatelessWidget {
                 ),
               ),
 
-              // Created At Card
-              Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text('Created At: ${personalCase['created_at']}'),
-                ),
-              ),
+              // // Created At Card
+              // Card(
+              //   margin: const EdgeInsets.symmetric(vertical: 8.0),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(16.0),
+              //     child: Text('Created At: ${personalCase['created_at']}'),
+              //   ),
+              // ),
 
               // Updated At Card
-              Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text('Updated At: ${personalCase['updated_at']}'),
-                ),
-              ),
+              // Card(
+              //   margin: const EdgeInsets.symmetric(vertical: 8.0),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(16.0),
+              //     child: Text('Updated At: ${personalCase['updated_at']}'),
+              //   ),
+              // ),
 
               // Related Health Record Section
               if (relatedHealthRecord != null) ...[
