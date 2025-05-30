@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/models/r_profile.dart';
+import 'package:m2health/const.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -15,22 +14,22 @@ import 'package:share_plus/share_plus.dart';
 
 class Utils {
   // start SP utils
-  static Future<void> setProfile(rProfile profile) async {
+  static Future<void> setProfile(profile) async {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = jsonEncode(profile.toJson());
     await prefs.setString(Const.OBJ_PROFILE, jsonString);
     // print('cekProfile stored: $jsonString');
   }
 
-  static Future<rProfile?> getProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString(Const.OBJ_PROFILE);
-    if (jsonString != null) {
-      final userMap = jsonDecode(jsonString);
-      return rProfile.fromJson(userMap);
-    }
-    return null;
-  }
+  // static Future<rProfile?> getProfile() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final jsonString = prefs.getString(Const.OBJ_PROFILE);
+  //   if (jsonString != null) {
+  //     final userMap = jsonDecode(jsonString);
+  //     return rProfile.fromJson(userMap);
+  //   }
+  //   return null;
+  // }
 
   // Save a boolean value with the given key to SharedPreferences.
   static Future<bool> setSpBool(String key, bool value) async {
@@ -385,4 +384,23 @@ class EmailValidator implements StringValidator {
 
     return ValidationResult(isValid: true);
   }
+}
+
+// String getImageUrl(String imageUrl) {
+//   if (Const.BASE_URL.contains('localhost')) {
+//     return imageUrl.replaceFirst(
+//         'https://homecare-api.med-map.org', 'http://localhost:3334');
+//   }
+//   return imageUrl;
+// }
+
+String getImageUrl(String imageUrl) {
+  if (imageUrl.contains('localhost:3334')) {
+    return imageUrl.replaceFirst(
+        'http://localhost:3334', 'https://homecare-api.med-map.org');
+  } else if (imageUrl.contains('localhost:3333')) {
+    return imageUrl.replaceFirst(
+        'http://localhost:3333', 'https://homecare-api.med-map.org');
+  }
+  return imageUrl;
 }

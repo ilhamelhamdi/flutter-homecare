@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/models/r_profile.dart';
-import 'package:flutter_homecare/utils.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
 import 'package:omega_dio_logger/omega_dio_logger.dart';
 
 abstract class SignUpState {}
@@ -25,9 +24,18 @@ class SignUpCubit extends Cubit<SignUpState> {
   final RegExp emailRegex =
       RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)?$');
 
-  Future<void> signUp(String email, String password, String username, String role) async {
+  Future<void> signUp(
+    String email,
+    String password,
+    String username,
+    String role,
+  ) async {
     print(email + " " + password + " " + username + " " + role);
-    if (email.isEmpty || !emailRegex.hasMatch(email) || password.isEmpty || username.isEmpty || role.isEmpty) {
+    if (email.isEmpty ||
+        !emailRegex.hasMatch(email) ||
+        password.isEmpty ||
+        username.isEmpty ||
+        role.isEmpty) {
       emit(SignUpFailure('Please fill in all fields correctly.'));
       return;
     }
@@ -35,11 +43,18 @@ class SignUpCubit extends Cubit<SignUpState> {
 
     var dio = Dio();
     dio.interceptors.add(const OmegaDioLogger());
-    var mUrl = Const.API_REGISTER + role; 
+
+    var mUrl = Const.API_REGISTER;
+    if (role == 'patient') {
+      mUrl = Const.API_REGISTER + 'patient';
+    } else if (role == 'nurse') {
+      mUrl = Const.API_REGISTER + 'nurse';
+    }
+
     try {
-      var response = await dio
-          .post(mUrl, data: {"email": email, "password": password, "username": username},
-              options: Options(validateStatus: (status) {
+      var response = await dio.post(mUrl,
+          data: {"email": email, "password": password, "username": username},
+          options: Options(validateStatus: (status) {
         return true;
       }));
 
@@ -47,7 +62,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
       if (response.statusCode != 200) {
         var mError = response.data['errors'][0]['message'] ?? "";
-        emit(SignUpFailure(response.data['message'] + " " + mError ));
+        emit(SignUpFailure(response.data['message'] + " " + mError));
         return;
       }
       emit(SignUpSuccess());
@@ -59,6 +74,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   Future<void> getUser(String token, String role) async {
     var dio = Dio();
     dio.interceptors.add(const OmegaDioLogger());
+
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.get(Const.URL_API + "/$role/profile",
@@ -71,8 +87,6 @@ class SignUpCubit extends Cubit<SignUpState> {
         return;
       }
 
-      rProfile mData = rProfile.fromJson(response.data);
-      Utils.setProfile(mData);
       emit(SignUpSuccess());
     } catch (e) {
       emit(SignUpFailure(e.toString()));

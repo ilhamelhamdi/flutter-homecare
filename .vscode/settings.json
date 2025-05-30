@@ -1,3 +1,4 @@
 {
-    "dart.flutterSdkPath": "D:\\Wolftagon\\flutter-flutter_homecare\\.fvm\\versions\\3.19.5"
+    "dart.flutterSdkPath": "D:\\Wolftagon\\flutter-m2health\\.fvm\\versions\\3.19.5",
+    "cmake.sourceDirectory": "D:/Wolftagon/m2health/linux"
 }

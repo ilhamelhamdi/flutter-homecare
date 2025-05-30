@@ -8,6 +8,12 @@ class AppRoutes {
   static const String partnership_list = '/partnership-list';
   static const String service_request = '/service-request';
   static const String profile = '/profile';
+  static const String chat = '/chat';
+  static const String pharma_profile = '/pharma-profile';
+  static const String personal = '/personal';
+  static const String nursing = '/nursing';
+  static const String appointment = '/appointment';
+
   // static const String home = '/';
   // static const String submenu = 'submenu';
   // static const String dashboard= 'dashboard';

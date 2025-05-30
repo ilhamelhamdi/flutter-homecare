@@ -1,19 +1,21 @@
-import 'package:flutter_homecare/models/r_profile.dart';
+import 'package:meta/meta.dart';
+import 'package:m2health/models/profile.dart';
 
+@immutable
 abstract class ProfileState {}
 
 class ProfileLoading extends ProfileState {}
 
-class ProfileUpdating extends ProfileState {}
+class ProfileUnauthenticated extends ProfileState {}
 
 class ProfileLoaded extends ProfileState {
-  final rProfile profile;
+  final Profile profile;
 
   ProfileLoaded(this.profile);
 }
 
 class ProfileUpdateSuccess extends ProfileState {
-  final rProfile profile;
+  final Profile profile;
 
   ProfileUpdateSuccess(this.profile);
 }
