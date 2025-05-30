@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/utils.dart';
@@ -8,7 +8,6 @@ import 'package:m2health/views/payment.dart';
 import 'package:m2health/models/profile.dart';
 import 'package:m2health/models/personal_case.dart';
 import 'dart:convert';
-import 'package:m2health/route/app_router.dart';
 
 class DetailAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> appointmentData;
@@ -278,7 +277,10 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
               children: [
                 const Icon(Icons.calendar_today, color: Colors.grey),
                 const SizedBox(width: 8),
-                Text(widget.appointmentData['date']),
+                Text(
+                  _formatDate(
+                      widget.appointmentData['date']), // Use the formatted date
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -582,5 +584,16 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
         ),
       ),
     );
+  }
+}
+
+String _formatDate(String date) {
+  try {
+    final DateTime parsedDate = DateTime.parse(date); // Parse the date string
+    return DateFormat('EEEE, dd MMMM yyyy')
+        .format(parsedDate); // Format as "Day, Date"
+  } catch (e) {
+    print('Error parsing date: $e');
+    return 'Invalid Date'; // Fallback in case of an error
   }
 }

@@ -46,7 +46,7 @@ class _ImagePreviewState extends State<ImagePreview> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Image less than 100MB',
+              'Image less than 10MB',
               style: TextStyle(fontSize: 12),
             ),
             SizedBox(height: 10),

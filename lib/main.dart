@@ -127,6 +127,24 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'm2health',
             theme: ThemeData(
+              fontFamily: 'Poppins', // Set Poppins as the default font
+              textTheme: const TextTheme(
+                displayLarge: TextStyle(fontFamily: 'Poppins'),
+                displayMedium: TextStyle(fontFamily: 'Poppins'),
+                displaySmall: TextStyle(fontFamily: 'Poppins'),
+                headlineLarge: TextStyle(fontFamily: 'Poppins'),
+                headlineMedium: TextStyle(fontFamily: 'Poppins'),
+                headlineSmall: TextStyle(fontFamily: 'Poppins'),
+                titleLarge: TextStyle(fontFamily: 'Poppins'),
+                titleMedium: TextStyle(fontFamily: 'Poppins'),
+                titleSmall: TextStyle(fontFamily: 'Poppins'),
+                bodyLarge: TextStyle(fontFamily: 'Poppins'),
+                bodyMedium: TextStyle(fontFamily: 'Poppins'),
+                bodySmall: TextStyle(fontFamily: 'Poppins'),
+                labelLarge: TextStyle(fontFamily: 'Poppins'),
+                labelMedium: TextStyle(fontFamily: 'Poppins'),
+                labelSmall: TextStyle(fontFamily: 'Poppins'),
+              ),
               colorScheme:
                   ColorScheme.fromSeed(seedColor: Const.colorDashboard),
               useMaterial3: true,

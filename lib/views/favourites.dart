@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/const.dart';
-import 'package:m2health/views/search/professional_details.dart';
 
 class FavouritesPage extends StatefulWidget {
   @override

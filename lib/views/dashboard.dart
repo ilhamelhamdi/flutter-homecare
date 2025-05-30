@@ -7,30 +7,11 @@ import 'package:m2health/views/pharmacist_services.dart';
 import 'package:m2health/views/remote_patient_monitoring.dart';
 import 'package:m2health/views/second_opinion.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// import 'package:m2health/views/details/detail_products.dart';
-// import 'package:m2health/views/poct.dart';
-// import 'package:m2health/views/tenders.dart';
-
 import '../const.dart';
-// import '../utils.dart';
 import '../main.dart';
-// import '../views/browse_products.dart';
-// import '../views/drugs.dart';
-// import '../views/analysis.dart' as listAnalysis;
-// import '../views/affair.dart' as listAffair;
-// import '../views/news.dart' as listNews;
-// import '../views/marketing_services.dart' as listMarketingServices;
-// import '../views/service_request.dart' as listServiceRequest;
-
 import '../AppLanguage.dart';
 import '../app_localzations.dart';
 import 'package:provider/provider.dart';
-// import '../api.dart';
-// import '../models/analysis_response.dart' as analysis;
-// import '../models/affair_response.dart' as affair;
-// import '../models/marketing_services_response.dart' as marketing_services;
-// import '../models/service_request_response.dart' as service_request;
 
 class Dashboard extends StatefulWidget {
   Dashboard({
@@ -42,21 +23,9 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   String? userName;
-  // final api = Api();
-  // late analysis.AnalysisResponse analysisResponse;
-  // late affair.AffairResponse affairResponse;
-  // late marketing_services.MarketingServicesResponse marketingServicesResponse;
-  // late service_request.ServiceRequestResponse serviceRequestResponse;
-  // List<analysis.Data> datum = [];
-  // List<affair.Data> datumAffair = [];
-  // List<marketing_services.Data> datumMarketingServices = [];
-  // List<service_request.Data> datumServiceRequest = [];
   int currentPage = 1;
   int limitItem = 3;
   String keyword = "";
-  // bool hasMore = true;
-  // bool isLoading = false;
-  // bool isInitialLoad = true;
   late ScrollController _scrollController;
   bool _isScrolledToEnd = false;
 
@@ -77,10 +46,6 @@ class _DashboardState extends State<Dashboard> {
           });
         }
       });
-    // getServiceRequest();
-    // getMarketingServices();
-    // getAnalysis();
-    // getAffairs();
   }
 
   Future<void> _loadUserName() async {
@@ -91,101 +56,6 @@ class _DashboardState extends State<Dashboard> {
     debugPrint('Username loaded: $userName');
   }
 
-  // Future<void> getServiceRequest({int page = 1}) async {
-  //   final response = await api.fetchData(
-  //       context, 'service-requests?page=$page&limit=$limitItem');
-  //   print('Raw API Response Service Request: $response');
-  //   try {
-  //     if (response != null) {
-  //       serviceRequestResponse =
-  //           service_request.ServiceRequestResponse.fromJson(response);
-  //       setState(() {
-  //         if (page == 1) {
-  //           datumServiceRequest = serviceRequestResponse.data ?? [];
-  //         } else {
-  //           datumServiceRequest.addAll(serviceRequestResponse.data ?? []);
-  //         }
-  //         currentPage = page;
-  //         print('datumServiceRequest: $datumServiceRequest');
-  //       });
-  //     } else {
-  //       Utils.showSnackBar(context, 'Failed to load data request service');
-  //     }
-  //   } catch (e) {
-  //     Utils.showSnackBar(context, e.toString());
-  //   }
-  // }
-
-  // Future<void> getMarketingServices({int page = 1}) async {
-  //   try {
-  //     final response = await api.fetchData(
-  //         context, 'marketing-services?page=$page&limit=$limitItem');
-  //     print('Raw API Response Marketing: $response');
-
-  //     if (response != null) {
-  //       marketingServicesResponse =
-  //           marketing_services.MarketingServicesResponse.fromJson(response);
-  //       setState(() {
-  //         if (page == 1) {
-  //           datumMarketingServices = marketingServicesResponse.data ?? [];
-  //         } else {
-  //           datumMarketingServices.addAll(marketingServicesResponse.data ?? []);
-  //         }
-  //         currentPage = page;
-  //       });
-  //     } else {
-  //       Utils.showSnackBar(context, 'Failed to load data');
-  //     }
-  //   } catch (e) {
-  //     Utils.showSnackBar(context, e.toString());
-  //   }
-  // }
-
-  // Future<void> getAnalysis({int page = 1}) async {
-  //   try {
-  //     final response = await api.fetchData(
-  //         context, 'cases-analysis?page=$page&limit=$limitItem');
-  //     if (response != null) {
-  //       analysisResponse = analysis.AnalysisResponse.fromJson(response);
-  //       setState(() {
-  //         if (page == 1) {
-  //           datum = analysisResponse.data ?? [];
-  //         } else {
-  //           datum.addAll(analysisResponse.data ?? []);
-  //         }
-  //         currentPage = page;
-  //       });
-  //     } else {
-  //       Utils.showSnackBar(context, 'Failed to load data');
-  //     }
-  //   } catch (e) {
-  //     Utils.showSnackBar(context, e.toString());
-  //     // isLoading = false;
-  //   }
-  // }
-
-  // Future<void> getAffairs({int page = 1}) async {
-  //   try {
-  //     final response = await api.fetchData(context,
-  //         'gov-affairs?sort=created_at&order=desc&page=$page&limit=$limitItem');
-  //     if (response != null) {
-  //       affairResponse = affair.AffairResponse.fromJson(response);
-  //       setState(() {
-  //         if (page == datumAffair) {
-  //           datumAffair = affairResponse.data ?? [];
-  //         } else {
-  //           datumAffair.addAll(affairResponse.data ?? []);
-  //         }
-  //         currentPage = page;
-  //       });
-  //     } else {
-  //       Utils.showSnackBar(context, 'Failed to load data');
-  //     }
-  //   } catch (e) {
-  //     Utils.showSnackBar(context, e.toString());
-  //     // isLoading = false;
-  //   }
-  // }
   final List<Map<String, String>> services = [
     {'image': 'assets/icons/ilu_physio.png', 'name': 'Physiotherapy'},
     {
@@ -367,7 +237,6 @@ class _DashboardState extends State<Dashboard> {
                             style: const TextStyle(
                               color: Color(0xFF232F55),
                               fontSize: 20,
-                              fontFamily: 'Inter',
                               fontWeight: FontWeight.w700,
                               height: 0,
                             ),
@@ -545,7 +414,6 @@ class _DashboardState extends State<Dashboard> {
                             style: const TextStyle(
                               color: Color(0xFF232F55),
                               fontSize: 20,
-                              fontFamily: 'Inter',
                               fontWeight: FontWeight.w700,
                               height: 0,
                             ),
@@ -648,7 +516,6 @@ class CircularIconWithTitle extends StatelessWidget {
             style: TextStyle(
               color: titleColor,
               fontSize: 12,
-              fontFamily: 'Inter',
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -708,7 +575,6 @@ class RectangularIconWithTitle extends StatelessWidget {
               style: TextStyle(
                 color: titleColor,
                 fontSize: 12,
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w700,
               ),
             ),
