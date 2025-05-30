@@ -4,7 +4,6 @@ import 'package:m2health/const.dart';
 import 'package:m2health/cubit/profiles/ServicesEdit_admin.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_details/edit_profile.dart';
-import 'package:m2health/cubit/profiles/profile_details/medical_record/upload_pdf.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:m2health/cubit/profiles/profile_details/medical_record/medical_record.dart';
 import 'package:m2health/cubit/profiles/profile_details/pharmagenomics_profile/pharmagenomical.dart';
@@ -13,8 +12,20 @@ import 'package:m2health/utils.dart';
 import 'package:m2health/cubit/appointment/appointment_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 class ProfilePage extends StatelessWidget {
+// Add this helper method to format the date
+  String formatDateTime(String dateTimeString) {
+    try {
+      DateTime dateTime = DateTime.parse(dateTimeString);
+      return DateFormat('MMM dd, yyyy • HH:mm').format(dateTime);
+    } catch (e) {
+      // If parsing fails, return the original string
+      return dateTimeString;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -98,7 +109,7 @@ class ProfilePage extends StatelessWidget {
                                 style: TextStyle(color: Colors.grey),
                               ),
                               Text(
-                                state.profile.updatedAt,
+                                formatDateTime(state.profile.updatedAt),
                                 style: const TextStyle(color: Colors.black),
                               ),
                             ],
@@ -177,7 +188,8 @@ class ProfilePage extends StatelessWidget {
                               ListTile(
                                 leading: const Icon(Icons.edit_note,
                                     color: Color(0xFF35C5CF)),
-                                title: const Text('Edit Service Titles'),
+                                title:
+                                    const Text('Edit Service Titles (admin)'),
                                 trailing: const Icon(Icons.arrow_forward_ios),
                                 onTap: () {
                                   Navigator.push(

@@ -36,7 +36,7 @@ class _AppointmentPageState extends State<AppointmentPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -65,11 +65,11 @@ class _AppointmentPageState extends State<AppointmentPage>
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: const Color(0xFF40E0D0), // Warna tosca
-          tabs: [
-            const Tab(text: 'Upcoming'),
-            const Tab(text: 'Completed'),
-            const Tab(text: 'Cancelled'),
-            const Tab(text: 'Missed'),
+          tabs: const [
+            Tab(text: 'Upcoming'),
+            Tab(text: 'Completed'),
+            Tab(text: 'Cancelled'),
+            Tab(text: 'Missed'),
           ],
         ),
       ),
