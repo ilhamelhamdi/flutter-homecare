@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
-import 'package:m2health/cubit/provider/provider_cubit.dart';
-import 'package:m2health/cubit/provider/provider_state.dart';
 import 'package:m2health/models/favorite.dart';
-import 'package:m2health/models/service_config.dart';
 import 'package:m2health/views/search/professional_details.dart';
-import 'package:m2health/widgets/provider_card.dart';
-import 'package:m2health/services/provider_service.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
 
@@ -33,17 +27,54 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> fetchProfessionals() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
+
       final userId = await Utils.getSpString(Const.USER_ID);
       final token = await Utils.getSpString(Const.TOKEN);
 
-      // Fetch favorite professionals
-      final favoriteResponse = await Dio().get(
-        Const.API_FAVORITES,
-        queryParameters: {
-          'user_id': userId,
-          'item_type':
-              widget.serviceType.toLowerCase(), // "pharmacist" or "nurse"
-        },
+      // Fetch favorite professionals first
+      try {
+        final favoriteResponse = await Dio().get(
+          Const.API_FAVORITES,
+          queryParameters: {
+            'user_id': userId,
+            'item_type':
+                widget.serviceType.toLowerCase(), // "pharmacist" or "nurse"
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        if (favoriteResponse.statusCode == 200) {
+          favoriteProfessionals = List<Map<String, dynamic>>.from(
+                  favoriteResponse.data['data'] ?? [])
+              .map((item) => Favorite.fromJson(item))
+              .toList();
+        }
+      } catch (e) {
+        print('Error fetching favorites: $e');
+        // Continue without favorites if this fails
+        favoriteProfessionals = [];
+      }
+
+      // Fetch all professionals - fix API endpoint selection
+      String apiEndpoint;
+      if (widget.serviceType.toLowerCase() == "pharma" ||
+          widget.serviceType.toLowerCase() == "pharmacist") {
+        apiEndpoint = Const.API_PHARMACIST_SERVICES;
+      } else if (widget.serviceType.toLowerCase() == "nurse") {
+        apiEndpoint = Const.API_NURSE_SERVICES;
+      } else {
+        throw Exception('Unknown service type: ${widget.serviceType}');
+      }
+
+      final response = await Dio().get(
+        apiEndpoint,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -51,54 +82,90 @@ class _SearchPageState extends State<SearchPage> {
         ),
       );
 
-      if (favoriteResponse.statusCode == 200) {
-        favoriteProfessionals =
-            List<Map<String, dynamic>>.from(favoriteResponse.data['data'])
-                .map((item) => Favorite.fromJson(item))
-                .toList();
-      } else {
-        throw Exception('Failed to load favorite professionals');
-      }
+      print('API Response Status: ${response.statusCode}');
+      print('API Response Data: ${response.data}');
 
-      // Fetch all professionals
-      final response = await Dio().get(
-        widget.serviceType == "Pharma"
-            ? Const.API_PHARMACIST_SERVICES
-            : Const.API_NURSE_SERVICES, // Use appropriate API
-      );
       if (response.statusCode == 200) {
+        final responseData = response.data;
+        List<dynamic> professionalList = [];
+
+        // Handle different response structures
+        if (responseData is Map<String, dynamic>) {
+          if (responseData.containsKey('data')) {
+            professionalList = responseData['data'] ?? [];
+          } else {
+            // If no 'data' key, assume the entire response is the list
+            professionalList = [responseData];
+          }
+        } else if (responseData is List) {
+          professionalList = responseData;
+        }
+
+        // Filter out professionals with missing or invalid data
+        final validProfessionals = professionalList
+            .where((professional) =>
+                professional is Map<String, dynamic> &&
+                professional['id'] != null &&
+                (professional['name'] != null &&
+                    professional['name'].toString().isNotEmpty))
+            .toList();
+
         setState(() {
-          professionals = List<Map<String, dynamic>>.from(response.data['data'])
-              .map((professional) {
+          professionals =
+              validProfessionals.map<Map<String, dynamic>>((professional) {
             final isFavorite = favoriteProfessionals
                 .any((fav) => fav.itemId == professional['id']);
+
             return {
-              'id': professional['id'] ?? 0,
-              'name': professional['name'] ?? '',
+              'id': professional['id'] ?? 0, // Ensure ID is included
+              'name': professional['name'] ?? 'Unknown Provider',
               'avatar': getImageUrl(professional['avatar'] ?? ''),
               'experience': professional['experience'] ?? 0,
               'rating': (professional['rating'] ?? 0.0).toDouble(),
-              'about': professional['about'] ?? '',
+              'about': professional['about'] ?? 'No description available',
               'working_information': professional['working_information'] ?? '',
-              'days_hour': professional['days_hour'] ?? '',
-              'maps_location': professional['maps_location'] ?? '',
+              'days_hour': professional['days_hour'] ?? 'Not specified',
+              'maps_location':
+                  professional['maps_location'] ?? 'Location not available',
               'certification': professional['certification'] ?? '',
               'user_id': professional['user_id'] ?? 0,
+              'user': professional['user'], // Include user data
               'created_at': professional['created_at'] ?? '',
               'updated_at': professional['updated_at'] ?? '',
               'isFavorite': isFavorite,
+              'role': widget.serviceType.toLowerCase() == "pharma" ||
+                      widget.serviceType.toLowerCase() == "pharmacist"
+                  ? 'pharmacist'
+                  : 'nurse',
+              'provider_type': widget.serviceType.toLowerCase() == "pharma" ||
+                      widget.serviceType.toLowerCase() == "pharmacist"
+                  ? 'pharmacist'
+                  : 'nurse', // Add provider_type field
             };
           }).toList();
+
           isLoading = false;
         });
+
+        print('Loaded ${professionals.length} valid professionals');
       } else {
-        throw Exception('Failed to load data');
+        throw Exception('Failed to load data: HTTP ${response.statusCode}');
       }
     } catch (e) {
       setState(() {
         isLoading = false;
+        professionals = [];
       });
-      print('Error: $e');
+      print('Error fetching professionals: $e');
+      // Show error to user
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load professionals: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -220,11 +287,116 @@ class _SearchPageState extends State<SearchPage> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
-                                            image: DecorationImage(
-                                              image: NetworkImage(
-                                                  professional['avatar']),
-                                              fit: BoxFit.cover,
-                                            ),
+                                            color: Colors.grey[300],
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: professional['avatar'] !=
+                                                        null &&
+                                                    professional['avatar']
+                                                        .toString()
+                                                        .isNotEmpty &&
+                                                    professional['avatar'] !=
+                                                        '' &&
+                                                    !professional['avatar']
+                                                        .toString()
+                                                        .contains('file:///')
+                                                ? Image.network(
+                                                    professional['avatar'],
+                                                    width: 50,
+                                                    height: 50,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      print(
+                                                          'Error loading avatar: $error');
+                                                      return Container(
+                                                        width: 50,
+                                                        height: 50,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Colors.grey[300],
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                        ),
+                                                        child: Icon(
+                                                          widget.serviceType
+                                                                          .toLowerCase() ==
+                                                                      "pharma" ||
+                                                                  widget.serviceType
+                                                                          .toLowerCase() ==
+                                                                      "pharmacist"
+                                                              ? Icons
+                                                                  .local_pharmacy
+                                                              : Icons
+                                                                  .local_hospital,
+                                                          size: 25,
+                                                          color:
+                                                              Colors.grey[600],
+                                                        ),
+                                                      );
+                                                    },
+                                                    loadingBuilder: (context,
+                                                        child,
+                                                        loadingProgress) {
+                                                      if (loadingProgress ==
+                                                          null) return child;
+                                                      return Container(
+                                                        width: 50,
+                                                        height: 50,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Colors.grey[200],
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                        ),
+                                                        child: Center(
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            value: loadingProgress
+                                                                        .expectedTotalBytes !=
+                                                                    null
+                                                                ? loadingProgress
+                                                                        .cumulativeBytesLoaded /
+                                                                    loadingProgress
+                                                                        .expectedTotalBytes!
+                                                                : null,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  )
+                                                : Container(
+                                                    width: 50,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey[300],
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                    ),
+                                                    child: Icon(
+                                                      widget.serviceType
+                                                                      .toLowerCase() ==
+                                                                  "pharma" ||
+                                                              widget.serviceType
+                                                                      .toLowerCase() ==
+                                                                  "pharmacist"
+                                                          ? Icons.local_pharmacy
+                                                          : Icons
+                                                              .local_hospital,
+                                                      size: 25,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                  ),
                                           ),
                                         ),
                                         const Positioned(

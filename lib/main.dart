@@ -31,11 +31,17 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
+        Provider<Dio>(
+          create: (context) => Dio(),
+        ),
         BlocProvider(create: (context) => AppointmentCubit(Dio())),
         BlocProvider(create: (context) => ProviderAppointmentCubit(Dio())),
         BlocProvider(
             create: (context) => PersonalCubit()..loadPersonalDetails()),
         BlocProvider(create: (context) => ProfileCubit(Dio())),
+        BlocProvider(
+          create: (context) => ProfileCubit(context.read<Dio>()),
+        ),
       ],
       child: ChangeNotifierProvider(
         create: (context) => AppLanguage(),

@@ -48,11 +48,11 @@ class Provider {
       userId: json['user_id'] ?? 0,
       providerType: json['provider_type'] ?? '',
       user: json['user'] != null ? User.fromJson(json['user']) : null,
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at']) 
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
           : DateTime.now(),
-      updatedAt: json['updated_at'] != null 
-          ? DateTime.parse(json['updated_at']) 
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
           : DateTime.now(),
     );
   }

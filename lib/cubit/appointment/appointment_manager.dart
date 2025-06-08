@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:m2health/cubit/appointment/appointment_cubit.dart';
-import 'package:m2health/cubit/appointment/provider_appointment_cubit.dart';
 import 'package:m2health/cubit/appointment/appointment_page.dart';
 import 'package:m2health/views/appointment/provider_appointment_page.dart';
 import 'package:m2health/utils.dart';
@@ -32,35 +29,37 @@ class AppointmentManager {
 
   /// Navigate to appropriate appointment page based on user role
   static Future<void> navigateToAppointmentPage(BuildContext context) async {
-    final isUserProvider = await isProvider();
+    try {
+      final isUserProvider = await isProvider();
 
-    if (isUserProvider) {
-      final providerType = await getProviderType();
-      if (providerType != null) {
-        // Navigate to provider appointment page
+      if (isUserProvider) {
+        final providerType = await getProviderType();
+        if (providerType != null) {
+          // Navigate to provider appointment page
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ProviderAppointmentPage(providerType: providerType),
+            ),
+          );
+        }
+      } else {
+        // Navigate to patient appointment page
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => BlocProvider(
-              create: (context) => ProviderAppointmentCubit(
-                context.read(), // Dio instance
-              ),
-              child: ProviderAppointmentPage(providerType: providerType),
-            ),
+            builder: (context) => AppointmentPage(),
           ),
         );
       }
-    } else {
-      // Navigate to patient appointment page
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => AppointmentCubit(
-              context.read(), // Dio instance
-            ),
-            child: AppointmentPage(),
-          ),
+    } catch (e) {
+      print('Error navigating to appointment page: $e');
+      // Show error to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error accessing appointments: ${e.toString()}'),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -68,26 +67,35 @@ class AppointmentManager {
 
   /// Create appropriate appointment widget based on user role
   static Future<Widget> createAppointmentWidget() async {
-    final isUserProvider = await isProvider();
+    try {
+      final isUserProvider = await isProvider();
 
-    if (isUserProvider) {
-      final providerType = await getProviderType();
-      if (providerType != null) {
-        return BlocProvider(
-          create: (context) => ProviderAppointmentCubit(
-            context.read(), // Dio instance
-          ),
-          child: ProviderAppointmentPage(providerType: providerType),
-        );
+      if (isUserProvider) {
+        final providerType = await getProviderType();
+        if (providerType != null) {
+          return ProviderAppointmentPage(providerType: providerType);
+        }
       }
-    }
 
-    // Default to patient appointment page
-    return BlocProvider(
-      create: (context) => AppointmentCubit(
-        context.read(), // Dio instance
-      ),
-      child: AppointmentPage(),
-    );
+      // Default to patient appointment page
+      return AppointmentPage();
+    } catch (e) {
+      print('Error creating appointment widget: $e');
+      // Return a default error widget
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.red),
+              SizedBox(height: 16),
+              Text('Error loading appointments'),
+              SizedBox(height: 8),
+              Text(e.toString()),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

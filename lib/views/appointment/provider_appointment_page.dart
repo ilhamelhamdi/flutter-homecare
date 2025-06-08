@@ -350,7 +350,30 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
   }
 
   void _acceptAppointment(int appointmentId) {
-    context.read<ProviderAppointmentCubit>().acceptAppointment(appointmentId);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Accept Appointment'),
+          content: Text('Are you sure you want to accept this appointment?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                context
+                    .read<ProviderAppointmentCubit>()
+                    .acceptAppointment(appointmentId);
+              },
+              child: Text('Accept', style: TextStyle(color: Colors.green)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _rejectAppointment(int appointmentId) {

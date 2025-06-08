@@ -102,10 +102,11 @@ class _AppointmentPageState extends State<AppointmentPage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      buildAppointmentList(state.appointments, 'pending'),
-                      buildAppointmentList(state.appointments, 'Completed'),
-                      buildAppointmentList(state.appointments, 'Cancelled'),
-                      buildAppointmentList(state.appointments, 'Missed'),
+                      buildAppointmentList(state.appointments,
+                          'upcoming'), // Show both pending and accepted
+                      buildAppointmentList(state.appointments, 'completed'),
+                      buildAppointmentList(state.appointments, 'cancelled'),
+                      buildAppointmentList(state.appointments, 'missed'),
                     ],
                   ),
                 ),
@@ -123,13 +124,40 @@ class _AppointmentPageState extends State<AppointmentPage>
   }
 
   Widget buildAppointmentList(List<Appointment> appointments, String status) {
-    final filteredAppointments = appointments
-        .where((appointment) => appointment.status == status)
-        .toList();
+    List<Appointment> filteredAppointments;
+
+    // Special handling for Upcoming tab to show both pending and accepted
+    if (status == 'upcoming') {
+      // For "Upcoming" tab, show both pending and accepted appointments
+      filteredAppointments = appointments
+          .where((appointment) =>
+              appointment.status.toLowerCase() == 'pending' ||
+              appointment.status.toLowerCase() == 'accepted' ||
+              appointment.status.toLowerCase() == 'upcoming')
+          .toList();
+    } else {
+      // For other tabs, filter by exact status
+      filteredAppointments = appointments
+          .where((appointment) =>
+              appointment.status.toLowerCase() == status.toLowerCase())
+          .toList();
+    }
 
     if (filteredAppointments.isEmpty) {
       return Center(
-        child: Text('No $status appointments found'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.event_busy, size: 64, color: Colors.grey[400]),
+            SizedBox(height: 16),
+            Text(
+              status == 'upcoming'
+                  ? 'No upcoming appointments found'
+                  : 'No ${status.toLowerCase()} appointments found',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+          ],
+        ),
       );
     }
 
@@ -228,7 +256,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (status == 'Completed')
+                      if (appointment.status.toLowerCase() == 'completed')
                         Row(
                           children: [
                             SizedBox(
@@ -286,7 +314,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                             ),
                           ],
                         ),
-                      if (status == 'Cancelled')
+                      if (appointment.status.toLowerCase() == 'cancelled')
                         Container(
                           width: 350,
                           height: 41,
@@ -318,7 +346,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                             ),
                           ),
                         ),
-                      if (status == 'Missed')
+                      if (appointment.status.toLowerCase() == 'missed')
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -395,7 +423,9 @@ class _AppointmentPageState extends State<AppointmentPage>
                             ),
                           ],
                         ),
-                      if (status == 'Upcoming')
+                      if (appointment.status.toLowerCase() == 'pending' ||
+                          appointment.status.toLowerCase() == 'accepted' ||
+                          appointment.status.toLowerCase() == 'upcoming')
                         Row(
                           children: [
                             OutlinedButton(

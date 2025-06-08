@@ -13,6 +13,7 @@ class ProviderAppointmentCubit extends Cubit<ProviderAppointmentState> {
   ProviderAppointmentCubit(this._dio) : super(ProviderAppointmentInitial()) {
     _appointmentService = AppointmentService(_dio);
   }
+
   Future<void> fetchProviderAppointments(String providerType) async {
     try {
       emit(ProviderAppointmentLoading());
@@ -34,12 +35,11 @@ class ProviderAppointmentCubit extends Cubit<ProviderAppointmentState> {
     }
   }
 
-  Future<void> updateAppointmentStatus(int appointmentId, String status) async {
+  Future<void> acceptAppointment(int appointmentId) async {
     try {
-      print('Updating appointment $appointmentId to status: $status');
+      print('Accepting appointment $appointmentId');
 
-      await _appointmentService.updateProviderAppointmentStatus(
-          appointmentId, status);
+      await _appointmentService.acceptProviderAppointment(appointmentId);
 
       // Update the appointment in current state
       final currentState = state;
@@ -47,7 +47,7 @@ class ProviderAppointmentCubit extends Cubit<ProviderAppointmentState> {
         final updatedAppointments =
             currentState.appointments.map((appointment) {
           if (appointment.id == appointmentId) {
-            return appointment.copyWith(status: status);
+            return appointment.copyWith(status: 'accepted');
           }
           return appointment;
         }).toList();
@@ -55,20 +55,63 @@ class ProviderAppointmentCubit extends Cubit<ProviderAppointmentState> {
         emit(ProviderAppointmentLoaded(updatedAppointments));
       }
     } catch (e) {
-      print('Error updating appointment status: $e');
-      emit(ProviderAppointmentError('Error updating status: ${e.toString()}'));
+      print('Error accepting appointment: $e');
+      emit(ProviderAppointmentError(
+          'Error accepting appointment: ${e.toString()}'));
     }
   }
 
-  Future<void> acceptAppointment(int appointmentId) async {
-    await updateAppointmentStatus(appointmentId, 'accepted');
-  }
-
   Future<void> rejectAppointment(int appointmentId) async {
-    await updateAppointmentStatus(appointmentId, 'rejected');
+    try {
+      print('Rejecting appointment $appointmentId');
+
+      await _appointmentService.rejectProviderAppointment(appointmentId);
+
+      // Update the appointment in current state
+      final currentState = state;
+      if (currentState is ProviderAppointmentLoaded) {
+        final updatedAppointments =
+            currentState.appointments.map((appointment) {
+          if (appointment.id == appointmentId) {
+            return appointment.copyWith(status: 'rejected');
+          }
+          return appointment;
+        }).toList();
+
+        emit(ProviderAppointmentLoaded(updatedAppointments));
+      }
+    } catch (e) {
+      print('Error rejecting appointment: $e');
+      emit(ProviderAppointmentError(
+          'Error rejecting appointment: ${e.toString()}'));
+    }
   }
 
   Future<void> completeAppointment(int appointmentId) async {
-    await updateAppointmentStatus(appointmentId, 'completed');
+    try {
+      print('Completing appointment $appointmentId');
+
+      await _appointmentService.completeProviderAppointment(appointmentId);
+
+      // Update the appointment in current state
+      final currentState = state;
+      if (currentState is ProviderAppointmentLoaded) {
+        final updatedAppointments =
+            currentState.appointments.map((appointment) {
+          if (appointment.id == appointmentId) {
+            return appointment.copyWith(status: 'completed');
+          }
+          return appointment;
+        }).toList();
+
+        emit(ProviderAppointmentLoaded(updatedAppointments));
+      }
+    } catch (e) {
+      print('Error completing appointment: $e');
+      emit(ProviderAppointmentError(
+          'Error completing appointment: ${e.toString()}'));
+    }
   }
+
+  // Remove the old updateAppointmentStatus method since we now have specific methods
 }

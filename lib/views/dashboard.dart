@@ -36,6 +36,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     _loadUserName();
+    context.read<ProfileCubit>().fetchProfile();
     _scrollController = ScrollController()
       ..addListener(() {
         if (_scrollController.position.pixels ==
@@ -112,10 +113,16 @@ class _DashboardState extends State<Dashboard> {
                   String avatarUrl = '';
 
                   if (state is ProfileLoaded) {
+                    // Use profile data when available
                     displayName = state.profile.username.isNotEmpty
                         ? state.profile.username
                         : userName ?? 'User';
-                    avatarUrl = state.profile.avatar;
+                    avatarUrl = state.profile.avatar ?? '';
+                  } else if (state is ProfileError ||
+                      state is ProfileUnauthenticated) {
+                    // Fallback to SharedPreferences data if profile loading fails
+                    displayName = userName ?? 'User';
+                    avatarUrl = ''; // No avatar available
                   }
 
                   return Column(
