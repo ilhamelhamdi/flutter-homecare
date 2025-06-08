@@ -203,6 +203,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   phoneNumber: _contactNumber,
                   homeAddress: _homeAddress,
                   gender: _gender,
+                  avatar: widget.profile.avatar, // Keep existing avatar
                   createdAt: widget.profile.createdAt,
                   updatedAt: DateTime.now().toString(),
                   // gender: _gender,

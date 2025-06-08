@@ -8,10 +8,12 @@ import 'package:m2health/views/remote_patient_monitoring.dart';
 import 'package:m2health/views/second_opinion.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../const.dart';
-import '../main.dart';
 import '../AppLanguage.dart';
 import '../app_localzations.dart';
 import 'package:provider/provider.dart';
+import 'package:m2health/cubit/profiles/profile_cubit.dart';
+import 'package:m2health/cubit/profiles/profile_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({
@@ -23,6 +25,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   String? userName;
+  String? userAvatar; // Add this field
   int currentPage = 1;
   int limitItem = 3;
   String keyword = "";
@@ -103,121 +106,147 @@ class _DashboardState extends State<Dashboard> {
             ),
             title: Padding(
               padding: const EdgeInsets.only(bottom: 25.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
+              child: BlocBuilder<ProfileCubit, ProfileState>(
+                builder: (context, state) {
+                  String displayName = userName ?? 'User';
+                  String avatarUrl = '';
+
+                  if (state is ProfileLoaded) {
+                    displayName = state.profile.username.isNotEmpty
+                        ? state.profile.username
+                        : userName ?? 'User';
+                    avatarUrl = state.profile.avatar;
+                  }
+
+                  return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Image.asset(
-                        Const.banner,
-                        fit: BoxFit.contain,
-                        height: 25,
-                      ),
-                      const Spacer(), // Menambahkan spacer untuk memisahkan logo dan CircleAvatar
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfilePage(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                15), // Membuat sudut membulat
-                            image: const DecorationImage(
-                              image: AssetImage(
-                                  'assets/icons/ic_avatar.png'), // Ganti dengan path gambar Anda
-                              fit: BoxFit.cover,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            Const.banner,
+                            fit: BoxFit.contain,
+                            height: 25,
+                          ),
+                          const Spacer(), // Menambahkan spacer untuk memisahkan logo dan CircleAvatar
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfilePage(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    15), // Membuat sudut membulat
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: avatarUrl.isNotEmpty
+                                    ? Image.network(
+                                        avatarUrl,
+                                        width: 56,
+                                        height: 56,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          // Fallback to default avatar if network image fails
+                                          return Image.asset(
+                                            'assets/icons/ic_avatar.png',
+                                            width: 56,
+                                            height: 56,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Container(
+                                            width: 56,
+                                            height: 56,
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : Image.asset(
+                                        'assets/icons/ic_avatar.png',
+                                        width: 56,
+                                        height: 56,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
                             ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Live Longer & Live Healthier, $displayName!",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      // ...existing code for search field...
+                      const SizedBox(height: 20), // Jarak di bawah teks
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/icons/ic_doctor.png',
+                              width: 24,
+                              height: 24,
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                            ),
+                            const SizedBox(width: 10),
+                            const Expanded(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText:
+                                      "Chat With AI doctor for all your health questions",
+                                  hintStyle: TextStyle(
+                                      color: Color(0xFF8A96BC), fontSize: 13),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Live Longer & Live Healthier, $userName!",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20), // Jarak di bawah teks
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/icons/ic_doctor.png',
-                          width: 24,
-                          height: 24,
-                          color: const Color.fromARGB(255, 0, 0,
-                              0), // Menambahkan warna jika diperlukan
-                        ),
-                        const SizedBox(width: 10),
-                        const Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText:
-                                  "Chat With AI doctor for all your health questions",
-                              hintStyle: TextStyle(
-                                  color: Color(0xFF8A96BC), fontSize: 13),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
-            actions: [
-              // Padding(
-              //   padding: const EdgeInsets.only(right: 16.0),
-              //   child: IconButton(
-              //     icon: Icon(Icons.perm_identity),
-              //     onPressed: () async {
-              //       // bool isLoggedIn =
-              //       //     await Utils.getSpBool(Const.IS_LOGED_IN) ?? false;
-              //       // if (isLoggedIn == true) {
-              //       //   // final back = await Navigator.push'cekMarketingServices : ' + (
-              //       //   //   context,
-              //       //   //   // MaterialPageRoute(builder: (context) => Submenu()),
-              //       //   //   MaterialPageRoute(builder: (context) => SubmenuPage()),
-              //       //   // );
-              //       //   // if (back == 'back') {
-              //       //   //   navbarVisibility(false);
-              //       //   // }
-              //       //   context.push(AppRoutes.submenu);
-              //       // } else {
-              //       //   context.push(AppRoutes.signIn);
-              //       //   // await Navigator.push(
-              //       //   //   context,
-              //       //   //   MaterialPageRoute(builder: (context) => SignInPage()),
-              //       //   // );
-              //       // }
-              //       // ;
-              //     },
-              //     // color: Colors.white,
-              //   ),
-              // )
-            ],
           ),
           body: Container(
             margin: const EdgeInsets.fromLTRB(0, 0, 0, 60),

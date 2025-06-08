@@ -39,9 +39,12 @@ class Appointment {
       userId: json['user_id'] ?? 0,
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
+      // Fix: Handle null profile_services_data properly
       profileServiceData: json['profile_services_data'] != null
-          ? jsonDecode(json['profile_services_data'])
-          : {},
+          ? (json['profile_services_data'] is String
+              ? jsonDecode(json['profile_services_data'])
+              : json['profile_services_data'])
+          : <String, dynamic>{}, // Return empty map instead of null
     );
   }
 

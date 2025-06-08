@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:m2health/cubit/appointment/appointment_page.dart';
-import 'package:m2health/views/splashscreen.dart';
+import 'package:m2health/views/appointment/unified_appointment_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/cubit/locations/location_page.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
@@ -12,7 +11,6 @@ import 'package:m2health/cubit/personal/personal_page.dart';
 // import 'package:m2health/cubit/nursing/nursing_page.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/views/dashboard.dart';
-import 'package:path/path.dart';
 import 'app_routes.dart';
 
 final GoRouter router = GoRouter(
@@ -42,7 +40,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.appointment,
-      builder: (context, state) => AppointmentPage(),
+      builder: (context, state) => UnifiedAppointmentPage(),
     ),
     // GoRoute(
     //   path: AppRoutes.submenu,

@@ -8,6 +8,7 @@ import 'package:m2health/route/app_router.dart';
 import 'package:m2health/views/dashboard.dart';
 import 'package:m2health/views/favourites.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
+import 'package:m2health/cubit/appointment/provider_appointment_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:navbar_router/navbar_router.dart';
@@ -31,6 +32,7 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AppointmentCubit(Dio())),
+        BlocProvider(create: (context) => ProviderAppointmentCubit(Dio())),
         BlocProvider(
             create: (context) => PersonalCubit()..loadPersonalDetails()),
         BlocProvider(create: (context) => ProfileCubit(Dio())),

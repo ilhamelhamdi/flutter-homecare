@@ -9,6 +9,7 @@ class Profile {
   final String email;
   final String homeAddress;
   final String gender;
+  final String avatar; // Add this field
   final String createdAt;
   final String updatedAt;
 
@@ -23,6 +24,7 @@ class Profile {
     required this.email,
     required this.homeAddress,
     required this.gender,
+    required this.avatar, // Add this parameter
     required this.createdAt,
     required this.updatedAt,
   });
@@ -39,6 +41,7 @@ class Profile {
       email: json['email'] ?? '',
       homeAddress: json['home_address'] ?? '',
       gender: json['gender'] ?? '',
+      avatar: json['avatar'] ?? '', // Add this line
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
     );
@@ -56,6 +59,7 @@ class Profile {
       'email': email,
       'home_address': homeAddress,
       'gender': gender,
+      'avatar': avatar, // Add this line
       'created_at': createdAt,
       'updated_at': updatedAt,
     };

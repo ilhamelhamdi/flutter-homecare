@@ -1,12 +1,18 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:m2health/views/search/professional_details.dart';
-import 'package:m2health/utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/provider/provider_cubit.dart';
+import 'package:m2health/cubit/provider/provider_state.dart';
 import 'package:m2health/models/favorite.dart';
+import 'package:m2health/models/service_config.dart';
+import 'package:m2health/views/search/professional_details.dart';
+import 'package:m2health/widgets/provider_card.dart';
+import 'package:m2health/services/provider_service.dart';
+import 'package:m2health/utils.dart';
+import 'package:dio/dio.dart';
 
 class SearchPage extends StatefulWidget {
-  final String serviceType; // Add serviceType parameter
+  final String serviceType; // "pharmacist" or "nurse"
 
   const SearchPage({Key? key, required this.serviceType}) : super(key: key);
 

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/cubit/appointment/appointment_detail.dart';
+import 'package:m2health/cubit/appointment/appointment_manager.dart';
 import 'package:m2health/models/appointment.dart';
 import 'package:intl/intl.dart';
 import 'package:m2health/views/book_appointment.dart';
@@ -58,6 +59,23 @@ class _AppointmentPageState extends State<AppointmentPage>
                     // Handle filter action
                   },
                 ),
+                IconButton(
+                  icon: const Icon(Icons.medical_services),
+                  onPressed: () async {
+                    // Check if user is a provider and navigate to provider appointments
+                    final isProvider = await AppointmentManager.isProvider();
+                    if (isProvider) {
+                      AppointmentManager.navigateToAppointmentPage(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'This feature is only available for healthcare providers'),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ],
             ),
           ],
@@ -84,7 +102,7 @@ class _AppointmentPageState extends State<AppointmentPage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      buildAppointmentList(state.appointments, 'Upcoming'),
+                      buildAppointmentList(state.appointments, 'pending'),
                       buildAppointmentList(state.appointments, 'Completed'),
                       buildAppointmentList(state.appointments, 'Cancelled'),
                       buildAppointmentList(state.appointments, 'Missed'),
@@ -108,6 +126,12 @@ class _AppointmentPageState extends State<AppointmentPage>
     final filteredAppointments = appointments
         .where((appointment) => appointment.status == status)
         .toList();
+
+    if (filteredAppointments.isEmpty) {
+      return Center(
+        child: Text('No $status appointments found'),
+      );
+    }
 
     return ListView.builder(
       itemCount: filteredAppointments.length,
@@ -145,15 +169,22 @@ class _AppointmentPageState extends State<AppointmentPage>
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundImage: NetworkImage(profile['avatar']),
                         radius: 30,
+                        backgroundImage: (profile['avatar'] != null &&
+                                profile['avatar'].toString().isNotEmpty)
+                            ? NetworkImage(profile['avatar'])
+                            : null,
+                        child: (profile['avatar'] == null ||
+                                profile['avatar'].toString().isEmpty)
+                            ? Icon(Icons.person, size: 30, color: Colors.grey)
+                            : null,
                       ),
                       const SizedBox(width: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            profile['name'],
+                            profile['name'] ?? 'Unknown Provider',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(

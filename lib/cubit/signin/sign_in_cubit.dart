@@ -63,24 +63,56 @@ class SignInCubit extends Cubit<SignInState> {
     dio.interceptors.add(const OmegaDioLogger());
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
-      var response = await dio.get(Const.URL_API + "/$role/profile",
+      var response = await dio.get(Const.URL_API + "/profiles",
           options: Options(validateStatus: (status) {
         return true;
       }));
 
+      print('Response status: ${response.statusCode}');
+      print('Response data: ${response.data}');
+
       if (response.statusCode != 200) {
-        emit(SignInError(response.data['message']));
+        final errorMessage =
+            response.data['message'] ?? 'Failed to get user profile';
+        emit(SignInError(errorMessage));
         return;
       }
 
-      if (response.data['id'] == null) {
-        emit(SignInError('id_null_cok'));
+      // Check if response has the expected structure
+      if (response.data == null) {
+        emit(SignInError('No response data received'));
         return;
+      }
+
+      final responseData = response.data;
+      if (responseData['data'] == null) {
+        emit(SignInError('Profile data not found in response'));
+        return;
+      }
+
+      final profileData = responseData['data'];
+      if (profileData['id'] == null) {
+        emit(SignInError('Profile ID not found'));
+        return;
+      }
+
+      // Successfully got profile data
+      print('Profile retrieved successfully:');
+      print('Profile ID: ${profileData['id']}');
+      print('User ID: ${profileData['user_id']}');
+      print('Username: ${profileData['username']}');
+      print('Email: ${profileData['email']}');
+
+      // Optional: Save additional profile information
+      await Utils.setSpString('profile_id', profileData['id'].toString());
+      if (profileData['username'] != null) {
+        await Utils.setSpString('profile_username', profileData['username']);
       }
 
       emit(SignInSuccess());
     } catch (e) {
-      emit(SignInError(e.toString()));
+      print('Exception in getUser: $e');
+      emit(SignInError('Failed to get user profile: ${e.toString()}'));
     }
   }
 }
