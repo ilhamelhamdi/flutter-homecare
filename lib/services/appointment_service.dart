@@ -194,9 +194,14 @@ class AppointmentService {
   }
 
   // Other existing methods...
+
   Future<List<Appointment>> fetchPatientAppointments() async {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
+
+      print('=== FETCHING PATIENT APPOINTMENTS ===');
+      print('API Endpoint: ${Const.API_APPOINTMENT}');
+      print('Token: ${token?.substring(0, 20)}...');
 
       final response = await _dio.get(
         Const.API_APPOINTMENT,
@@ -208,12 +213,31 @@ class AppointmentService {
         ),
       );
 
+      print('Response Status: ${response.statusCode}');
+      print('Raw Response Data: ${response.data}');
+
       if (response.statusCode == 200) {
         if (response.data == null || response.data['data'] == null) {
+          print('No appointment data found in response');
           return [];
         }
 
         final data = response.data['data'] as List;
+        print('Number of appointments: ${data.length}');
+
+        // Debug each appointment
+        for (int i = 0; i < data.length; i++) {
+          print('=== APPOINTMENT $i DEBUG ===');
+          print('Raw appointment data: ${data[i]}');
+          final appointment = Appointment.fromJson(data[i]);
+          print('Parsed appointment ID: ${appointment.id}');
+          print('Parsed profileServiceData: ${appointment.profileServiceData}');
+          print(
+              'ProfileServiceData type: ${appointment.profileServiceData.runtimeType}');
+          print(
+              'ProfileServiceData keys: ${appointment.profileServiceData.keys.toList()}');
+        }
+
         return data.map((json) => Appointment.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load appointments: ${response.statusCode}');

@@ -100,6 +100,100 @@ class ProviderService {
     }
   }
 
+  /// Fetch provider data by name and type for fallback scenarios
+  Future<Map<String, dynamic>?> getProviderByName({
+    required String providerName,
+    required String providerType,
+  }) async {
+    try {
+      // First try to fetch all providers of the type and find by name
+      final providers = await getAvailableProviders(
+        providerType: providerType,
+        page: 1,
+        limit:
+            100, // Get more providers to increase chance of finding the match
+      );
+
+      // Look for exact match first, then partial match
+      Provider? matchedProvider;
+
+      // Exact name match
+      for (final provider in providers) {
+        if (provider.name.toLowerCase() == providerName.toLowerCase()) {
+          matchedProvider = provider;
+          break;
+        }
+      }
+
+      // If no exact match, try partial match
+      if (matchedProvider == null) {
+        for (final provider in providers) {
+          if (provider.name
+                  .toLowerCase()
+                  .contains(providerName.toLowerCase()) ||
+              providerName
+                  .toLowerCase()
+                  .contains(provider.name.toLowerCase())) {
+            matchedProvider = provider;
+            break;
+          }
+        }
+      }
+
+      if (matchedProvider != null) {
+        // Convert Provider model to Map for compatibility
+        return {
+          'id': matchedProvider.id,
+          'name': matchedProvider.name,
+          'avatar': matchedProvider.avatar,
+          'experience': matchedProvider.experience,
+          'rating': matchedProvider.rating,
+          'about': matchedProvider.about,
+          'working_information': matchedProvider.workingInformation,
+          'days_hour': matchedProvider.daysHour,
+          'maps_location': matchedProvider.mapsLocation,
+          'certification': matchedProvider.certification,
+          'user_id': matchedProvider.userId,
+          'provider_type': matchedProvider.providerType,
+          'username': matchedProvider.name, // Fallback for username field
+          'provider_name':
+              matchedProvider.name, // Fallback for provider_name field
+          '${providerType}_name':
+              matchedProvider.name, // Dynamic field based on type
+        };
+      }
+
+      // If no match found, return a generic provider data structure
+      return {
+        'name': providerName,
+        'username': providerName,
+        'provider_name': providerName,
+        '${providerType}_name': providerName,
+        'avatar': '',
+        'experience': 0,
+        'rating': 0.0,
+        'about': 'Provider information not available',
+        'working_information': 'Working hours not specified',
+        'days_hour': 'Schedule not available',
+        'maps_location': 'Location not specified',
+        'certification': 'Certification not specified',
+        'provider_type': providerType,
+      };
+    } catch (e) {
+      print('Error fetching provider by name: $e');
+
+      // Return minimal fallback data
+      return {
+        'name': providerName,
+        'username': providerName,
+        'provider_name': providerName,
+        '${providerType}_name': providerName,
+        'avatar': '',
+        'provider_type': providerType,
+      };
+    }
+  }
+
   /// Toggle favorite status for a provider
   Future<void> toggleFavorite({
     required int providerId,
