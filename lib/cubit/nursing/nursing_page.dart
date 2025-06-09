@@ -134,30 +134,31 @@ class _NursingState extends State<NursingService> {
                             String route;
                             switch (index) {
                               case 0:
-                                // navbarVisibility(true);
+                                // Primary Nursing - Navigate to Personal Case for Nursing
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => PersonalPage(
-                                      title: "Pharma Services Case",
-                                      serviceType: "Pharma",
+                                      title: "Nursing Services Case",
+                                      serviceType: "Nurse",
                                       onItemTap: (item) {
-                                        // Handle item tap
+                                        // Handle item tap for nursing services
                                       },
                                     ),
                                   ),
                                 );
                                 return;
                               case 1:
-                                // navbarVisibility(true);
+                                // Specialized Nursing Services - Navigate to Personal Case for Nursing
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => PersonalPage(
-                                      title: "Pharma Services Case",
-                                      serviceType: "Pharma",
+                                      title:
+                                          "Specialized Nursing Services Case",
+                                      serviceType: "Nurse",
                                       onItemTap: (item) {
-                                        // Handle item tap
+                                        // Handle item tap for specialized nursing
                                       },
                                     ),
                                   ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/models/profile.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class EditProfilePage extends StatefulWidget {
   final Profile profile;
@@ -14,24 +16,55 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
+  final ImagePicker _picker = ImagePicker();
+  File? _selectedImage;
   late String _gender;
   late int _age;
   late double _weight;
   late double _height;
   late String _contactNumber;
   late String _homeAddress;
-  late String _drugAllergy;
+
+  Future<void> _pickImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $e')),
+      );
+    }
+  }
+
+  void _removeImage() {
+    setState(() {
+      _selectedImage = null;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    _gender = widget.profile.gender;
-    _age = widget.profile.age ?? 0;
-    _weight = widget.profile.weight ?? 0.0;
-    _height = widget.profile.height ?? 0.0;
-    _contactNumber = widget.profile.phoneNumber ?? '';
-    _homeAddress = widget.profile.homeAddress ?? '';
-    // _drugAllergy = widget.profile.drugAllergy ?? '';
+    // Ensure gender has a valid value from the dropdown options
+    _gender =
+        (widget.profile.gender == 'Male' || widget.profile.gender == 'Female')
+            ? widget.profile.gender
+            : 'Male'; // Default to 'Male' if invalid
+    _age = widget.profile.age;
+    _weight = widget.profile.weight;
+    _height = widget.profile.height;
+    _contactNumber = widget.profile.phoneNumber;
+    _homeAddress = widget.profile.homeAddress;
   }
 
   @override
@@ -49,6 +82,93 @@ class _EditProfilePageState extends State<EditProfilePage> {
           key: _formKey,
           child: ListView(
             children: [
+              // Profile Image Section
+              const Text(
+                'Profile Image',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(60),
+                        border:
+                            Border.all(color: Colors.grey.shade300, width: 2),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(58),
+                        child: _selectedImage != null
+                            ? Image.file(
+                                _selectedImage!,
+                                fit: BoxFit.cover,
+                              )
+                            : widget.profile.avatar.isNotEmpty
+                                ? Image.network(
+                                    widget.profile.avatar,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: Colors.grey.shade200,
+                                        child: const Icon(
+                                          Icons.person,
+                                          size: 60,
+                                          color: Colors.grey,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    color: Colors.grey.shade200,
+                                    child: const Icon(
+                                      Icons.person,
+                                      size: 60,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF40E0D0),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_selectedImage != null)
+                Center(
+                  child: TextButton(
+                    onPressed: _removeImage,
+                    child: const Text(
+                      'Remove Image',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 30),
               Container(
                 width: 352,
                 height: 56,
@@ -203,14 +323,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   phoneNumber: _contactNumber,
                   homeAddress: _homeAddress,
                   gender: _gender,
-                  avatar: widget.profile.avatar, // Keep existing avatar
+                  avatar: widget
+                      .profile.avatar, // Keep existing avatar if no new image
                   createdAt: widget.profile.createdAt,
                   updatedAt: DateTime.now().toString(),
-                  // gender: _gender,
-                  // drugAllergy: _drugAllergy,
                 );
 
-                context.read<ProfileCubit>().updateProfile(updatedProfile);
+                // Use the new method that handles image uploads
+                context
+                    .read<ProfileCubit>()
+                    .updateProfileWithImage(updatedProfile, _selectedImage);
 
                 Navigator.pop(context);
               }
