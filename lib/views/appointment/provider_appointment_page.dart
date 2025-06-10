@@ -66,43 +66,89 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
           ],
         ),
       ),
-      body: BlocBuilder<ProviderAppointmentCubit, ProviderAppointmentState>(
-        builder: (context, state) {
-          if (state is ProviderAppointmentLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is ProviderAppointmentLoaded) {
-            return TabBarView(
-              controller: _tabController,
-              children: [
-                _buildProviderAppointmentList(state.appointments, 'pending'),
-                _buildProviderAppointmentList(state.appointments, 'accepted'),
-                _buildProviderAppointmentList(state.appointments, 'completed'),
-                _buildProviderAppointmentList(state.appointments, 'rejected'),
-              ],
+      body: BlocListener<ProviderAppointmentCubit, ProviderAppointmentState>(
+        listener: (context, state) {
+          if (state is ProviderAppointmentLoaded) {
+            // Check if we just successfully updated an appointment
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    Icon(Icons.check, color: Colors.white),
+                    SizedBox(width: 8),
+                    Text('Appointment updated successfully'),
+                  ],
+                ),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
             );
           } else if (state is ProviderAppointmentError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 64, color: Colors.red),
-                  SizedBox(height: 16),
-                  Text('Error: ${state.message}'),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<ProviderAppointmentCubit>()
-                          .fetchProviderAppointments(widget.providerType);
-                    },
-                    child: Text('Retry'),
-                  ),
-                ],
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    Icon(Icons.error, color: Colors.white),
+                    SizedBox(width: 8),
+                    Expanded(child: Text(state.message)),
+                  ],
+                ),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 5),
+                action: SnackBarAction(
+                  label: 'Retry',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    context
+                        .read<ProviderAppointmentCubit>()
+                        .fetchProviderAppointments(widget.providerType);
+                  },
+                ),
               ),
             );
           }
-          return Center(child: Text('No appointments found'));
         },
+        child: BlocBuilder<ProviderAppointmentCubit, ProviderAppointmentState>(
+          builder: (context, state) {
+            if (state is ProviderAppointmentLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is ProviderAppointmentLoaded) {
+              return TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildProviderAppointmentList(state.appointments, 'pending'),
+                  _buildProviderAppointmentList(state.appointments, 'accepted'),
+                  _buildProviderAppointmentList(
+                      state.appointments, 'completed'),
+                  _buildProviderAppointmentList(state.appointments, 'rejected'),
+                ],
+              );
+            } else if (state is ProviderAppointmentError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 64, color: Colors.red),
+                    SizedBox(height: 16),
+                    Text('Error: ${state.message}'),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<ProviderAppointmentCubit>()
+                            .fetchProviderAppointments(widget.providerType);
+                      },
+                      child: Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return Center(child: Text('No appointments found'));
+          },
+        ),
       ),
     );
   }
@@ -184,33 +230,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          // Debug: Tambahkan print untuk melihat data yang tersedia
-                          () {
-                            print(
-                                'DEBUG Patient Data Keys: ${patientData.keys.toList()}');
-                            print('DEBUG Patient Data Values: $patientData');
-
-                            // Coba semua kemungkinan field name
-                            final possibleNames = [
-                              patientData['username'],
-                              patientData['name'],
-                              patientData['patient_name'],
-                              patientData['user']?['username'],
-                              patientData['user']?['name'],
-                            ];
-
-                            for (int i = 0; i < possibleNames.length; i++) {
-                              print(
-                                  'DEBUG Name option $i: ${possibleNames[i]}');
-                            }
-
-                            return patientData['username']?.toString() ??
-                                patientData['name']?.toString() ??
-                                patientData['patient_name']?.toString() ??
-                                patientData['user']?['username']?.toString() ??
-                                patientData['user']?['name']?.toString() ??
-                                'Unknown Patient';
-                          }(),
+                          _getPatientName(appointment),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -405,25 +425,91 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
   }
 
   void _rejectAppointment(int appointmentId) {
+    print('=== UI: REJECT APPOINTMENT TRIGGERED ===');
+    print('Appointment ID to reject: $appointmentId');
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Reject Appointment'),
-          content: Text('Are you sure you want to reject this appointment?'),
+          title: Row(
+            children: [
+              Icon(Icons.cancel, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Reject Appointment'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Are you sure you want to reject this appointment?'),
+              SizedBox(height: 8),
+              Text(
+                'Appointment ID: $appointmentId',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'This action cannot be undone.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.red[600],
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                print('Reject appointment cancelled by user');
+                Navigator.of(context).pop();
+              },
               child: Text('Cancel'),
             ),
-            TextButton(
+            ElevatedButton(
               onPressed: () {
+                print('User confirmed rejection of appointment $appointmentId');
                 Navigator.of(context).pop();
+
+                // Show loading indicator
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Text('Rejecting appointment...'),
+                      ],
+                    ),
+                    duration: Duration(seconds: 3),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+
+                // Call the cubit to reject appointment
+                print('Calling cubit to reject appointment $appointmentId');
                 context
                     .read<ProviderAppointmentCubit>()
                     .rejectAppointment(appointmentId);
               },
-              child: Text('Reject', style: TextStyle(color: Colors.red)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Reject'),
             ),
           ],
         );
@@ -536,26 +622,35 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                           ),
                         ],
                         SizedBox(height: 20),
-                        // Medical Records Section
+                        // Related Medical Record Section
                         Text(
-                          'Patient Medical Records:',
+                          'Related Medical Record:',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(height: 8),
-                        FutureBuilder<List<Map<String, dynamic>>>(
-                          future:
-                              _fetchPatientMedicalRecords(appointment.userId),
+                        FutureBuilder<Map<String, dynamic>?>(
+                          future: _fetchRelatedMedicalRecord(appointment.id),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator());
                             } else if (snapshot.hasError) {
-                              return Text('Error loading medical records');
+                              return Container(
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.red[50],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'Error loading medical record: ${snapshot.error}',
+                                  style: TextStyle(color: Colors.red[800]),
+                                ),
+                              );
                             } else if (!snapshot.hasData ||
-                                snapshot.data!.isEmpty) {
+                                snapshot.data == null) {
                               return Container(
                                 padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
@@ -563,15 +658,10 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                    'No medical records found for this patient'),
+                                    'No related medical record found for this appointment'),
                               );
                             } else {
-                              return Column(
-                                children: snapshot.data!
-                                    .map((record) =>
-                                        _buildMedicalRecordCard(record))
-                                    .toList(),
-                              );
+                              return _buildMedicalRecordCard(snapshot.data!);
                             }
                           },
                         ),
@@ -667,28 +757,251 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
     );
   }
 
-  Future<List<Map<String, dynamic>>> _fetchPatientMedicalRecords(
-      int patientUserId) async {
+  Future<Map<String, dynamic>?> _fetchRelatedMedicalRecord(
+      int appointmentId) async {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
+      final currentUserId = await Utils.getSpString(Const.USER_ID);
+      final userRole = await Utils.getSpString(Const.ROLE);
 
-      final response = await Dio().get(
-        '${Const.API_MEDICAL_RECORDS}?user_id=$patientUserId',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
+      print('=== MEDICAL RECORD FETCH DEBUG ===');
+      print('Target appointment ID: $appointmentId');
+      print('Current user ID: $currentUserId');
+      print('Current user role: $userRole');
+      print('Token present: ${token != null}');
 
-      if (response.statusCode == 200) {
-        return List<Map<String, dynamic>>.from(response.data['data'] ?? []);
+      // Find the appointment to get the patient user_id
+      final appointments = context.read<ProviderAppointmentCubit>().state;
+      ProviderAppointment? targetAppointment;
+
+      if (appointments is ProviderAppointmentLoaded) {
+        targetAppointment = appointments.appointments.firstWhere(
+          (appointment) => appointment.id == appointmentId,
+          orElse: () => throw Exception('Appointment not found'),
+        );
       }
-      return [];
+
+      if (targetAppointment == null) {
+        print('ERROR: Could not find appointment with ID: $appointmentId');
+        return null;
+      }
+      final patientUserId = targetAppointment.userId;
+      print('Patient user_id: $patientUserId');
+
+      // Try multiple API call approaches
+      List<Map<String, dynamic>> allPersonalCases = [];
+
+      // Approach 1: Basic call without filters
+      print('\n=== APPROACH 1: Basic API call ===');
+      try {
+        final basicResponse = await Dio().get(
+          '${Const.API_PERSONAL_CASES}',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          ),
+        );
+        print('Basic call status: ${basicResponse.statusCode}');
+        print('Basic call response: ${basicResponse.data}');
+
+        if (basicResponse.statusCode == 200 &&
+            basicResponse.data['data'] != null) {
+          allPersonalCases.addAll(
+              List<Map<String, dynamic>>.from(basicResponse.data['data']));
+        }
+      } catch (e) {
+        print('Basic call failed: $e');
+      }
+
+      // Approach 2: Call with pagination
+      print('\n=== APPROACH 2: Paginated call ===');
+      try {
+        final paginatedResponse = await Dio().get(
+          '${Const.API_PERSONAL_CASES}',
+          queryParameters: {
+            'page': 1,
+            'limit': 50,
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          ),
+        );
+        print('Paginated call status: ${paginatedResponse.statusCode}');
+        print('Paginated call response: ${paginatedResponse.data}');
+
+        if (paginatedResponse.statusCode == 200 &&
+            paginatedResponse.data['data'] != null) {
+          final paginatedData =
+              List<Map<String, dynamic>>.from(paginatedResponse.data['data']);
+          for (var item in paginatedData) {
+            if (!allPersonalCases
+                .any((existing) => existing['id'] == item['id'])) {
+              allPersonalCases.add(item);
+            }
+          }
+        }
+      } catch (e) {
+        print('Paginated call failed: $e');
+      }
+
+      // Approach 3: Try with user filter
+      print('\n=== APPROACH 3: User filter call ===');
+      try {
+        final userFilterResponse = await Dio().get(
+          '${Const.API_PERSONAL_CASES}',
+          queryParameters: {
+            'user_id': patientUserId,
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          ),
+        );
+        print('User filter call status: ${userFilterResponse.statusCode}');
+        print('User filter call response: ${userFilterResponse.data}');
+
+        if (userFilterResponse.statusCode == 200 &&
+            userFilterResponse.data['data'] != null) {
+          final userFilterData =
+              List<Map<String, dynamic>>.from(userFilterResponse.data['data']);
+          for (var item in userFilterData) {
+            if (!allPersonalCases
+                .any((existing) => existing['id'] == item['id'])) {
+              allPersonalCases.add(item);
+            }
+          }
+        }
+      } catch (e) {
+        print('User filter call failed: $e');
+      }
+
+      // Approach 4: Try with include parameter
+      print('\n=== APPROACH 4: Include relationships ===');
+      try {
+        final includeResponse = await Dio().get(
+          '${Const.API_PERSONAL_CASES}',
+          queryParameters: {
+            'include': 'relatedHealthRecord,user',
+            'with': 'relatedHealthRecord',
+          },
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          ),
+        );
+        print('Include call status: ${includeResponse.statusCode}');
+        print('Include call response: ${includeResponse.data}');
+
+        if (includeResponse.statusCode == 200 &&
+            includeResponse.data['data'] != null) {
+          final includeData =
+              List<Map<String, dynamic>>.from(includeResponse.data['data']);
+          for (var item in includeData) {
+            if (!allPersonalCases
+                .any((existing) => existing['id'] == item['id'])) {
+              allPersonalCases.add(item);
+            }
+          }
+        }
+      } catch (e) {
+        print('Include call failed: $e');
+      }
+
+      print('\n=== CONSOLIDATED RESULTS ===');
+      print('Total unique personal cases found: ${allPersonalCases.length}');
+
+      if (allPersonalCases.isEmpty) {
+        print('No personal cases found with any approach');
+        return null;
+      }
+
+      // Log all cases for debugging
+      print('All personal cases:');
+      for (var personalCase in allPersonalCases) {
+        print(
+            '  Case ID: ${personalCase['id']}, User ID: ${personalCase['user_id']}, Related Record ID: ${personalCase['related_health_record_id']}');
+      }
+
+      return _processPersonalCases(allPersonalCases, patientUserId, token);
     } catch (e) {
-      print('Error fetching patient medical records: $e');
-      return [];
+      print('Error fetching related medical record: $e');
+      return null;
     }
+  }
+
+  Future<Map<String, dynamic>?> _processPersonalCases(
+      List<Map<String, dynamic>> personalCases,
+      int patientUserId,
+      String? token) async {
+    print(
+        'Processing ${personalCases.length} personal cases for user $patientUserId');
+
+    // Filter cases for the specific patient user_id (try both int and string comparison)
+    final patientCases = personalCases.where((personalCase) {
+      final caseUserId = personalCase['user_id'];
+      return caseUserId == patientUserId ||
+          caseUserId.toString() == patientUserId.toString();
+    }).toList();
+
+    print('Patient-specific cases found: ${patientCases.length}');
+
+    if (patientCases.isEmpty) {
+      print('No cases found for patient user_id: $patientUserId');
+      print('Available user_ids in personal cases:');
+      for (var personalCase in personalCases) {
+        print('  - User ID: ${personalCase['user_id']}');
+      }
+      return null;
+    }
+
+    // Find personal case that has related_health_record_id
+    for (var personalCase in patientCases) {
+      if (personalCase['related_health_record_id'] != null) {
+        final recordId = personalCase['related_health_record_id'];
+        print('Found case with related_health_record_id: $recordId');
+
+        // Check if relatedHealthRecord is already included in the response
+        if (personalCase['relatedHealthRecord'] != null) {
+          print('RelatedHealthRecord found in response');
+          return Map<String, dynamic>.from(personalCase['relatedHealthRecord']);
+        } else {
+          print('Fetching medical record separately...');
+
+          try {
+            final medicalRecordResponse = await Dio().get(
+              '${Const.API_MEDICAL_RECORDS}/$recordId',
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                },
+              ),
+            );
+
+            if (medicalRecordResponse.statusCode == 200) {
+              print('Successfully fetched medical record');
+              return Map<String, dynamic>.from(
+                  medicalRecordResponse.data['data'] ?? {});
+            }
+          } catch (e) {
+            print('Error fetching medical record $recordId: $e');
+          }
+        }
+      }
+    }
+
+    print(
+        'No personal case found with related_health_record_id for this patient');
+    return null;
   }
 
   Widget _buildMedicalRecordCard(Map<String, dynamic> record) {
@@ -724,5 +1037,31 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
         ),
       ),
     );
+  }
+
+  String _getPatientName(ProviderAppointment appointment) {
+    final patientData = appointment.patientData;
+
+    // Try different possible name fields in order of preference
+    final possibleNames = [
+      patientData['username'],
+      patientData['name'],
+      patientData['patient_name'],
+      patientData['user']?['username'],
+      patientData['user']?['name'],
+    ];
+
+    for (var name in possibleNames) {
+      if (name != null && name.toString().isNotEmpty) {
+        return name.toString();
+      }
+    }
+
+    // If patient data is empty, show user ID as fallback
+    if (patientData.isEmpty) {
+      return 'Patient (ID: ${appointment.userId})';
+    }
+
+    return 'Unknown Patient';
   }
 }

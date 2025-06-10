@@ -133,25 +133,66 @@ class ProviderAppointmentCubit extends Cubit<ProviderAppointmentState> {
 
   Future<void> rejectAppointment(int appointmentId) async {
     try {
-      print('Rejecting appointment $appointmentId');
+      print('=== CUBIT: REJECTING APPOINTMENT ===');
+      print('Appointment ID: $appointmentId');
 
+      // Get current state before making the API call
+      final currentState = state;
+      print('Current state type: ${currentState.runtimeType}');
+
+      if (currentState is ProviderAppointmentLoaded) {
+        print(
+            'Number of appointments in current state: ${currentState.appointments.length}');
+        final targetAppointment = currentState.appointments
+            .where((appointment) => appointment.id == appointmentId)
+            .firstOrNull;
+
+        if (targetAppointment != null) {
+          print('Target appointment found:');
+          print('  - ID: ${targetAppointment.id}');
+          print('  - Current Status: ${targetAppointment.status}');
+          print(
+              '  - Patient: ${targetAppointment.patientData['username'] ?? targetAppointment.patientData['name'] ?? 'Unknown'}');
+          print('  - Date: ${targetAppointment.date}');
+          print('  - Time: ${targetAppointment.hour}');
+        } else {
+          print('❌ Target appointment not found in current state');
+          emit(ProviderAppointmentError(
+              'Appointment not found in current state'));
+          return;
+        }
+      }
+
+      print('Calling appointment service to reject appointment...');
       await _appointmentService.rejectProviderAppointment(appointmentId);
+      print('✅ Appointment service call completed successfully');
 
       // Update the appointment in current state
-      final currentState = state;
       if (currentState is ProviderAppointmentLoaded) {
+        print('Updating appointment status in cubit state...');
         final updatedAppointments =
             currentState.appointments.map((appointment) {
           if (appointment.id == appointmentId) {
+            print(
+                'Updating appointment ${appointment.id} status from ${appointment.status} to rejected');
             return appointment.copyWith(status: 'rejected');
           }
           return appointment;
         }).toList();
 
+        print(
+            'Emitting updated state with ${updatedAppointments.length} appointments');
         emit(ProviderAppointmentLoaded(updatedAppointments));
+        print('✅ State updated successfully');
+      } else {
+        print(
+            '⚠️ Current state is not ProviderAppointmentLoaded, cannot update');
       }
     } catch (e) {
-      print('Error rejecting appointment: $e');
+      print('=== CUBIT: REJECT APPOINTMENT ERROR ===');
+      print('Error type: ${e.runtimeType}');
+      print('Error message: $e');
+      print('❌ Emitting error state');
       emit(ProviderAppointmentError(
           'Error rejecting appointment: ${e.toString()}'));
     }

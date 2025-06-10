@@ -69,16 +69,27 @@ class AppointmentService {
     }
   }
 
-  /// Reject provider appointment - Fixed endpoint
+  /// Reject provider appointment - Enhanced with detailed debugging
   Future<void> rejectProviderAppointment(int appointmentId) async {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
+      final userId = await Utils.getSpString(Const.USER_ID);
+      final userRole = await Utils.getSpString(Const.ROLE);
 
-      print('Attempting to reject appointment $appointmentId');
+      print('=== REJECTING APPOINTMENT DEBUG ===');
+      print('Appointment ID: $appointmentId');
+      print('User ID: $userId');
+      print('User Role: $userRole');
+      print('Token present: ${token != null}');
+      print('Token length: ${token?.length ?? 0}');
+      if (token != null && token.length > 20) {
+        print('Token preview: ${token.substring(0, 20)}...');
+      }
       print(
-          'Using endpoint: ${Const.URL_API}/provider/appointments/$appointmentId/reject');
-
-      final response = await _dio.post(
+          'Full endpoint: ${Const.URL_API}/provider/appointments/$appointmentId/reject');
+      print('Base URL: ${Const.URL_API}');
+      print('=== SENDING REJECT REQUEST ===');
+      final response = await _dio.put(
         '${Const.URL_API}/provider/appointments/$appointmentId/reject',
         options: Options(
           headers: {
@@ -91,18 +102,56 @@ class AppointmentService {
         ),
       );
 
-      print('Reject appointment response status: ${response.statusCode}');
-      print('Reject appointment response data: ${response.data}');
+      print('=== REJECT RESPONSE RECEIVED ===');
+      print('Response status: ${response.statusCode}');
+      print('Response headers: ${response.headers}');
+      print('Response data: ${response.data}');
+      print('Response status message: ${response.statusMessage}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Appointment rejected successfully');
+        print('✅ Appointment rejected successfully');
       } else if (response.statusCode == 404) {
+        print('❌ Appointment not found (404)');
         throw Exception('Appointment not found or endpoint not available');
+      } else if (response.statusCode == 403) {
+        print('❌ Permission denied (403)');
+        throw Exception('Permission denied to reject this appointment');
+      } else if (response.statusCode == 401) {
+        print('❌ Authentication failed (401)');
+        throw Exception('Authentication failed. Please login again.');
+      } else if (response.statusCode == 422) {
+        print('❌ Validation error (422)');
+        final errorMessage = response.data['message'] ?? 'Validation failed';
+        throw Exception('Validation error: $errorMessage');
       } else {
-        throw Exception('Failed to reject appointment: ${response.statusCode}');
+        print('❌ Unexpected response: ${response.statusCode}');
+        throw Exception(
+            'Failed to reject appointment: ${response.statusCode} - ${response.data}');
       }
     } catch (e) {
-      print('Error rejecting appointment: $e');
+      print('=== REJECT APPOINTMENT ERROR ===');
+      print('Error type: ${e.runtimeType}');
+      print('Error message: $e');
+
+      if (e is DioException) {
+        print('DioException type: ${e.type}');
+        print('DioException message: ${e.message}');
+        print('DioException response status: ${e.response?.statusCode}');
+        print('DioException response data: ${e.response?.data}');
+        print('DioException request path: ${e.requestOptions.path}');
+        print('DioException request headers: ${e.requestOptions.headers}');
+
+        if (e.response?.statusCode == 404) {
+          throw Exception(
+              'Reject endpoint not found. Please check if the API supports this endpoint.');
+        } else if (e.response?.statusCode == 403) {
+          throw Exception(
+              'Permission denied. You may not be authorized to reject this appointment.');
+        } else if (e.response?.statusCode == 401) {
+          throw Exception('Authentication failed. Please login again.');
+        }
+      }
+
       throw Exception('Error rejecting appointment: $e');
     }
   }
