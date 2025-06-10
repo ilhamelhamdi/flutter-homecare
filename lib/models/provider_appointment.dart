@@ -30,6 +30,41 @@ class ProviderAppointment {
   });
 
   factory ProviderAppointment.fromJson(Map<String, dynamic> json) {
+    // Debug: Print raw JSON data
+    print('=== ProviderAppointment DEBUG ===');
+    print('Raw JSON: $json');
+    print('JSON Keys: ${json.keys.toList()}');
+
+    // Check for different possible patient data fields
+    final possiblePatientFields = [
+      'patient_data',
+      'patient',
+      'user',
+      'profile',
+      'patient_info',
+      'user_data'
+    ];
+
+    Map<String, dynamic> patientData = {};
+
+    for (String field in possiblePatientFields) {
+      if (json.containsKey(field) && json[field] != null) {
+        print('Found patient data in field: $field');
+        print('Patient data: ${json[field]}');
+        patientData = Map<String, dynamic>.from(json[field]);
+        break;
+      }
+    }
+
+    // If still empty, try to extract from user relation
+    if (patientData.isEmpty && json['user_id'] != null) {
+      print(
+          'Patient data empty, will need to fetch separately for user_id: ${json['user_id']}');
+    }
+
+    print('Final patient data: $patientData');
+    print('=== END ProviderAppointment DEBUG ===');
+
     return ProviderAppointment(
       id: json['id'] ?? 0,
       userId: json['user_id'] ?? 0,
@@ -40,7 +75,7 @@ class ProviderAppointment {
       summary: json['summary'] ?? '',
       payTotal: (json['pay_total'] as num?)?.toDouble() ?? 0.0,
       providerType: json['provider_type'] ?? '',
-      patientData: json['patient_data'] ?? {},
+      patientData: patientData,
       profileServiceData: json['profile_services_data'] ?? {},
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',

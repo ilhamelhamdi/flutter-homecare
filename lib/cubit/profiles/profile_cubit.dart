@@ -78,38 +78,41 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<void> updateProfileWithImage(Profile profile, File? imageFile) async {
+  Future<void> updateProfileWithImage(Profile profile, File? image) async {
     try {
-      final token = await Utils.getSpString(Const.TOKEN);
+      // emit(ProfileUpdating());
 
-      // If no image file, use regular update
-      if (imageFile == null) {
-        return updateProfile(profile);
+      final token = await Utils.getSpString(Const.TOKEN);
+      if (token == null) {
+        emit(ProfileError('Authentication token not found.'));
+        return;
       }
 
-      // Create FormData for multipart upload
-      FormData formData = FormData.fromMap({
-        'age': profile.age,
-        'weight': profile.weight,
-        'height': profile.height,
-        'phone_number': profile.phoneNumber,
-        'home_address': profile.homeAddress,
-        'gender': profile.gender,
-      });
+      final formData = FormData();
 
-      // Add image file if provided
-      formData.files.add(
-        MapEntry(
+      // Add profile data fields
+      formData.fields.addAll([
+        MapEntry('age', profile.age.toString()),
+        MapEntry('gender', profile.gender),
+        MapEntry('weight', profile.weight.toString()),
+        MapEntry('height', profile.height.toString()),
+        MapEntry('phone_number', profile.phoneNumber),
+        MapEntry('home_address', profile.homeAddress),
+      ]);
+
+      // Add image if selected
+      if (image != null) {
+        formData.files.add(MapEntry(
           'avatar',
           await MultipartFile.fromFile(
-            imageFile.path,
-            filename: imageFile.path.split('/').last,
+            image.path,
+            filename: 'avatar.jpg',
           ),
-        ),
-      );
+        ));
+      }
 
       final response = await _dio.put(
-        '${Const.URL_API}/profiles/${profile.id}',
+        '${Const.BASE_URL}/v1/profiles',
         data: formData,
         options: Options(
           headers: {
@@ -120,15 +123,22 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
 
       if (response.statusCode == 200) {
-        final updatedProfile = Profile.fromJson(response.data['data']);
+        // Update the profile with the response data
+        final updatedProfileData = response.data;
+        final updatedProfile = Profile.fromJson(updatedProfileData);
+
+        // Save to local storage if needed
+        await Utils.setProfile(Profile.fromJson(updatedProfileData));
+
         emit(ProfileUpdateSuccess(updatedProfile));
-      } else if (response.statusCode == 401) {
-        emit(ProfileUnauthenticated());
       } else {
-        emit(ProfileError('Failed to update profile'));
+        final errorData = response.data;
+        final errorMessage =
+            errorData['message'] ?? 'Failed to update profile.';
+        emit(ProfileError(errorMessage));
       }
     } catch (e) {
-      emit(ProfileError(e.toString()));
+      emit(ProfileError('Failed to update profile: $e'));
     }
   }
 }

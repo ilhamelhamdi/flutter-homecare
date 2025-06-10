@@ -283,22 +283,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Container(
-              //   width: 352,
-              //   height: 156,
-              //   child: TextFormField(
-              //     initialValue: _drugAllergy,
-              //     decoration: InputDecoration(
-              //       labelText: 'Drug Allergy Statuses',
-              //       border: OutlineInputBorder(
-              //         borderRadius: BorderRadius.circular(8),
-              //       ),
-              //     ),
-              //     onSaved: (value) {
-              //       _drugAllergy = value!;
-              //     },
-              //   ),
-              // ),
+
               const SizedBox(height: 16),
             ],
           ),

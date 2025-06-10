@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
 import 'package:meta/meta.dart';
 import 'package:m2health/models/provider_appointment.dart';
 import 'package:m2health/services/appointment_service.dart';
@@ -18,20 +20,88 @@ class ProviderAppointmentCubit extends Cubit<ProviderAppointmentState> {
     try {
       emit(ProviderAppointmentLoading());
 
-      final appointments =
-          await _appointmentService.fetchProviderAppointments(providerType);
-      emit(ProviderAppointmentLoaded(appointments));
-    } catch (e) {
-      print('Error in fetchProviderAppointments: $e');
-      if (e.toString().contains('401')) {
-        emit(ProviderAppointmentError(
-            'Authentication failed. Please login again.'));
-      } else if (e.toString().contains('403')) {
-        emit(ProviderAppointmentError(
-            'Access denied. Please check your permissions.'));
+      final token = await Utils.getSpString(Const.TOKEN);
+      final response = await Dio().get(
+        '${Const.API_PROVIDER_APPOINTMENTS}?provider_type=$providerType',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      print('=== API Response Debug ===');
+      print('Status: ${response.statusCode}');
+      print('Response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> appointmentsJson = response.data['data'] ?? [];
+
+        // Parse appointments and enrich with patient data if needed
+        final List<ProviderAppointment> appointments = [];
+
+        for (var appointmentJson in appointmentsJson) {
+          var appointment = ProviderAppointment.fromJson(appointmentJson);
+
+          // If patient data is empty, fetch it separately
+          if (appointment.patientData.isEmpty && appointment.userId > 0) {
+            print('Fetching patient data for user_id: ${appointment.userId}');
+            final patientData = await _fetchPatientData(appointment.userId);
+
+            // Create new appointment with patient data
+            appointment = ProviderAppointment(
+              id: appointment.id,
+              userId: appointment.userId,
+              type: appointment.type,
+              status: appointment.status,
+              date: appointment.date,
+              hour: appointment.hour,
+              summary: appointment.summary,
+              payTotal: appointment.payTotal,
+              providerType: appointment.providerType,
+              patientData: patientData,
+              profileServiceData: appointment.profileServiceData,
+              createdAt: appointment.createdAt,
+              updatedAt: appointment.updatedAt,
+            );
+          }
+
+          appointments.add(appointment);
+        }
+
+        emit(ProviderAppointmentLoaded(appointments));
       } else {
-        emit(ProviderAppointmentError('Error: ${e.toString()}'));
+        emit(ProviderAppointmentError('Failed to load appointments'));
       }
+    } catch (e) {
+      print('Error fetching appointments: $e');
+      emit(ProviderAppointmentError('Error: $e'));
+    }
+  }
+
+  Future<Map<String, dynamic>> _fetchPatientData(int userId) async {
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+
+      final response = await Dio().get(
+        '${Const.API_PROFILE}?user_id=$userId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      print('Patient data response: ${response.data}');
+
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        return Map<String, dynamic>.from(response.data['data']);
+      }
+
+      return {};
+    } catch (e) {
+      print('Error fetching patient data: $e');
+      return {};
     }
   }
 

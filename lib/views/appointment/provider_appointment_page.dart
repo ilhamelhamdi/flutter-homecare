@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:m2health/cubit/appointment/provider_appointment_cubit.dart';
 import 'package:m2health/models/provider_appointment.dart';
 import 'package:m2health/const.dart';
+import 'package:dio/dio.dart';
+import 'package:m2health/utils.dart';
 
 class ProviderAppointmentPage extends StatefulWidget {
   final String providerType;
@@ -182,7 +184,33 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          patientData['name'] ?? 'Unknown Patient',
+                          // Debug: Tambahkan print untuk melihat data yang tersedia
+                          () {
+                            print(
+                                'DEBUG Patient Data Keys: ${patientData.keys.toList()}');
+                            print('DEBUG Patient Data Values: $patientData');
+
+                            // Coba semua kemungkinan field name
+                            final possibleNames = [
+                              patientData['username'],
+                              patientData['name'],
+                              patientData['patient_name'],
+                              patientData['user']?['username'],
+                              patientData['user']?['name'],
+                            ];
+
+                            for (int i = 0; i < possibleNames.length; i++) {
+                              print(
+                                  'DEBUG Name option $i: ${possibleNames[i]}');
+                            }
+
+                            return patientData['username']?.toString() ??
+                                patientData['name']?.toString() ??
+                                patientData['patient_name']?.toString() ??
+                                patientData['user']?['username']?.toString() ??
+                                patientData['user']?['name']?.toString() ??
+                                'Unknown Patient';
+                          }(),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -473,8 +501,11 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildDetailRow('Patient',
-                            appointment.patientData['name'] ?? 'Unknown'),
+                        _buildDetailRow(
+                            'Patient',
+                            appointment.patientData['username'] ??
+                                appointment.patientData['name'] ??
+                                'Unknown'),
                         _buildDetailRow('Type', appointment.type),
                         _buildDetailRow('Status', appointment.status),
                         _buildDetailRow(
@@ -504,6 +535,46 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                             child: Text(appointment.summary),
                           ),
                         ],
+                        SizedBox(height: 20),
+                        // Medical Records Section
+                        Text(
+                          'Patient Medical Records:',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        FutureBuilder<List<Map<String, dynamic>>>(
+                          future:
+                              _fetchPatientMedicalRecords(appointment.userId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text('Error loading medical records');
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Container(
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                    'No medical records found for this patient'),
+                              );
+                            } else {
+                              return Column(
+                                children: snapshot.data!
+                                    .map((record) =>
+                                        _buildMedicalRecordCard(record))
+                                    .toList(),
+                              );
+                            }
+                          },
+                        ),
                         SizedBox(height: 20),
                         if (appointment.status.toLowerCase() == 'pending') ...[
                           Row(
@@ -592,6 +663,65 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchPatientMedicalRecords(
+      int patientUserId) async {
+    try {
+      final token = await Utils.getSpString(Const.TOKEN);
+
+      final response = await Dio().get(
+        '${Const.API_MEDICAL_RECORDS}?user_id=$patientUserId',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return List<Map<String, dynamic>>.from(response.data['data'] ?? []);
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching patient medical records: $e');
+      return [];
+    }
+  }
+
+  Widget _buildMedicalRecordCard(Map<String, dynamic> record) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              record['title'] ?? 'Medical Record',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(height: 8),
+            _buildDetailRow('Disease Name', record['disease_name'] ?? 'N/A'),
+            _buildDetailRow(
+                'Disease History', record['disease_history'] ?? 'N/A'),
+            if (record['symptoms'] != null &&
+                record['symptoms'].toString().isNotEmpty)
+              _buildDetailRow('Symptoms', record['symptoms']),
+            if (record['special_consideration'] != null &&
+                record['special_consideration'].toString().isNotEmpty)
+              _buildDetailRow(
+                  'Special Consideration', record['special_consideration']),
+            if (record['treatment_info'] != null &&
+                record['treatment_info'].toString().isNotEmpty)
+              _buildDetailRow('Treatment Info', record['treatment_info']),
+          ],
+        ),
       ),
     );
   }
