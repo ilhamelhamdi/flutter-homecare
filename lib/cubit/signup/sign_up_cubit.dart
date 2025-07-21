@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
-import 'package:m2health/utils.dart';
+import 'package:m2health/services/sso_service.dart';
 import 'package:omega_dio_logger/omega_dio_logger.dart';
 
 abstract class SignUpState {}
@@ -19,7 +19,15 @@ class SignUpFailure extends SignUpState {
 }
 
 class SignUpCubit extends Cubit<SignUpState> {
-  SignUpCubit() : super(SignUpInitial());
+  final Dio _dio;
+  // late final SSOService _ssoService;
+
+  SignUpCubit()
+      : _dio = Dio(),
+        super(SignUpInitial()) {
+    _dio.interceptors.add(const OmegaDioLogger());
+    // _ssoService = SSOService(_dio);
+  }
 
   final RegExp emailRegex =
       RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)?$');
@@ -42,11 +50,7 @@ class SignUpCubit extends Cubit<SignUpState> {
       emit(SignUpFailure('Please fill in all fields correctly.'));
       return;
     }
-
     emit(SignUpLoading());
-
-    var dio = Dio();
-    dio.interceptors.add(const OmegaDioLogger());
 
     // Build the appropriate URL based on the selected role
     String mUrl;
@@ -72,7 +76,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     print('Registration URL: $mUrl');
 
     try {
-      var response = await dio.post(
+      var response = await _dio.post(
         mUrl,
         data: {"email": email, "password": password, "username": username},
         options: Options(
@@ -150,93 +154,86 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
-  // Google Sign-In method
-  Future<void> signUpWithGoogle(String role) async {
-    print('=== GOOGLE SIGN UP ===');
-    print('Role: $role');
+  // // Google Sign-In method
+  // Future<void> signUpWithGoogle(String role) async {
+  //   print('=== GOOGLE SIGN UP ===');
+  //   print('Role: $role');
 
-    if (role.isEmpty) {
-      emit(
-          SignUpFailure('Please select a role before signing up with Google.'));
-      return;
-    }
+  //   if (role.isEmpty) {
+  //     emit(
+  //         SignUpFailure('Please select a role before signing up with Google.'));
+  //     return;
+  //   }
 
-    emit(SignUpLoading());
+  //   emit(SignUpLoading());
 
-    try {
-      // TODO: Implement Google Sign-In SDK integration
-      // For now, show a placeholder message
-      emit(SignUpFailure(
-          'Google Sign-In will be implemented soon. Please use email registration.'));
+  //   try {
+  //     final result = await _ssoService.signInWithGoogle(role);
 
-      // Future implementation will look like:
-      // 1. Use google_sign_in package to get Google credentials
-      // 2. Send the Google token to your backend
-      // 3. Backend validates with Google and creates user account
-      // 4. Return JWT token for app authentication
-    } catch (e) {
-      print('Google Sign-In Error: $e');
-      emit(SignUpFailure('Google Sign-In failed. Please try again.'));
-    }
-  }
+  //     if (result['success'] == true) {
+  //       print('Google Sign-Up successful');
+  //       emit(SignUpSuccess());
+  //     } else {
+  //       emit(SignUpFailure(result['message'] ?? 'Google Sign-In failed'));
+  //     }
+  //   } catch (e) {
+  //     print('Google Sign-In Error: $e');
+  //     emit(SignUpFailure('Google Sign-In failed. Please try again.'));
+  //   }
+  // }
 
-  // WeChat Sign-In method
-  Future<void> signUpWithWeChat(String role) async {
-    print('=== WECHAT SIGN UP ===');
-    print('Role: $role');
+  // // WeChat Sign-In method
+  // Future<void> signUpWithWeChat(String role) async {
+  //   print('=== WECHAT SIGN UP ===');
+  //   print('Role: $role');
 
-    if (role.isEmpty) {
-      emit(
-          SignUpFailure('Please select a role before signing up with WeChat.'));
-      return;
-    }
+  //   if (role.isEmpty) {
+  //     emit(
+  //         SignUpFailure('Please select a role before signing up with WeChat.'));
+  //     return;
+  //   }
+  //   emit(SignUpLoading());
 
-    emit(SignUpLoading());
+  //   try {
+  //     final result = await _ssoService.signInWithWeChat(role);
 
-    try {
-      // TODO: Implement WeChat Sign-In SDK integration
-      // For now, show a placeholder message
-      emit(SignUpFailure(
-          'WeChat Sign-In will be implemented soon. Please use email registration.'));
+  //     if (result['success'] == true) {
+  //       print('WeChat Sign-Up successful');
+  //       emit(SignUpSuccess());
+  //     } else {
+  //       emit(SignUpFailure(result['message'] ?? 'WeChat Sign-In failed'));
+  //     }
+  //   } catch (e) {
+  //     print('WeChat Sign-In Error: $e');
+  //     emit(SignUpFailure('WeChat Sign-In failed. Please try again.'));
+  //   }
+  // }
 
-      // Future implementation will look like:
-      // 1. Use fluwx package to get WeChat credentials
-      // 2. Send the WeChat token to your backend
-      // 3. Backend validates with WeChat and creates user account
-      // 4. Return JWT token for app authentication
-    } catch (e) {
-      print('WeChat Sign-In Error: $e');
-      emit(SignUpFailure('WeChat Sign-In failed. Please try again.'));
-    }
-  }
+  // // Facebook Sign-In method (keeping existing icon functionality)
+  // Future<void> signUpWithFacebook(String role) async {
+  //   print('=== FACEBOOK SIGN UP ===');
+  //   print('Role: $role');
 
-  // Facebook Sign-In method (keeping existing icon functionality)
-  Future<void> signUpWithFacebook(String role) async {
-    print('=== FACEBOOK SIGN UP ===');
-    print('Role: $role');
+  //   if (role.isEmpty) {
+  //     emit(SignUpFailure(
+  //         'Please select a role before signing up with Facebook.'));
+  //     return;
+  //   }
 
-    if (role.isEmpty) {
-      emit(SignUpFailure(
-          'Please select a role before signing up with Facebook.'));
-      return;
-    }
+  //   emit(SignUpLoading());
 
-    emit(SignUpLoading());
+  //   try {
+  //     final result = await _ssoService.signInWithFacebook(role);
 
-    try {
-      // TODO: Implement Facebook Sign-In SDK integration
-      // For now, show a placeholder message
-      emit(SignUpFailure(
-          'Facebook Sign-In will be implemented soon. Please use email registration.'));
-
-      // Future implementation will look like:
-      // 1. Use flutter_facebook_auth package to get Facebook credentials
-      // 2. Send the Facebook token to your backend
-      // 3. Backend validates with Facebook and creates user account
-      // 4. Return JWT token for app authentication
-    } catch (e) {
-      print('Facebook Sign-In Error: $e');
-      emit(SignUpFailure('Facebook Sign-In failed. Please try again.'));
-    }
-  }
+  //     if (result['success'] == true) {
+  //       print('Facebook Sign-Up successful');
+  //       emit(SignUpSuccess());
+  //     } else {
+  //       emit(SignUpFailure(result['message'] ?? 'Facebook Sign-In failed'));
+  //     }
+  //   } catch (e) {
+  //     print('Facebook Sign-In Error: $e');
+  //     emit(SignUpFailure('Facebook Sign-In failed. Please try again.'));
+  //   }
+  // }
 }

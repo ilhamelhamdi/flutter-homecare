@@ -29,7 +29,9 @@ class _PersonalPageState extends State<PersonalPage> {
   @override
   void initState() {
     super.initState();
-    context.read<PersonalCubit>().loadPersonalDetails();
+    context
+        .read<PersonalCubit>()
+        .loadPersonalDetails(serviceType: widget.serviceType);
   }
 
   @override
@@ -39,7 +41,9 @@ class _PersonalPageState extends State<PersonalPage> {
         title: Text(
           widget.serviceType == "Pharma"
               ? "Pharmacist Services Case"
-              : "Nurse Services Case",
+              : widget.serviceType == "Radiologist"
+                  ? "Radiologist Services Case"
+                  : "Nurse Services Case",
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),

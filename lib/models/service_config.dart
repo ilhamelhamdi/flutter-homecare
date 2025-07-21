@@ -122,4 +122,64 @@ class ServiceConfig {
       ],
     );
   }
+
+  static ServiceConfig radiologist() {
+    return ServiceConfig(
+      type: 'radiologist',
+      displayName: 'Radiologist Services',
+      apiEndpoint: '/v1/providers/available?provider_type=radiologist',
+      defaultServices: [
+        ServiceTitle(
+          title: 'Image Analysis & Interpretation',
+          price: 150.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: 'CT Scan Review',
+          price: 200.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: 'MRI Scan Analysis',
+          price: 250.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: 'X-Ray Examination',
+          price: 100.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: 'Ultrasound Analysis',
+          price: 120.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: 'Mammography Review',
+          price: 180.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: 'PET Scan Interpretation',
+          price: 300.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: '3D Reconstruction Analysis',
+          price: 220.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: 'Contrast Study Review',
+          price: 160.0,
+          serviceType: 'radiologist',
+        ),
+        ServiceTitle(
+          title: 'Second Opinion Consultation',
+          price: 100.0,
+          serviceType: 'radiologist',
+        ),
+      ],
+    );
+  }
 }

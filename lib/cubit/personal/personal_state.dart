@@ -14,6 +14,7 @@ class Issue {
   final Map<String, dynamic> relatedHealthRecord; // Changed to Map
   final String addOn;
   final double estimatedBudget;
+  final String? caseType; // Add case_type field
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -27,10 +28,10 @@ class Issue {
     required this.relatedHealthRecord,
     required this.addOn,
     required this.estimatedBudget,
+    this.caseType, // Add case_type to constructor
     required this.createdAt,
     required this.updatedAt,
   });
-
   factory Issue.fromJson(Map<String, dynamic> json) {
     return Issue(
       id: json['id'] ?? 0,
@@ -45,6 +46,7 @@ class Issue {
           : {}, // Convert to
       addOn: json['add_on'] ?? '',
       estimatedBudget: (json['estimated_budget'] as num?)?.toDouble() ?? 0.0,
+      caseType: json['case_type'], // Add case_type parsing
       createdAt: DateTime.parse(
           json['created_at'] ?? DateTime.now().toIso8601String()),
       updatedAt: DateTime.parse(
@@ -87,6 +89,7 @@ class Issue {
       'related_health_record': relatedHealthRecord,
       'add_on': addOn,
       'estimated_budget': estimatedBudget,
+      'case_type': caseType, // Add case_type to JSON
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

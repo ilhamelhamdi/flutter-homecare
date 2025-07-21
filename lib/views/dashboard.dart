@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m2health/cubit/precision/nutrition_assestment.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({
@@ -471,34 +472,66 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     itemCount: services.length,
                     itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Match the container's border radius
-                              child: Image.asset(
-                                services[index][
-                                    'image']!, // Use the image path from the list
-                                height: 72,
-                                width: 111,
-                                fit: BoxFit
-                                    .cover, // Ensure the image fills the box
+                      return GestureDetector(
+                          onTap: () {
+                            if (services[index]['name'] ==
+                                'Precision\nNutrition') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        NutritionAssessmentPage()),
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    title: const Text('Coming Soon'),
+                                    content: const Text(
+                                        'This feature will be available soon!'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      8.0), // Match the container's border radius
+                                  child: Image.asset(
+                                    services[index][
+                                        'image']!, // Use the image path from the list
+                                    height: 72,
+                                    width: 111,
+                                    fit: BoxFit
+                                        .cover, // Ensure the image fills the box
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            services[index]
-                                ['name']!, // Use the name from the list
-                            style: const TextStyle(
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      );
+                              const SizedBox(height: 10),
+                              Text(
+                                services[index]
+                                    ['name']!, // Use the name from the list
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ));
                     },
                   )
                 ],

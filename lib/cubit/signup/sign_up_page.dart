@@ -170,7 +170,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    TextField(
+                    TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
                         hintText: 'Password',
@@ -181,9 +181,18 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
-                    TextField(
+                    TextFormField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
                         hintText: 'Confirm Password',
@@ -197,6 +206,15 @@ class _SignUpPageState extends State<SignUpPage> {
                       obscureText: true,
                       onChanged: (value) {
                         _validatePasswords();
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password';
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
                       },
                     ),
                     const SizedBox(height: 20),
@@ -281,7 +299,19 @@ class _SignUpPageState extends State<SignUpPage> {
                             icon: Image.asset('assets/icons/ic_fb.png'),
                             iconSize: 40,
                             onPressed: () {
-                              // Handle Facebook login
+                              if (_selectedRole == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Please select a user type first'),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                                return;
+                              }
+                              // context
+                              //     .read<SignUpCubit>()
+                              //     .signUpWithFacebook(_selectedRole!);
                             },
                           ),
                           const SizedBox(width: 16),
@@ -289,7 +319,19 @@ class _SignUpPageState extends State<SignUpPage> {
                             icon: Image.asset('assets/icons/ic_google.png'),
                             iconSize: 40,
                             onPressed: () {
-                              // Handle Google login
+                              if (_selectedRole == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Please select a user type first'),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                                return;
+                              }
+                              // context
+                              //     .read<SignUpCubit>()
+                              //     .signUpWithGoogle(_selectedRole!);
                             },
                           ),
                           const SizedBox(width: 16),
@@ -297,7 +339,19 @@ class _SignUpPageState extends State<SignUpPage> {
                             icon: Image.asset('assets/icons/ic_wechat.png'),
                             iconSize: 40,
                             onPressed: () {
-                              // Handle WeChat login
+                              if (_selectedRole == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Please select a user type first'),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                                return;
+                              }
+                              // context
+                              //     .read<SignUpCubit>()
+                              //     .signUpWithWeChat(_selectedRole!);
                             },
                           ),
                         ],

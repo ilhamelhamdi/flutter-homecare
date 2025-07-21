@@ -5,21 +5,20 @@ import 'package:m2health/cubit/personal/personal_state.dart';
 import 'package:m2health/utils.dart';
 import '../search/search_professional.dart';
 
-class AddOn extends StatefulWidget {
+class RadiologistAddOn extends StatefulWidget {
   final Issue issue;
   final String serviceType;
 
-  AddOn({required this.issue, required this.serviceType});
+  RadiologistAddOn({required this.issue, required this.serviceType});
 
   @override
-  _AddOnState createState() => _AddOnState();
+  _RadiologistAddOnState createState() => _RadiologistAddOnState();
 }
 
-class _AddOnState extends State<AddOn> {
+class _RadiologistAddOnState extends State<RadiologistAddOn> {
   bool isLoading = true;
   late List<bool> _selectedServices;
-  List<Map<String, dynamic>>?
-      serviceData; // Nullable to handle uninitialized state
+  List<Map<String, dynamic>>? serviceData;
   double _estimatedBudget = 0.0;
 
   @override
@@ -32,15 +31,8 @@ class _AddOnState extends State<AddOn> {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
 
-      // Determine endpoint based on service type
-      String endpoint;
-      if (widget.serviceType == "Pharma") {
-        endpoint = '${Const.URL_API}/service-titles/pharma';
-      } else if (widget.serviceType == "Radiologist") {
-        endpoint = '${Const.URL_API}/service-titles/radiologist';
-      } else {
-        endpoint = '${Const.URL_API}/service-titles/nurse';
-      }
+      // Try to fetch radiologist services from API
+      final endpoint = '${Const.URL_API}/service-titles/radiologist';
 
       final response = await Dio().get(
         endpoint,
@@ -65,33 +57,25 @@ class _AddOnState extends State<AddOn> {
         _initializeDefaultServiceTitles();
       }
     } catch (e) {
-      print('Error fetching service titles: $e');
+      print('Error fetching radiologist service titles: $e');
       _initializeDefaultServiceTitles();
     }
   }
 
   void _initializeDefaultServiceTitles() {
-    if (widget.serviceType == "Pharma") {
-      serviceData = [
-        {'id': 1, 'title': 'Medication Review', 'price': 15.0},
-        {'id': 2, 'title': 'Prescription Consultation', 'price': 10.0},
-        {'id': 3, 'title': 'Medication Management Plan', 'price': 25.0},
-      ];
-    } else if (widget.serviceType == "Radiologist") {
-      serviceData = [
-        {'id': 1, 'title': 'Image Analysis & Interpretation', 'price': 150.0},
-        {'id': 2, 'title': 'CT Scan Review', 'price': 200.0},
-        {'id': 3, 'title': 'MRI Scan Analysis', 'price': 250.0},
-        {'id': 4, 'title': 'X-Ray Examination', 'price': 100.0},
-        {'id': 5, 'title': 'Ultrasound Analysis', 'price': 120.0},
-      ];
-    } else if (widget.serviceType == "Nurse") {
-      serviceData = [
-        {'id': 1, 'title': 'Medical Escort', 'price': 20.0},
-        {'id': 2, 'title': 'Inject', 'price': 15.0},
-        {'id': 3, 'title': 'Blood Glucose Check', 'price': 10.0},
-      ];
-    }
+    // Default radiologist services
+    serviceData = [
+      {'id': 1, 'title': 'Image Analysis & Interpretation', 'price': 150.0},
+      {'id': 2, 'title': 'CT Scan Review', 'price': 200.0},
+      {'id': 3, 'title': 'MRI Scan Analysis', 'price': 250.0},
+      {'id': 4, 'title': 'X-Ray Examination', 'price': 100.0},
+      {'id': 5, 'title': 'Ultrasound Analysis', 'price': 120.0},
+      {'id': 6, 'title': 'Mammography Review', 'price': 180.0},
+      {'id': 7, 'title': 'PET Scan Interpretation', 'price': 300.0},
+      {'id': 8, 'title': '3D Reconstruction Analysis', 'price': 220.0},
+      {'id': 9, 'title': 'Contrast Study Review', 'price': 160.0},
+      {'id': 10, 'title': 'Second Opinion Consultation', 'price': 100.0},
+    ];
 
     _selectedServices =
         List<bool>.generate(serviceData!.length, (index) => false);
@@ -123,10 +107,11 @@ class _AddOnState extends State<AddOn> {
           .map((entry) => serviceData![entry.key]['title'])
           .join(', '),
       "estimated_budget": _estimatedBudget,
+      "case_type": "radiology",
       "updated_at": DateTime.now().toIso8601String(),
     };
 
-    print('Data to be submitted: $data');
+    print('Radiologist add-on data to be submitted: $data');
 
     try {
       final response = await Dio().put(
@@ -144,15 +129,16 @@ class _AddOnState extends State<AddOn> {
           context,
           MaterialPageRoute(
             builder: (context) => SearchPage(
-              serviceType: widget.serviceType,
+              serviceType: 'Radiologist',
             ),
           ),
         );
       } else {
-        print('Failed to submit data: ${response.statusMessage}');
+        print(
+            'Failed to submit radiologist add-on data: ${response.statusMessage}');
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error submitting radiologist add-on: $e');
     }
   }
 
@@ -162,11 +148,7 @@ class _AddOnState extends State<AddOn> {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            widget.serviceType == "Pharma"
-                ? 'Pharmacist Add-On Services'
-                : widget.serviceType == "Radiologist"
-                    ? 'Radiologist Add-On Services'
-                    : 'Nursing Add-On Services',
+            'Radiologist Add-On Services',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
@@ -175,31 +157,25 @@ class _AddOnState extends State<AddOn> {
         ),
       );
     }
+
     if (serviceData == null || serviceData!.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            widget.serviceType == "Pharma"
-                ? 'Pharmacist Add-On Services'
-                : widget.serviceType == "Radiologist"
-                    ? 'Radiologist Add-On Services'
-                    : 'Nursing Add-On Services',
+            'Radiologist Add-On Services',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
         body: const Center(
-          child: Text('No services available'),
+          child: Text('No radiologist services available'),
         ),
       );
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.serviceType == "Pharma"
-              ? 'Pharmacist Add-On Services'
-              : widget.serviceType == "Radiologist"
-                  ? 'Radiologist Add-On Services'
-                  : 'Nursing Add-On Services',
+          'Radiologist Add-On Services',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
@@ -207,11 +183,37 @@ class _AddOnState extends State<AddOn> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Color(0xFF35C5CF).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.medical_services, color: Color(0xFF35C5CF)),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Select additional radiology services for comprehensive analysis',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF35C5CF),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: serviceData!.length,
                 itemBuilder: (context, i) {
                   return Card(
+                    elevation: 2,
+                    margin: EdgeInsets.symmetric(vertical: 4),
                     child: ListTile(
                       leading: GestureDetector(
                         onTap: () {
@@ -239,7 +241,7 @@ class _AddOnState extends State<AddOn> {
                       title: Text(
                         serviceData![i]['title'] as String,
                         style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold),
+                            fontSize: 14, fontWeight: FontWeight.bold),
                         overflow: TextOverflow.visible,
                       ),
                       subtitle: Text(
@@ -261,13 +263,15 @@ class _AddOnState extends State<AddOn> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Estimated Budget',
+                  'Estimated Total Budget',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '\$$_estimatedBudget',
+                  '\$${_estimatedBudget.toStringAsFixed(2)}',
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w900),
+                      color: Color(0xFF35C5CF),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900),
                 ),
               ],
             ),
@@ -284,7 +288,7 @@ class _AddOnState extends State<AddOn> {
                   ),
                 ),
                 child: const Text(
-                  'Book Appointment',
+                  'Find Radiologists',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ),

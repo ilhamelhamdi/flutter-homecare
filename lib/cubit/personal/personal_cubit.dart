@@ -7,13 +7,21 @@ import 'personal_state.dart';
 class PersonalCubit extends Cubit<PersonalState> {
   PersonalCubit() : super(PersonalInitial());
 
-  void loadPersonalDetails() async {
+  void loadPersonalDetails({String? serviceType}) async {
     emit(PersonalLoading());
     try {
       final token = await Utils.getSpString(Const.TOKEN);
       print('Token: $token');
+
+      // Build API endpoint with optional filtering
+      String apiUrl = Const.API_PERSONAL_CASES;
+      if (serviceType != null) {
+        // Add query parameter for filtering by service type
+        apiUrl += '?service_type=${serviceType.toLowerCase()}';
+      }
+
       final response = await Dio().get(
-        '${Const.API_PERSONAL_CASES}',
+        apiUrl,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -26,9 +34,27 @@ class PersonalCubit extends Cubit<PersonalState> {
 
       if (response.statusCode == 200) {
         final data = response.data['data'] as List;
-        final issues = data.map((json) => Issue.fromJson(json)).toList();
+        var issues = data.map((json) => Issue.fromJson(json)).toList();
+        // Client-side filtering as backup if backend doesn't support filtering
+        if (serviceType != null) {
+          issues = issues.where((issue) {
+            final caseType = issue.caseType?.toLowerCase() ?? '';
+            switch (serviceType.toLowerCase()) {
+              case 'pharma':
+              case 'pharmacist':
+                return caseType == 'pharmacy' || caseType == 'pharmacist';
+              case 'nurse':
+                return caseType == 'nursing' || caseType == 'nurse';
+              case 'radiologist':
+                return caseType == 'radiology' || caseType == 'radiologist';
+              default:
+                return true;
+            }
+          }).toList();
+        }
+
         issues.forEach((issue) => issue.updateImageUrls());
-        print('Parsed issues: $issues');
+        print('Filtered issues for $serviceType: ${issues.length}');
         emit(PersonalLoaded(issues));
       } else {
         print('Failed to load data: ${response.statusMessage}');

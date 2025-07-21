@@ -32,6 +32,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   late DateTime _focusedDay;
   late DateTime selectTime;
   late AppointmentService _appointmentService;
+  bool _isSubmitting = false; // Add loading state to prevent duplicates
 
   @override
   void initState() {
@@ -44,6 +45,16 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   }
 
   Future<void> _submitAppointment() async {
+    // Prevent duplicate submissions
+    if (_isSubmitting) {
+      print('Already submitting appointment, ignoring duplicate request');
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
     try {
       final userId = await Utils.getSpString(Const.USER_ID);
 
@@ -124,7 +135,15 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         );
       }
     } catch (e) {
+      print('=== APPOINTMENT CREATION ERROR ===');
       print('Error: $e');
+
+      // Enhanced error logging for debugging
+      if (e is DioException && e.response != null) {
+        print('Status Code: ${e.response!.statusCode}');
+        print('Response Data: ${e.response!.data}');
+        print('Request Data: ${e.requestOptions.data}');
+      }
 
       String errorMessage = 'Failed to create appointment';
       if (e.toString().contains('Validation error') ||
@@ -132,7 +151,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         errorMessage = 'Please check your appointment details and try again';
       } else if (e.toString().contains('422')) {
         errorMessage =
-            'Invalid appointment data. Please verify all fields are correct';
+            'Invalid appointment data. Provider may not be available or data is incomplete. Please verify all fields are correct';
       } else if (e.toString().contains('provider_id')) {
         errorMessage =
             'Provider information is missing. Please select a provider again.';
@@ -140,13 +159,19 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         errorMessage =
             'Provider type is missing. Please select a provider again.';
       }
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      // Always reset the submitting state
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -316,13 +341,36 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: _submitAppointment,
-          child: Text(
-            widget.appointmentId != null ? 'Reschedule' : 'Next',
-            style: TextStyle(color: Colors.white),
-          ),
+          onPressed: _isSubmitting
+              ? null
+              : _submitAppointment, // Disable when submitting
+          child: _isSubmitting
+              ? const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      'Submitting...',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                )
+              : Text(
+                  widget.appointmentId != null ? 'Reschedule' : 'Next',
+                  style: const TextStyle(color: Colors.white),
+                ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF35C5CF),
+            backgroundColor: _isSubmitting
+                ? const Color(0xFF35C5CF).withOpacity(0.6)
+                : const Color(0xFF35C5CF),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),

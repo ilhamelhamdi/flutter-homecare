@@ -13,13 +13,14 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
   late TabController _tabController;
   List<Map<String, dynamic>> pharmaServices = [];
   List<Map<String, dynamic>> nurseServices = [];
+  List<Map<String, dynamic>> radiologistServices = [];
   bool isLoading = true;
   String? errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _fetchServiceTitles();
   }
 
@@ -46,9 +47,7 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
             'Authorization': 'Bearer $token',
           },
         ),
-      );
-
-      // Fetch Nurse service titles
+      ); // Fetch Nurse service titles
       final nurseResponse = await Dio().get(
         '${Const.URL_API}/service-titles/nurse',
         options: Options(
@@ -58,7 +57,19 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
         ),
       );
 
-      if (pharmaResponse.statusCode == 200 && nurseResponse.statusCode == 200) {
+      // Fetch Radiologist service titles
+      final radiologistResponse = await Dio().get(
+        '${Const.URL_API}/service-titles/radiologist',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (pharmaResponse.statusCode == 200 &&
+          nurseResponse.statusCode == 200 &&
+          radiologistResponse.statusCode == 200) {
         setState(() {
           // If backend returns data, use it, otherwise use default values
           if (pharmaResponse.data['data'] != null &&
@@ -116,6 +127,34 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
             ];
           }
 
+          if (radiologistResponse.data['data'] != null &&
+              radiologistResponse.data['data'].isNotEmpty) {
+            radiologistServices = List<Map<String, dynamic>>.from(
+                radiologistResponse.data['data']);
+          } else {
+            // Default radiologist services
+            radiologistServices = [
+              {
+                'id': 1,
+                'title': 'Image Analysis & Interpretation',
+                'price': 150.0
+              },
+              {'id': 2, 'title': 'CT Scan Review', 'price': 200.0},
+              {'id': 3, 'title': 'MRI Scan Analysis', 'price': 250.0},
+              {'id': 4, 'title': 'X-Ray Examination', 'price': 100.0},
+              {'id': 5, 'title': 'Ultrasound Analysis', 'price': 120.0},
+              {'id': 6, 'title': 'Mammography Review', 'price': 180.0},
+              {'id': 7, 'title': 'PET Scan Interpretation', 'price': 300.0},
+              {'id': 8, 'title': '3D Reconstruction Analysis', 'price': 220.0},
+              {'id': 9, 'title': 'Contrast Study Review', 'price': 160.0},
+              {
+                'id': 10,
+                'title': 'Second Opinion Consultation',
+                'price': 100.0
+              },
+            ];
+          }
+
           isLoading = false;
         });
       } else {
@@ -135,8 +174,11 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
   Future<void> _saveServiceTitles(String serviceType) async {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
-      final serviceData =
-          serviceType == 'pharma' ? pharmaServices : nurseServices;
+      final serviceData = serviceType == 'pharma'
+          ? pharmaServices
+          : serviceType == 'nurse'
+              ? nurseServices
+              : radiologistServices;
 
       // Add service_type to each item
       final servicesWithType = serviceData
@@ -161,8 +203,10 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
         setState(() {
           if (serviceType == 'pharma') {
             pharmaServices = updatedServices;
-          } else {
+          } else if (serviceType == 'nurse') {
             nurseServices = updatedServices;
+          } else {
+            radiologistServices = updatedServices;
           }
         });
 
@@ -199,7 +243,6 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
   //     }
   //   });
   // }
-
   void _addNewService(String serviceType) {
     setState(() {
       if (serviceType == 'pharma') {
@@ -207,10 +250,15 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
           'title': '', // Default empty title
           'price': 10.0, // Default price
         });
-      } else {
+      } else if (serviceType == 'nurse') {
         nurseServices.add({
           'title': '', // Default empty title
           'price': 10.0, // Default price
+        });
+      } else {
+        radiologistServices.add({
+          'title': '', // Default empty title
+          'price': 150.0, // Default radiologist price
         });
       }
     });
@@ -219,8 +267,11 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
   void _removeService(String serviceType, int index) async {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
-      final serviceData =
-          serviceType == 'pharma' ? pharmaServices : nurseServices;
+      final serviceData = serviceType == 'pharma'
+          ? pharmaServices
+          : serviceType == 'nurse'
+              ? nurseServices
+              : radiologistServices;
 
       // Check if the service has an ID (i.e., it exists on the server)
       final serviceId = serviceData[index]['id'];
@@ -285,6 +336,7 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
           tabs: const [
             Tab(text: 'Pharmacist Services'),
             Tab(text: 'Nurse Services'),
+            Tab(text: 'Radiologist Services'),
           ],
         ),
       ),
@@ -310,9 +362,7 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
                               double.tryParse(value) ?? 10.0;
                         });
                       },
-                    ),
-
-                    // Nurse Services Tab
+                    ), // Nurse Services Tab
                     _buildServiceList(
                       'nurse',
                       nurseServices,
@@ -325,6 +375,23 @@ class _ServiceTitlesEditPageState extends State<ServiceTitlesEditPage>
                         setState(() {
                           nurseServices[index]['price'] =
                               double.tryParse(value) ?? 10.0;
+                        });
+                      },
+                    ),
+
+                    // Radiologist Services Tab
+                    _buildServiceList(
+                      'radiologist',
+                      radiologistServices,
+                      (index, value) {
+                        setState(() {
+                          radiologistServices[index]['title'] = value;
+                        });
+                      },
+                      (index, value) {
+                        setState(() {
+                          radiologistServices[index]['price'] =
+                              double.tryParse(value) ?? 150.0;
                         });
                       },
                     ),

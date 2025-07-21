@@ -60,15 +60,15 @@ class _SearchPageState extends State<SearchPage> {
         print('Error fetching favorites: $e');
         // Continue without favorites if this fails
         favoriteProfessionals = [];
-      }
-
-      // Fetch all professionals - fix API endpoint selection
+      } // Fetch all professionals - fix API endpoint selection
       String apiEndpoint;
       if (widget.serviceType.toLowerCase() == "pharma" ||
           widget.serviceType.toLowerCase() == "pharmacist") {
         apiEndpoint = Const.API_PHARMACIST_SERVICES;
       } else if (widget.serviceType.toLowerCase() == "nurse") {
         apiEndpoint = Const.API_NURSE_SERVICES;
+      } else if (widget.serviceType.toLowerCase() == "radiologist") {
+        apiEndpoint = Const.API_RADIOLOGIST_SERVICES;
       } else {
         throw Exception('Unknown service type: ${widget.serviceType}');
       }
@@ -136,11 +136,15 @@ class _SearchPageState extends State<SearchPage> {
               'role': widget.serviceType.toLowerCase() == "pharma" ||
                       widget.serviceType.toLowerCase() == "pharmacist"
                   ? 'pharmacist'
-                  : 'nurse',
+                  : widget.serviceType.toLowerCase() == "radiologist"
+                      ? 'radiologist'
+                      : 'nurse',
               'provider_type': widget.serviceType.toLowerCase() == "pharma" ||
                       widget.serviceType.toLowerCase() == "pharmacist"
                   ? 'pharmacist'
-                  : 'nurse', // Add provider_type field
+                  : widget.serviceType.toLowerCase() == "radiologist"
+                      ? 'radiologist'
+                      : 'nurse', // Add provider_type field
             };
           }).toList();
 
@@ -242,7 +246,11 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String role = widget.serviceType == "Pharma" ? "Pharmacist" : "Nurse";
+    final String role = widget.serviceType == "Pharma"
+        ? "Pharmacist"
+        : widget.serviceType == "Radiologist"
+            ? "Radiologist"
+            : "Nurse";
 
     return Scaffold(
       appBar: AppBar(
