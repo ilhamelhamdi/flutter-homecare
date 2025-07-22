@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:m2health/cubit/precision/nutrition_assestment.dart';
+import 'package:m2health/cubit/precision/precision_page.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({
@@ -480,7 +480,7 @@ class _DashboardState extends State<Dashboard> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        NutritionAssessmentPage()),
+                                        PrecisionNutritionPage()),
                               );
                             } else {
                               showDialog(

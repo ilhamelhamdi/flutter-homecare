@@ -117,6 +117,7 @@ flutter:
     - assets/icons/
     - assets/fonts/
     - assets/images/
+    - assets/illustration/
     - assets/jsons/
     - assets/pdfs/content_service.pdf
   # in this "flutter" section. Each entry in this list should have a

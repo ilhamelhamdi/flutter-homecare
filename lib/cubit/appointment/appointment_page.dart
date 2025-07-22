@@ -104,12 +104,6 @@ class _AppointmentPageState extends State<AppointmentPage>
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.filter_list),
-                  onPressed: () {
-                    // Handle filter action
-                  },
-                ),
-                IconButton(
                   icon: const Icon(Icons.medical_services),
                   onPressed: () async {
                     // Check if user is a provider and navigate to provider appointments
