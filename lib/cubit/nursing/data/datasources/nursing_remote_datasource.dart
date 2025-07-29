@@ -1,58 +1,39 @@
-// lib/features/nursing/data/datasources/nursing_remote_datasource.dart
-import 'package:dio/dio.dart';
-import 'package:m2health/const.dart';
-import 'package:m2health/cubit/nursing/domain/entities/nursing_case.dart';
-import 'package:m2health/utils.dart';
+import 'package:m2health/cubit/nursing/data/models/nursing_case.dart';
+import 'package:m2health/cubit/nursing/data/models/nursing_service.dart';
 
-class NursingRemoteDataSource {
-  final Dio dio;
-  final String baseUrl;
+abstract class NursingRemoteDataSource {
+  Future<List<NursingServiceModel>> getNursingServices();
+  Future<void> createNursingCase(NursingCaseModel nursingCase);
+}
 
-  NursingRemoteDataSource({required this.dio, required this.baseUrl});
-
-  Future<List<NursingCaseModel>> getNursingCases() async {
-    try {
-      final token = await Utils.getSpString(Const.TOKEN);
-      final response = await dio.get(
-        '$baseUrl/nursing-cases',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        return data.map((json) => NursingCaseModel.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load nursing cases');
-      }
-    } catch (e) {
-      throw Exception('Error fetching nursing cases: $e');
-    }
+class NursingRemoteDataSourceImpl implements NursingRemoteDataSource {
+  @override
+  Future<List<NursingServiceModel>> getNursingServices() async {
+    // Simulate a network call
+    await Future.delayed(const Duration(seconds: 1));
+    return [
+      const NursingServiceModel(
+        title: 'Primary Nursing',
+        description:
+            'Monitor and administer\nnursing procedures from\nbody checking, Medication,\ntube feed and suctioning to\ninjections and wound care.',
+        imagePath: 'assets/icons/ilu_nurse.png',
+        color: '9AE1FF',
+        opacity: '0.3',
+      ),
+      const NursingServiceModel(
+        title: 'Specialized Nursing Services',
+        description:
+            'Focus on recovery and leave\nthe complex nursing care in\nthe hands of our experienced\nnurse Care Pros',
+        imagePath: 'assets/icons/ilu_nurse_special.png',
+        color: 'B28CFF',
+        opacity: '0.2',
+      ),
+    ];
   }
 
-  Future<NursingCaseModel> createNursingCase(NursingCase nursingCase) async {
-    try {
-      final token = await Utils.getSpString(Const.TOKEN);
-      final response = await dio.post(
-        '$baseUrl/nursing-cases',
-        data: (nursingCase as NursingCaseModel).toJson(),
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-
-      if (response.statusCode == 201) {
-        return NursingCaseModel.fromJson(response.data['data']);
-      } else {
-        throw Exception('Failed to create nursing case');
-      }
-    } catch (e) {
-      throw Exception('Error creating nursing case: $e');
-    }
+  @override
+  Future<void> createNursingCase(NursingCaseModel nursingCase) async {
+    // Simulate a network call
+    await Future.delayed(const Duration(seconds: 1));
   }
 }
