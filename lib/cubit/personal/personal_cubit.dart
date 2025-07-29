@@ -5,9 +5,11 @@ import 'package:m2health/utils.dart';
 import 'personal_state.dart';
 
 class PersonalCubit extends Cubit<PersonalState> {
+  String? currentServiceType;
   PersonalCubit() : super(PersonalInitial());
 
   void loadPersonalDetails({String? serviceType}) async {
+    currentServiceType = serviceType;
     emit(PersonalLoading());
     try {
       final token = await Utils.getSpString(Const.TOKEN);

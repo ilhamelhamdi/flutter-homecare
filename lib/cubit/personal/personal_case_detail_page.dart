@@ -20,19 +20,6 @@ class PersonalCaseDetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title Card
-              // Card(
-              //   margin: const EdgeInsets.symmetric(vertical: 8.0),
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(16.0),
-              //     child: Text(
-              //       'Title: ${personalCase['title']}',
-              //       style: const TextStyle(
-              //           fontSize: 18, fontWeight: FontWeight.bold),
-              //     ),
-              //   ),
-              // ),
-
               // Description Card
               Card(
                 margin: const EdgeInsets.symmetric(vertical: 8.0),

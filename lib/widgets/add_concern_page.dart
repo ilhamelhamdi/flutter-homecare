@@ -90,6 +90,9 @@ class _AddConcernPageState extends State<AddConcernPage> {
       print('Response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Reload the data on the previous page
+        context.read<PersonalCubit>().loadPersonalDetails();
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Issue submitted successfully'),

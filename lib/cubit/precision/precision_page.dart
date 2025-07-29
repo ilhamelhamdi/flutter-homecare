@@ -227,7 +227,7 @@ class NutritionTimeline extends StatelessWidget {
       children: [
         Container(
           width: 32,
-          height: 32,
+          height: 200,
           decoration: BoxDecoration(
             color: isCompleted ? Colors.green : Colors.grey.shade300,
             shape: BoxShape.circle,

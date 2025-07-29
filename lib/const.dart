@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Const {
-  // static const String BASE_URL = 'http://192.168.1.4:3333';
+  // static const String BASE_URL = 'http://192.168.1.2:3333';
   static const String BASE_URL = 'https://homecare-api.med-map.org';
   // static const String BASE_URL = 'http://192.168.56.1:3333';
   static const String URL_API = BASE_URL + '/v1';
