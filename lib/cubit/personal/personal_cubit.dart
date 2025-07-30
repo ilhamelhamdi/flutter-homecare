@@ -36,22 +36,22 @@ class PersonalCubit extends Cubit<PersonalState> {
         final data = response.data['data'] as List;
         var issues = data.map((json) => Issue.fromJson(json)).toList();
         // Client-side filtering as backup if backend doesn't support filtering
-        if (serviceType != null) {
-          issues = issues.where((issue) {
-            final caseType = issue.caseType?.toLowerCase() ?? '';
-            switch (serviceType.toLowerCase()) {
-              case 'pharma':
-              case 'pharmacist':
-                return caseType == 'pharmacy' || caseType == 'pharmacist';
-              case 'nurse':
-                return caseType == 'nursing' || caseType == 'nurse';
-              case 'radiologist':
-                return caseType == 'radiology' || caseType == 'radiologist';
-              default:
-                return true;
-            }
-          }).toList();
-        }
+        // if (serviceType != null) {
+        //   issues = issues.where((issue) {
+        //     final caseType = issue.caseType?.toLowerCase() ?? '';
+        //     switch (serviceType.toLowerCase()) {
+        //       case 'pharma':
+        //       case 'pharmacist':
+        //         return caseType == 'pharmacy' || caseType == 'pharmacist';
+        //       case 'nurse':
+        //         return caseType == 'nursing' || caseType == 'nurse';
+        //       case 'radiologist':
+        //         return caseType == 'radiology' || caseType == 'radiologist';
+        //       default:
+        //         return true;
+        //     }
+        //   }).toList();
+        // }
 
         issues.forEach((issue) => issue.updateImageUrls());
         print('Filtered issues for $serviceType: ${issues.length}');
