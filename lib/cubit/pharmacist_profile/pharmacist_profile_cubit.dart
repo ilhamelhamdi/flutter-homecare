@@ -31,6 +31,8 @@ class PharmacistProfileCubit extends Cubit<PharmacistProfileState> {
                 text: 'Incremental review text...',
                 rating: '4.5',
               )),
+      imageUrl:
+          'http://homecare-api.med-map.org/uploads/pharmacist-avatars/cm8mg6m9c0021h2p0c592c8cg.png',
     ));
   }
 }

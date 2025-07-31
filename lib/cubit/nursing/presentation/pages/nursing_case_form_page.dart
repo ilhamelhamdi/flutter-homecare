@@ -142,7 +142,7 @@ class _NursingCaseFormPageState extends State<NursingCaseFormPage> {
                       child: OutlinedButton(
                         onPressed: () {
                           // Ganti dengan halaman form nursing yang baru
-                          // showAddConcernPage(context);
+                          showAddConcernPage(context);
                         },
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Color(0xFF35C5CF)),
@@ -164,7 +164,7 @@ class _NursingCaseFormPageState extends State<NursingCaseFormPage> {
                       child: ElevatedButton(
                         onPressed: hasIssues
                             ? () {
-                                // Navigasi ke halaman selanjutnya, misalnya pembayaran
+                                showAddConcernPage(context);
                               }
                             : null,
                         style: ElevatedButton.styleFrom(

@@ -46,15 +46,20 @@ class ProfessionalProfilePage extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        image: DecorationImage(
-                          image: NetworkImage(avatar),
-                          fit: BoxFit.cover,
-                        ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: FadeInImage.assetNetwork(
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        placeholder: 'assets/images/images_budi.png',
+                        image: avatar,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/images_budi.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
                     const Positioned(

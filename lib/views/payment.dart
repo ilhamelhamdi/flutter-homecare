@@ -49,14 +49,20 @@ class _PaymentPageState extends State<PaymentPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 50,
                       height: 50,
-                      decoration: BoxDecoration(
+                      child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: DecorationImage(
-                          image: NetworkImage(profile['avatar']),
+                        child: Image.network(
+                          profile['avatar'],
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/images_budi.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       ),
                     ),

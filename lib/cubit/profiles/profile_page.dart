@@ -79,270 +79,280 @@ class ProfilePage extends StatelessWidget {
                 );
               } else if (state is ProfileLoaded) {
                 final isAdmin = Utils.getSpString(Const.ROLE) == 'admin';
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EditProfilePage(
-                                        profile: state.profile)),
-                              );
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: state.profile.avatar.isNotEmpty
-                                  ? Image.network(
-                                      state.profile.avatar,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        // Fallback to default avatar if network image fails
-                                        return Image.asset(
-                                          'assets/icons/ic_avatar.png',
-                                          width: 100,
-                                          height: 100,
-                                          fit: BoxFit.cover,
-                                        );
-                                      },
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return Container(
-                                          width: 100,
-                                          height: 100,
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                          .cumulativeBytesLoaded /
-                                                      loadingProgress
-                                                          .expectedTotalBytes!
-                                                  : null,
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<ProfileCubit>().fetchProfile();
+                  },
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditProfilePage(
+                                          profile: state.profile)),
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: state.profile.avatar.isNotEmpty
+                                    ? Image.network(
+                                        state.profile.avatar,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          // Fallback to default avatar if network image fails
+                                          return Image.asset(
+                                            'assets/icons/ic_avatar.png',
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Container(
+                                            width: 100,
+                                            height: 100,
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : Image.asset(
-                                      'assets/icons/ic_avatar.png',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
+                                          );
+                                        },
+                                      )
+                                    : Image.asset(
+                                        'assets/icons/ic_avatar.png',
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                state.profile.username,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Last updated:',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              Text(
-                                formatDateTime(state.profile.updatedAt),
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Card(
-                        elevation: 4,
-                        shadowColor: Colors.grey,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Health Records',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              ListTile(
-                                leading: const Icon(
-                                  Icons.medical_services,
-                                  color: Color(0xFF35C5CF),
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  state.profile.username,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                title: const Text('Medical Records'),
-                                trailing: const Icon(
-                                  Icons.arrow_forward_ios,
+                                const SizedBox(height: 4),
+                                const Text(
+                                  'Last updated:',
+                                  style: TextStyle(color: Colors.grey),
                                 ),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            MedicalRecordsPage()),
-                                  );
-                                },
-                              ),
-                              // ListTile(
-                              //   leading: const Icon(Icons.upload_file_outlined,
-                              //       color: Color(0xFF35C5CF)),
-                              //   title: const Text('Upload Report'),
-                              //   trailing: const Icon(Icons.arrow_forward_ios),
-                              //   onTap: () {
-                              //     Navigator.push(
-                              //       context,
-                              //       MaterialPageRoute(
-                              //           builder: (context) => UploadPDFPage()),
-                              //     );
-                              //   },
-                              // ),
-                              ListTile(
-                                leading: const Icon(Icons.local_pharmacy,
-                                    color: Color(0xFF35C5CF)),
-                                title: const Text('Pharmagenomics Profile'),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          PharmagenomicsProfilePage(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.local_pharmacy,
-                                    color: Color(0xFF35C5CF)),
-                                title: const Text('Wellness Genomics Profile'),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                onTap: () {
-                                  // Handle Pharma Profile tap
-                                },
-                              ),
-                              if (isAdmin)
+                                Text(
+                                  formatDateTime(state.profile.updatedAt),
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Card(
+                          elevation: 4,
+                          shadowColor: Colors.grey,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Health Records',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                                 ListTile(
-                                  leading: const Icon(Icons.edit_note,
+                                  leading: const Icon(
+                                    Icons.medical_services,
+                                    color: Color(0xFF35C5CF),
+                                  ),
+                                  title: const Text('Medical Records'),
+                                  trailing: const Icon(
+                                    Icons.arrow_forward_ios,
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              MedicalRecordsPage()),
+                                    );
+                                  },
+                                ),
+                                // ListTile(
+                                //   leading: const Icon(Icons.upload_file_outlined,
+                                //       color: Color(0xFF35C5CF)),
+                                //   title: const Text('Upload Report'),
+                                //   trailing: const Icon(Icons.arrow_forward_ios),
+                                //   onTap: () {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //           builder: (context) => UploadPDFPage()),
+                                //     );
+                                //   },
+                                // ),
+                                ListTile(
+                                  leading: const Icon(Icons.local_pharmacy,
                                       color: Color(0xFF35C5CF)),
-                                  title:
-                                      const Text('Edit Service Titles (admin)'),
+                                  title: const Text('Pharmagenomics Profile'),
                                   trailing: const Icon(Icons.arrow_forward_ios),
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            ServiceTitlesEditPage(),
+                                            PharmagenomicsProfilePage(),
                                       ),
                                     );
                                   },
                                 ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Card(
-                        elevation: 4,
-                        shadowColor: Colors.grey,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Appointment',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.calendar_today,
-                                    color: Color(0xFF35C5CF)),
-                                title: const Text('All My Appointments'),
-                                trailing: const Icon(Icons.arrow_forward_ios),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AppointmentPage(),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Profile Information',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EditProfilePage(
-                                        profile: state.profile)),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            Text(
-                                'Age: ${state.profile.age} | Weight: ${state.profile.weight} KG | Height: ${state.profile.height} cm'),
-                            const SizedBox(height: 8),
-                            Text('Phone Number: ${state.profile.phoneNumber}'),
-                            const SizedBox(height: 8),
-                            Text(
-                                'Home Address (Primary): ${state.profile.homeAddress}'),
-                            const SizedBox(height: 16),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: OutlinedButton.icon(
-                          onPressed: () async {
-                            await Utils.clearSp();
-                            debugPrint('Data telah dibersihkan');
-                            GoRouter.of(context).go(AppRoutes.signIn);
-                          },
-                          icon: const Icon(Icons.logout, color: Colors.red),
-                          label: const Text('Logout',
-                              style: TextStyle(color: Colors.red)),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.red),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                                ListTile(
+                                  leading: const Icon(Icons.local_pharmacy,
+                                      color: Color(0xFF35C5CF)),
+                                  title:
+                                      const Text('Wellness Genomics Profile'),
+                                  trailing: const Icon(Icons.arrow_forward_ios),
+                                  onTap: () {
+                                    // Handle Pharma Profile tap
+                                  },
+                                ),
+                                if (isAdmin)
+                                  ListTile(
+                                    leading: const Icon(Icons.edit_note,
+                                        color: Color(0xFF35C5CF)),
+                                    title: const Text(
+                                        'Edit Service Titles (admin)'),
+                                    trailing:
+                                        const Icon(Icons.arrow_forward_ios),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ServiceTitlesEditPage(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        Card(
+                          elevation: 4,
+                          shadowColor: Colors.grey,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Appointment',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.calendar_today,
+                                      color: Color(0xFF35C5CF)),
+                                  title: const Text('All My Appointments'),
+                                  trailing: const Icon(Icons.arrow_forward_ios),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AppointmentPage(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Profile Information',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditProfilePage(
+                                          profile: state.profile)),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              Text(
+                                  'Age: ${state.profile.age} | Weight: ${state.profile.weight} KG | Height: ${state.profile.height} cm'),
+                              const SizedBox(height: 8),
+                              Text(
+                                  'Phone Number: ${state.profile.phoneNumber}'),
+                              const SizedBox(height: 8),
+                              Text(
+                                  'Home Address (Primary): ${state.profile.homeAddress}'),
+                              const SizedBox(height: 16),
+                            ],
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              await Utils.clearSp();
+                              debugPrint('Data telah dibersihkan');
+                              GoRouter.of(context).go(AppRoutes.signIn);
+                            },
+                            icon: const Icon(Icons.logout, color: Colors.red),
+                            label: const Text('Logout',
+                                style: TextStyle(color: Colors.red)),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.red),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               } else if (state is ProfileError) {

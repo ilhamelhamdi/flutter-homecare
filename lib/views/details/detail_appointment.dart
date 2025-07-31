@@ -379,18 +379,9 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                                 height: 50,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 25,
-                                      color: Colors.grey[600],
-                                    ),
+                                  return Image.asset(
+                                    'assets/images/images_budi.png',
+                                    fit: BoxFit.cover,
                                   );
                                 },
                               )

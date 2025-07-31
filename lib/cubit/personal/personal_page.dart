@@ -77,7 +77,8 @@ class _PersonalPageState extends State<PersonalPage> {
                     final issues = state.issues;
                     return RefreshIndicator(
                       onRefresh: () async {
-                        context.read<PersonalCubit>().loadPersonalDetails();
+                        context.read<PersonalCubit>().loadPersonalDetails(
+                            serviceType: widget.serviceType);
                       },
                       child: issues.isEmpty
                           ? const Center(
@@ -158,6 +159,15 @@ class _PersonalPageState extends State<PersonalPage> {
                                                   width: 100,
                                                   height: 100,
                                                   fit: BoxFit.cover,
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Image.asset(
+                                                      'assets/images/no_img.jpg',
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    );
+                                                  },
                                                 );
                                               }).toList(),
                                             ),

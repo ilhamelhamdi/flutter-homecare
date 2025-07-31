@@ -111,20 +111,61 @@ class _DashboardState extends State<Dashboard> {
               padding: const EdgeInsets.only(bottom: 25.0),
               child: BlocBuilder<ProfileCubit, ProfileState>(
                 builder: (context, state) {
+                  Widget avatarWidget;
                   String displayName = userName ?? 'User';
-                  String avatarUrl = '';
 
                   if (state is ProfileLoaded) {
-                    // Use profile data when available
                     displayName = state.profile.username.isNotEmpty
                         ? state.profile.username
                         : userName ?? 'User';
-                    avatarUrl = state.profile.avatar ?? '';
-                  } else if (state is ProfileError ||
-                      state is ProfileUnauthenticated) {
-                    // Fallback to SharedPreferences data if profile loading fails
+                    avatarWidget = state.profile.avatar.isNotEmpty
+                        ? Image.network(
+                            state.profile.avatar,
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/icons/ic_avatar.png',
+                                width: 56,
+                                height: 56,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Container(
+                                width: 56,
+                                height: 56,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            'assets/icons/ic_avatar.png',
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                          );
+                  } else {
+                    // For Loading, Error, or Unauthenticated states
                     displayName = userName ?? 'User';
-                    avatarUrl = ''; // No avatar available
+                    avatarWidget = Image.asset(
+                      'assets/icons/ic_avatar.png',
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                    );
                   }
 
                   return Column(
@@ -138,7 +179,7 @@ class _DashboardState extends State<Dashboard> {
                             fit: BoxFit.contain,
                             height: 25,
                           ),
-                          const Spacer(), // Menambahkan spacer untuk memisahkan logo dan CircleAvatar
+                          const Spacer(),
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -152,56 +193,11 @@ class _DashboardState extends State<Dashboard> {
                               width: 56,
                               height: 56,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    15), // Membuat sudut membulat
+                                borderRadius: BorderRadius.circular(15),
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
-                                child: avatarUrl.isNotEmpty
-                                    ? Image.network(
-                                        avatarUrl,
-                                        width: 56,
-                                        height: 56,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          // Fallback to default avatar if network image fails
-                                          return Image.asset(
-                                            'assets/icons/ic_avatar.png',
-                                            width: 56,
-                                            height: 56,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                        loadingBuilder:
-                                            (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
-                                            return child;
-                                          return Container(
-                                            width: 56,
-                                            height: 56,
-                                            child: Center(
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                value: loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      )
-                                    : Image.asset(
-                                        'assets/icons/ic_avatar.png',
-                                        width: 56,
-                                        height: 56,
-                                        fit: BoxFit.cover,
-                                      ),
+                                child: avatarWidget,
                               ),
                             ),
                           ),
@@ -210,13 +206,36 @@ class _DashboardState extends State<Dashboard> {
                       const SizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Live Longer & Live Healthier, $displayName!",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        child: Row(
+                          children: [
+                            if (state is ProfileLoading) ...[
+                              const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                "Loading...",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ] else
+                              Text(
+                                "Live Longer & Live Healthier, $displayName!",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                       // ...existing code for search field...

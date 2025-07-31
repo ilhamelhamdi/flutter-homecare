@@ -15,6 +15,7 @@ class PharmacistProfileLoaded extends PharmacistProfileState {
   final String workingInfo;
   final List<Certificate> certificates;
   final List<Review> reviews;
+  final String imageUrl;
 
   PharmacistProfileLoaded({
     required this.name,
@@ -26,6 +27,7 @@ class PharmacistProfileLoaded extends PharmacistProfileState {
     required this.workingInfo,
     required this.certificates,
     required this.reviews,
+    required this.imageUrl,
   });
 }
 
