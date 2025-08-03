@@ -29,3 +29,23 @@ class NursingCaseError extends NursingCaseState {
   @override
   List<Object> get props => [message];
 }
+
+class MedicalRecordsLoading extends NursingCaseState {}
+
+class MedicalRecordsLoaded extends NursingCaseState {
+  final List<Map<String, dynamic>> medicalRecords;
+
+  const MedicalRecordsLoaded(this.medicalRecords);
+
+  @override
+  List<Object> get props => [medicalRecords];
+}
+
+class MedicalRecordsError extends NursingCaseState {
+  final String message;
+
+  const MedicalRecordsError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

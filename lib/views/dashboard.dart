@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:m2health/views/diabetic_care.dart';
 import 'package:m2health/views/home_health_screening.dart';
-import 'package:m2health/views/nursing_services.dart';
 import 'package:m2health/views/pharmacist_services.dart';
 import 'package:m2health/views/remote_patient_monitoring.dart';
 import 'package:m2health/views/second_opinion.dart';
@@ -331,8 +330,7 @@ class _DashboardState extends State<Dashboard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const NursingServicesPage()),
+                                builder: (context) => NursingService()),
                           );
                         },
                         iconPath:

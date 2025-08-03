@@ -17,11 +17,11 @@ class NursingServiceModel extends NursingServiceEntity {
 
   factory NursingServiceModel.fromMap(Map<String, dynamic> map) {
     return NursingServiceModel(
-      title: map['title'],
-      description: map['description'],
-      imagePath: map['imagePath'],
-      color: map['color'],
-      opacity: map['opacity'],
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      imagePath: map['imagePath'] ?? '',
+      color: map['color'] ?? '',
+      opacity: map['opacity'] ?? '',
     );
   }
 }

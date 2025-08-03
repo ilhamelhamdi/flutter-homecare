@@ -32,8 +32,13 @@ import 'package:m2health/cubit/nursing/domain/repositories/nursing_repository.da
 import 'package:m2health/cubit/nursing/domain/usecases/create_nursing_case.dart';
 import 'package:m2health/cubit/nursing/domain/usecases/get_nursing_cases.dart';
 import 'package:m2health/cubit/nursing/domain/usecases/get_nursing_services.dart';
+import 'package:m2health/cubit/nursing/domain/usecases/get_medical_records.dart';
+import 'package:m2health/cubit/nursing/domain/usecases/update_nursing_case.dart';
+import 'package:m2health/cubit/nursing/domain/usecases/get_professionals.dart';
+import 'package:m2health/cubit/nursing/domain/usecases/toggle_favorite.dart';
 import 'package:m2health/cubit/nursing/presentation/bloc/nursing_case/nursing_case_bloc.dart';
 import 'package:m2health/cubit/nursing/presentation/bloc/nursing_services/nursing_services_bloc.dart';
+import 'package:m2health/cubit/nursing/presentation/bloc/professional/professional_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,7 +61,8 @@ void main() async {
         // Nursing Module Dependencies
         RepositoryProvider<NursingRepository>(
           create: (context) => NursingRepositoryImpl(
-            remoteDataSource: NursingRemoteDataSourceImpl(),
+            remoteDataSource:
+                NursingRemoteDataSourceImpl(dio: context.read<Dio>()),
           ),
         ),
         Provider<GetNursingServices>(
@@ -71,6 +77,14 @@ void main() async {
           create: (context) =>
               CreateNursingCase(context.read<NursingRepository>()),
         ),
+        Provider<GetMedicalRecords>(
+          create: (context) =>
+              GetMedicalRecords(context.read<NursingRepository>()),
+        ),
+        Provider<UpdateNursingCase>(
+          create: (context) =>
+              UpdateNursingCase(context.read<NursingRepository>()),
+        ),
         BlocProvider(
           create: (context) => NursingServicesBloc(
             getNursingServices: context.read<GetNursingServices>(),
@@ -80,6 +94,22 @@ void main() async {
           create: (context) => NursingCaseBloc(
             getNursingCases: context.read<GetNursingCases>(),
             createNursingCase: context.read<CreateNursingCase>(),
+            getMedicalRecords: context.read<GetMedicalRecords>(),
+            updateNursingCase: context.read<UpdateNursingCase>(),
+          ),
+        ),
+        Provider<GetProfessionals>(
+          create: (context) =>
+              GetProfessionals(context.read<NursingRepository>()),
+        ),
+        Provider<ToggleFavorite>(
+          create: (context) =>
+              ToggleFavorite(context.read<NursingRepository>()),
+        ),
+        BlocProvider(
+          create: (context) => ProfessionalBloc(
+            getProfessionals: context.read<GetProfessionals>(),
+            toggleFavorite: context.read<ToggleFavorite>(),
           ),
         ),
       ],

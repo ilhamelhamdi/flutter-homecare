@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/cubit/appointment/appointment_detail.dart';
+import 'package:m2health/main.dart';
 import 'package:m2health/views/appointment/appointment_detail_page.dart';
 import 'package:m2health/cubit/appointment/appointment_manager.dart';
 import 'package:m2health/models/appointment.dart';
@@ -10,6 +11,7 @@ import 'package:m2health/services/provider_service.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:m2health/views/book_appointment.dart';
+import 'package:m2health/views/dashboard.dart';
 
 class AppointmentPage extends StatefulWidget {
   static const String route = '/appointment';
@@ -83,6 +85,14 @@ class _AppointmentPageState extends State<AppointmentPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Dashboard()),
+                (Route<dynamic> route) => false);
+          },
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

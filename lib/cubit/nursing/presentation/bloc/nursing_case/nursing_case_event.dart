@@ -18,3 +18,15 @@ class CreateNursingCaseEvent extends NursingCaseEvent {
   @override
   List<Object> get props => [nursingCase];
 }
+
+class GetMedicalRecordsEvent extends NursingCaseEvent {}
+
+class UpdateNursingCaseEvent extends NursingCaseEvent {
+  final String caseId;
+  final Map<String, dynamic> data;
+
+  const UpdateNursingCaseEvent(this.caseId, this.data);
+
+  @override
+  List<Object> get props => [caseId, data];
+}

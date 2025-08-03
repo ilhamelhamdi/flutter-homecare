@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
-import 'package:m2health/views/appointment/appointment_detail_page.dart';
+import 'package:m2health/cubit/appointment/appointment_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:m2health/widgets/bottombar.dart';
 
 class PaymentPage extends StatefulWidget {
   final int appointmentId;
@@ -164,7 +166,7 @@ class _PaymentPageState extends State<PaymentPage> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Const.tosca, // Set the button color to Const.tosca
+            backgroundColor: Const.tosca,
           ),
           child: const Text(
             'Confirm',
@@ -232,7 +234,7 @@ class PaymentSuccessDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            'assets/icons/ic_checklist.png', // Replace with your actual image path
+            'assets/icons/ic_checklist.png',
             width: 142,
             height: 142,
           ),
@@ -295,35 +297,15 @@ class PaymentSuccessDialog extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  Const.tosca, // Set the button color to Const.tosca
-              minimumSize:
-                  const Size(150, 50), // Customize the width and height
+              backgroundColor: Const.tosca,
+              minimumSize: const Size(150, 50),
             ),
             child: const Text(
               'Please Feedback',
-              style:
-                  TextStyle(color: Colors.white), // Set the text color to white
+              style: TextStyle(color: Colors.white),
             ),
           ),
           const SizedBox(height: 16),
-          // ElevatedButton(
-          //   onPressed: () {
-          //     // Navigator.of(context).pop();
-          //     context.go('/dashboard');
-          //   },
-          //   style: ElevatedButton.styleFrom(
-          //     backgroundColor:
-          //         Const.tosca, // Set the button color to Const.tosca
-          //     minimumSize:
-          //         const Size(150, 50), // Customize the width and height
-          //   ),
-          //   child: const Text(
-          //     'Return to Home',
-          //     style:
-          //         TextStyle(color: Colors.white), // Set the text color to white
-          //   ),
-          // ),
           SizedBox(
             width: 150,
             height: 50,
@@ -473,7 +455,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
             const SizedBox(height: 16),
             Center(
               child: SizedBox(
-                width: 353, // Set the width to 353
+                width: 353,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -483,8 +465,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Const.tosca, // Set the button color to Const.tosca
+                    backgroundColor: Const.tosca,
                   ),
                   child: const Text(
                     'Submit',
@@ -498,7 +479,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
             ),
             Center(
               child: SizedBox(
-                width: 353, // Set the width to 353
+                width: 353,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -508,8 +489,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Const.tosca, // Set the button color to Const.tosca
+                    backgroundColor: Const.tosca,
                   ),
                   child: const Text(
                     'Close',
@@ -565,7 +545,6 @@ class FeedbackDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: Text('Feedback'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -578,7 +557,7 @@ class FeedbackDetails extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/icons/ic_checklist.png', // Replace with your actual image path
+              'assets/icons/ic_checklist.png',
               width: 142,
               height: 142,
             ),
@@ -606,14 +585,12 @@ class FeedbackDetails extends StatelessWidget {
                         builder: (context) => AppointmentPage(),
                       ),
                     ).then((_) {
-                      // Show the bottom navigation bar after navigation completes
                       MyApp.showBottomAppBar(context);
                     });
                   },
                   child: const Text(
                     'View Detail',
-                    style: TextStyle(
-                        color: Const.tosca), // Set the text color to white
+                    style: TextStyle(color: Const.tosca),
                   ),
                 ),
               ),

@@ -11,6 +11,16 @@ class NursingServiceCard extends StatelessWidget {
     required this.onTap,
   });
 
+  Color _getCardColor() {
+    try {
+      final String hexColor = service.color.replaceAll('#', '');
+      final double opacity = double.tryParse(service.opacity) ?? 1.0;
+      return Color(int.parse('0xFF$hexColor')).withOpacity(opacity);
+    } catch (e) {
+      return Colors.grey.shade200;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -19,8 +29,7 @@ class NursingServiceCard extends StatelessWidget {
         width: 357,
         height: 243,
         padding: const EdgeInsets.all(16.0),
-        color: Color(int.parse('0xFF${service.color}'))
-            .withOpacity(double.parse(service.opacity)),
+        color: _getCardColor(),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
