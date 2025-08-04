@@ -307,23 +307,6 @@ class PaymentSuccessDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // ElevatedButton(
-          //   onPressed: () {
-          //     // Navigator.of(context).pop();
-          //     context.go('/dashboard');
-          //   },
-          //   style: ElevatedButton.styleFrom(
-          //     backgroundColor:
-          //         Const.tosca, // Set the button color to Const.tosca
-          //     minimumSize:
-          //         const Size(150, 50), // Customize the width and height
-          //   ),
-          //   child: const Text(
-          //     'Return to Home',
-          //     style:
-          //         TextStyle(color: Colors.white), // Set the text color to white
-          //   ),
-          // ),
           SizedBox(
             width: 150,
             height: 50,

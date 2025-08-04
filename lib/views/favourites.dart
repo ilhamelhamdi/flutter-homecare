@@ -160,6 +160,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Center(
           child: Text(
             'Favourites',

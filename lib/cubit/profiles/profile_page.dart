@@ -9,7 +9,7 @@ import 'package:m2health/cubit/profiles/profile_details/medical_record/medical_r
 import 'package:m2health/cubit/profiles/profile_details/pharmagenomics_profile/pharmagenomical.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/utils.dart';
-import 'package:m2health/cubit/appointment/appointment_page.dart';
+import 'package:m2health/views/appointment/appointment_detail_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +32,7 @@ class ProfilePage extends StatelessWidget {
       create: (context) => ProfileCubit(Dio())..fetchProfile(),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Text(
             'My Health Profile',
             style: TextStyle(fontWeight: FontWeight.bold),

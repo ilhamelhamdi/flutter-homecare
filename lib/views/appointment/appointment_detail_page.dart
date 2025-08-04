@@ -85,14 +85,6 @@ class _AppointmentPageState extends State<AppointmentPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Dashboard()),
-                (Route<dynamic> route) => false);
-          },
-        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -106,23 +98,6 @@ class _AppointmentPageState extends State<AppointmentPage>
                   icon: const Icon(Icons.search),
                   onPressed: () {
                     // Handle search action
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.medical_services),
-                  onPressed: () async {
-                    // Check if user is a provider and navigate to provider appointments
-                    final isProvider = await AppointmentManager.isProvider();
-                    if (isProvider) {
-                      AppointmentManager.navigateToAppointmentPage(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'This feature is only available for healthcare providers'),
-                        ),
-                      );
-                    }
                   },
                 ),
               ],
@@ -168,7 +143,31 @@ class _AppointmentPageState extends State<AppointmentPage>
           }
         },
       ),
-      // bottomNavigationBar: CustomBottomAppBar(),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Const.tosca,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: const Text(
+            'Return to Home',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
     );
   }
 
@@ -192,6 +191,18 @@ class _AppointmentPageState extends State<AppointmentPage>
           .toList();
     }
 
+    // Sort by date (newest first)
+    filteredAppointments.sort((a, b) {
+      try {
+        final dateA = DateTime.parse(a.date);
+        final dateB = DateTime.parse(b.date);
+        return dateB.compareTo(dateA);
+      } catch (e) {
+        // In case of parsing error, keep original order
+        return 0;
+      }
+    });
+
     if (filteredAppointments.isEmpty) {
       return Center(
         child: Column(
@@ -214,271 +225,244 @@ class _AppointmentPageState extends State<AppointmentPage>
       itemCount: filteredAppointments.length,
       itemBuilder: (context, index) {
         final appointment = filteredAppointments[index];
-        final profile = appointment.profileServiceData;
+        return _AppointmentListItem(
+          key: ValueKey(appointment.id), // Add a unique key for performance
+          appointment: appointment,
+          getProviderData: _getProviderDataWithFallback,
+        );
+      },
+    );
+  }
+}
 
-        // DEBUG: Print comprehensive appointment data
-        print('=== APPOINTMENT DEBUG INFO ===');
-        print('Appointment ID: ${appointment.id}');
-        print('Appointment Type: ${appointment.type}');
-        print('Raw profileServiceData: $profile');
-        print('profileServiceData type: ${profile.runtimeType}');
-        print('profileServiceData keys: ${profile.keys.toList()}');
+/// An optimized widget for displaying a single appointment item.
+/// It uses a StatefulWidget to ensure the Future for fetching provider data
+/// is called only once, preventing lag during scrolling.
+class _AppointmentListItem extends StatefulWidget {
+  final Appointment appointment;
+  final Future<Map<String, dynamic>?> Function(Appointment) getProviderData;
 
-        // Check all possible name fields
-        final possibleNameFields = [
-          'name',
-          'username',
-          'provider_name',
-          'pharmacist_name',
-          'nurse_name'
-        ];
-        for (final field in possibleNameFields) {
-          if (profile.containsKey(field)) {
-            print('Found $field: ${profile[field]}');
-          }
-        }
+  const _AppointmentListItem({
+    Key? key,
+    required this.appointment,
+    required this.getProviderData,
+  }) : super(key: key);
 
-        // Check all possible avatar fields
-        final possibleAvatarFields = [
-          'avatar',
-          'image',
-          'photo',
-          'profile_image'
-        ];
-        for (final field in possibleAvatarFields) {
-          if (profile.containsKey(field)) {
-            print('Found $field: ${profile[field]}');
-          }
-        }
-        print('=== END DEBUG INFO ===');
+  @override
+  __AppointmentListItemState createState() => __AppointmentListItemState();
+}
 
-        return FutureBuilder<Map<String, dynamic>?>(
-          future: _getProviderDataWithFallback(appointment),
-          builder: (context, snapshot) {
-            final effectiveProfile =
-                snapshot.data ?? appointment.profileServiceData;
+class __AppointmentListItemState extends State<_AppointmentListItem> {
+  late Future<Map<String, dynamic>?> _providerDataFuture;
 
-            // Enhanced provider name extraction with multiple fallbacks
-            String providerName = 'Unknown Provider';
-            if (effectiveProfile['name'] != null &&
-                effectiveProfile['name'].toString().isNotEmpty) {
-              providerName = effectiveProfile['name'].toString();
-            } else if (effectiveProfile['username'] != null &&
-                effectiveProfile['username'].toString().isNotEmpty) {
-              providerName = effectiveProfile['username'].toString();
-            } else if (effectiveProfile['provider_name'] != null &&
-                effectiveProfile['provider_name'].toString().isNotEmpty) {
-              providerName = effectiveProfile['provider_name'].toString();
-            } else if (effectiveProfile['pharmacist_name'] != null &&
-                effectiveProfile['pharmacist_name'].toString().isNotEmpty) {
-              providerName = effectiveProfile['pharmacist_name'].toString();
-            } else if (effectiveProfile['nurse_name'] != null &&
-                effectiveProfile['nurse_name'].toString().isNotEmpty) {
-              providerName = effectiveProfile['nurse_name'].toString();
-            } else {
-              // If still no provider name found, try to extract from summary as final fallback
-              final extractedName =
-                  appointment.extractProviderNameFromSummary();
-              if (extractedName != null) {
-                providerName = extractedName;
-              }
-            }
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the data once when the widget is initialized and store the future.
+    _providerDataFuture = widget.getProviderData(widget.appointment);
+  }
 
-            // Enhanced avatar handling with multiple fallbacks
-            String? avatarUrl;
-            if (effectiveProfile['avatar'] != null &&
-                effectiveProfile['avatar'].toString().isNotEmpty) {
-              avatarUrl = effectiveProfile['avatar'].toString();
-            } else if (effectiveProfile['image'] != null &&
-                effectiveProfile['image'].toString().isNotEmpty) {
-              avatarUrl = effectiveProfile['image'].toString();
-            } else if (effectiveProfile['photo'] != null &&
-                effectiveProfile['photo'].toString().isNotEmpty) {
-              avatarUrl = effectiveProfile['photo'].toString();
-            } else if (effectiveProfile['profile_image'] != null &&
-                effectiveProfile['profile_image'].toString().isNotEmpty) {
-              avatarUrl = effectiveProfile['profile_image'].toString();
-            }
+  String _getProviderName(
+      Map<String, dynamic> profile, Appointment appointment) {
+    if (profile['name'] != null && profile['name'].toString().isNotEmpty) {
+      return profile['name'].toString();
+    }
+    if (profile['username'] != null &&
+        profile['username'].toString().isNotEmpty) {
+      return profile['username'].toString();
+    }
+    if (profile['provider_name'] != null &&
+        profile['provider_name'].toString().isNotEmpty) {
+      return profile['provider_name'].toString();
+    }
+    if (profile['pharmacist_name'] != null &&
+        profile['pharmacist_name'].toString().isNotEmpty) {
+      return profile['pharmacist_name'].toString();
+    }
+    if (profile['nurse_name'] != null &&
+        profile['nurse_name'].toString().isNotEmpty) {
+      return profile['nurse_name'].toString();
+    }
+    // Final fallback to extract from summary
+    return appointment.extractProviderNameFromSummary() ?? 'Unknown Provider';
+  }
 
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailAppointmentPage(
-                      appointmentData: {
-                        'id': appointment.id,
-                        'user_id': appointment.userId,
-                        'type': appointment.type,
-                        'status': appointment.status,
-                        'date': appointment.date,
-                        'hour': appointment.hour,
-                        'summary': appointment.summary,
-                        'pay_total': appointment.payTotal,
-                        'profile_services_data': effectiveProfile,
-                      },
-                    ),
-                  ),
-                );
-              },
-              child: Stack(
-                children: [
-                  // Show loading indicator if data is being fetched
-                  if (snapshot.connectionState == ConnectionState.waiting &&
-                      appointment.needsProviderDataFallback)
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Container(
-                        margin: EdgeInsets.all(8),
-                        child: SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.blue),
-                          ),
-                        ),
+  String? _getAvatarUrl(Map<String, dynamic> profile) {
+    if (profile['avatar'] != null && profile['avatar'].toString().isNotEmpty) {
+      return profile['avatar'].toString();
+    }
+    if (profile['image'] != null && profile['image'].toString().isNotEmpty) {
+      return profile['image'].toString();
+    }
+    if (profile['photo'] != null && profile['photo'].toString().isNotEmpty) {
+      return profile['photo'].toString();
+    }
+    if (profile['profile_image'] != null &&
+        profile['profile_image'].toString().isNotEmpty) {
+      return profile['profile_image'].toString();
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appointment = widget.appointment;
+    final appointmentStatus = appointment.status;
+    final appointmentStatusLower = appointmentStatus.toLowerCase();
+
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _providerDataFuture,
+      builder: (context, snapshot) {
+        final effectiveProfile =
+            snapshot.data ?? appointment.profileServiceData;
+
+        final providerName = _getProviderName(effectiveProfile, appointment);
+        final avatarUrl = _getAvatarUrl(effectiveProfile);
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailAppointmentPage(
+                  appointmentData: {
+                    'id': appointment.id,
+                    'user_id': appointment.userId,
+                    'type': appointment.type,
+                    'status': appointment.status,
+                    'date': appointment.date,
+                    'hour': appointment.hour,
+                    'summary': appointment.summary,
+                    'pay_total': appointment.payTotal,
+                    'profile_services_data': effectiveProfile,
+                  },
+                ),
+              ),
+            );
+          },
+          child: Stack(
+            children: [
+              // Show loading indicator if data is being fetched
+              if (snapshot.connectionState == ConnectionState.waiting &&
+                  appointment.needsProviderDataFallback)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    margin: EdgeInsets.all(8),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                       ),
                     ),
-                  Card(
-                    margin: const EdgeInsets.all(10),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
+                  ),
+                ),
+              Card(
+                margin: const EdgeInsets.all(10),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundImage:
-                                    (avatarUrl != null && avatarUrl.isNotEmpty)
-                                        ? NetworkImage(avatarUrl)
-                                        : null,
-                                child: (avatarUrl == null || avatarUrl.isEmpty)
-                                    ? Icon(Icons.person,
-                                        size: 30, color: Colors.grey)
-                                    : null,
-                              ),
-                              const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    providerName,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text('${appointment.type} |'),
-                                      const SizedBox(width: 5),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: status == 'Completed'
-                                              ? const Color(0x1A18B23C)
-                                              : status == 'Cancelled' ||
-                                                      status == 'Missed'
-                                                  ? const Color(0x1AED3443)
-                                                  : const Color(0x1AE59500),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                        ),
-                                        child: Text(
-                                          status,
-                                          style: TextStyle(
-                                            color: status == 'Completed'
-                                                ? Colors.green
-                                                : status == 'Cancelled' ||
-                                                        status == 'Missed'
-                                                    ? Colors.red
-                                                    : const Color(0xFFE59500),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    '${DateFormat('EEEE').format(DateTime.parse(appointment.date))}, ${DateFormat('dd MMMM yyyy').format(DateTime.parse(appointment.date))} | ${appointment.hour}',
-                                  ),
-                                ],
-                              ),
-                            ],
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage:
+                                (avatarUrl != null && avatarUrl.isNotEmpty)
+                                    ? NetworkImage(avatarUrl)
+                                    : const AssetImage(
+                                            'assets/images/images_olla.png')
+                                        as ImageProvider,
                           ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              if (appointment.status.toLowerCase() ==
-                                  'completed')
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  providerName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
                                 Row(
                                   children: [
-                                    SizedBox(
-                                      width: 160,
-                                      child: OutlinedButton(
-                                        onPressed: () {
-                                          // Handle rating
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                              color: Const.tosca),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'Rating',
-                                          style: TextStyle(
-                                            color: Const.tosca,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 20),
+                                    Text('${appointment.type} |'),
+                                    const SizedBox(width: 5),
                                     Container(
-                                      width: 160,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF40E0D0), // Tosca color
-                                            Color(0xFF35C5CF),
-                                          ],
-                                          begin: Alignment.bottomRight,
-                                          end: Alignment.topLeft,
-                                        ),
+                                        color: appointmentStatusLower ==
+                                                'completed'
+                                            ? const Color(0x1A18B23C)
+                                            : appointmentStatusLower ==
+                                                        'cancelled' ||
+                                                    appointmentStatusLower ==
+                                                        'missed'
+                                                ? const Color(0x1AED3443)
+                                                : const Color(0x1AE59500),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
-                                      child: OutlinedButton(
-                                        onPressed: () {
-                                          // Handle book again
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                              color: Colors.transparent),
-                                          backgroundColor: Colors.transparent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'Book Again',
-                                          style: TextStyle(color: Colors.white),
+                                      child: Text(
+                                        appointmentStatus,
+                                        style: TextStyle(
+                                          color: appointmentStatusLower ==
+                                                  'completed'
+                                              ? Colors.green
+                                              : appointmentStatusLower ==
+                                                          'cancelled' ||
+                                                      appointmentStatusLower ==
+                                                          'missed'
+                                                  ? Colors.red
+                                                  : const Color(0xFFE59500),
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              if (appointment.status.toLowerCase() ==
-                                  'cancelled')
+                                Text(
+                                  '${DateFormat('EEEE').format(DateTime.parse(appointment.date))}, ${DateFormat('dd MMMM yyyy').format(DateTime.parse(appointment.date))} | ${appointment.hour}',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (appointmentStatusLower == 'completed')
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 160,
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      // Handle rating
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      side:
+                                          const BorderSide(color: Const.tosca),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Rating',
+                                      style: TextStyle(
+                                        color: Const.tosca,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
                                 Container(
-                                  width: 350,
-                                  height: 41,
+                                  width: 160,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     gradient: const LinearGradient(
@@ -508,275 +492,292 @@ class _AppointmentPageState extends State<AppointmentPage>
                                     ),
                                   ),
                                 ),
-                              if (appointment.status.toLowerCase() == 'missed')
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    OutlinedButton(
-                                      onPressed: () {
-                                        final appointmentId = appointment.id;
-                                        context
-                                            .read<AppointmentCubit>()
-                                            .deleteAppointment(appointmentId);
-                                      },
-                                      style: OutlinedButton.styleFrom(
-                                        side:
-                                            const BorderSide(color: Colors.red),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Cancel Bookings',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                              ],
+                            ),
+                          if (appointmentStatusLower == 'cancelled')
+                            Container(
+                              width: 350,
+                              height: 41,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF40E0D0), // Tosca color
+                                    Color(0xFF35C5CF),
+                                  ],
+                                  begin: Alignment.bottomRight,
+                                  end: Alignment.topLeft,
+                                ),
+                              ),
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  // Handle book again
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                      color: Colors.transparent),
+                                  backgroundColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Book Again',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          if (appointmentStatusLower == 'missed')
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                OutlinedButton(
+                                  onPressed: () {
+                                    final appointmentId = appointment.id;
+                                    context
+                                        .read<AppointmentCubit>()
+                                        .deleteAppointment(appointmentId);
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(color: Colors.red),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Container(
-                                      width: 160,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF35C5CF),
-                                            Color(0xFF9DCEFF),
-                                          ],
-                                          begin: Alignment.bottomRight,
-                                          end: Alignment.topLeft,
-                                        ),
-                                      ),
-                                      child: OutlinedButton(
-                                        onPressed: () {
-                                          final appointmentId = appointment
-                                              .id; // Get the appointment ID
-                                          final profile =
-                                              appointment.profileServiceData;
+                                  ),
+                                  child: const Text(
+                                    'Cancel Bookings',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Container(
+                                  width: 160,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF35C5CF),
+                                        Color(0xFF9DCEFF),
+                                      ],
+                                      begin: Alignment.bottomRight,
+                                      end: Alignment.topLeft,
+                                    ),
+                                  ),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      final appointmentId = appointment
+                                          .id; // Get the appointment ID
+                                      final profile =
+                                          appointment.profileServiceData;
 
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  BookAppointmentPage(
-                                                pharmacist: profile,
-                                                appointmentId:
-                                                    appointmentId, // Pass the appointment ID
-                                                initialDate: DateTime.parse(
-                                                    appointment
-                                                        .date), // Pre-fill date
-                                                initialTime: DateFormat('HH:mm')
-                                                    .parse(appointment
-                                                        .hour), // Pre-fill time
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                              color: Colors.transparent),
-                                          backgroundColor: Colors.transparent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              BookAppointmentPage(
+                                            pharmacist: profile,
+                                            appointmentId:
+                                                appointmentId, // Pass the appointment ID
+                                            initialDate: DateTime.parse(
+                                                appointment
+                                                    .date), // Pre-fill date
+                                            initialTime: DateFormat('HH:mm')
+                                                .parse(appointment
+                                                    .hour), // Pre-fill time
                                           ),
                                         ),
-                                        child: const Text(
-                                          'Reschedule',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
+                                      );
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(
+                                          color: Colors.transparent),
+                                      backgroundColor: Colors.transparent,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                  ],
+                                    child: const Text(
+                                      'Reschedule',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
                                 ),
-                              if (appointment.status.toLowerCase() ==
-                                      'pending' ||
-                                  appointment.status.toLowerCase() ==
-                                      'accepted' ||
-                                  appointment.status.toLowerCase() ==
-                                      'upcoming')
-                                Row(
-                                  children: [
-                                    OutlinedButton(
-                                      onPressed: () {
-                                        final appointmentId = appointment.id;
+                              ],
+                            ),
+                          if (appointmentStatusLower == 'pending' ||
+                              appointmentStatusLower == 'accepted' ||
+                              appointmentStatusLower == 'upcoming')
+                            Row(
+                              children: [
+                                OutlinedButton(
+                                  onPressed: () {
+                                    final appointmentId = appointment.id;
 
-                                        // Show confirmation dialog
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                    // Show confirmation dialog
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          contentPadding:
+                                              const EdgeInsets.all(16.0),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.topRight,
+                                                child: IconButton(
+                                                  icon: const Icon(Icons.close),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
                                               ),
-                                              contentPadding:
-                                                  const EdgeInsets.all(16.0),
-                                              content: Column(
-                                                mainAxisSize: MainAxisSize.min,
+                                              const Icon(Icons.warning_outlined,
+                                                  size: 50, color: Colors.red),
+                                              const SizedBox(height: 16),
+                                              const Text(
+                                                'Are you sure to cancel this booking?',
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(height: 8),
+                                              const Text(
+                                                'You can rebook it later from the canceled appointment menu.',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(height: 16),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                 children: [
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.topRight,
-                                                    child: IconButton(
-                                                      icon: const Icon(
-                                                          Icons.close),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop(); // Close dialog
+                                                    },
+                                                    child: const Text('No'),
                                                   ),
-                                                  const Icon(
-                                                      Icons.warning_outlined,
-                                                      size: 50,
-                                                      color: Colors.red),
-                                                  const SizedBox(height: 16),
-                                                  const Text(
-                                                    'Are you sure to cancel this booking?',
-                                                    style: TextStyle(
-                                                      color: Colors.blue,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  const Text(
-                                                    'You can rebook it later from the canceled appointment menu.',
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  const SizedBox(height: 16),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop(); // Close dialog
-                                                        },
-                                                        child: const Text('No'),
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      // Close dialog and cancel the appointment
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      context
+                                                          .read<
+                                                              AppointmentCubit>()
+                                                          .cancelAppointment(
+                                                              appointmentId);
+                                                    },
+                                                    child: const Text(
+                                                        'Yes, Cancel'),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
                                                       ),
-                                                      ElevatedButton(
-                                                        onPressed: () {
-                                                          // Close dialog and cancel the appointment
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          context
-                                                              .read<
-                                                                  AppointmentCubit>()
-                                                              .cancelAppointment(
-                                                                  appointmentId);
-                                                        },
-                                                        child: const Text(
-                                                            'Yes, Cancel'),
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          backgroundColor:
-                                                              Colors.red,
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
-                                            );
-                                          },
+                                            ],
+                                          ),
                                         );
                                       },
-                                      style: OutlinedButton.styleFrom(
-                                        side:
-                                            const BorderSide(color: Colors.red),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Cancel Booking',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                    );
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(color: Colors.red),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Container(
-                                      width: 160,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF35C5CF),
-                                            Color(0xFF9DCEFF),
-                                          ],
-                                          begin: Alignment.bottomRight,
-                                          end: Alignment.topLeft,
-                                        ),
-                                      ),
-                                      child: OutlinedButton(
-                                        onPressed: () {
-                                          final appointmentId = appointment
-                                              .id; // Get the appointment ID
-                                          final profile =
-                                              appointment.profileServiceData;
+                                  ),
+                                  child: const Text(
+                                    'Cancel Booking',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Container(
+                                  width: 160,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF35C5CF),
+                                        Color(0xFF9DCEFF),
+                                      ],
+                                      begin: Alignment.bottomRight,
+                                      end: Alignment.topLeft,
+                                    ),
+                                  ),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      final appointmentId = appointment
+                                          .id; // Get the appointment ID
+                                      final profile =
+                                          appointment.profileServiceData;
 
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  BookAppointmentPage(
-                                                pharmacist: profile,
-                                                appointmentId:
-                                                    appointmentId, // Pass the appointment ID
-                                                initialDate: DateTime.parse(
-                                                    appointment
-                                                        .date), // Pre-fill date
-                                                initialTime: DateFormat('HH:mm')
-                                                    .parse(appointment
-                                                        .hour), // Pre-fill time
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                              color: Colors.transparent),
-                                          backgroundColor: Colors.transparent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              BookAppointmentPage(
+                                            pharmacist: profile,
+                                            appointmentId:
+                                                appointmentId, // Pass the appointment ID
+                                            initialDate: DateTime.parse(
+                                                appointment
+                                                    .date), // Pre-fill date
+                                            initialTime: DateFormat('HH:mm')
+                                                .parse(appointment
+                                                    .hour), // Pre-fill time
                                           ),
                                         ),
-                                        child: const Text(
-                                          'Reschedule',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
+                                      );
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(
+                                          color: Colors.transparent),
+                                      backgroundColor: Colors.transparent,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                  ],
+                                    child: const Text(
+                                      'Reschedule',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
                                 ),
-                            ],
-                          ),
+                              ],
+                            ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            );
-          },
+            ],
+          ),
         );
       },
     );
