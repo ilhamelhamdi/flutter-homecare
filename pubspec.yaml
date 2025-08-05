@@ -72,10 +72,10 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^28.2.9
 
   # Social Sign-In
-  google_sign_in: ^6.2.1
-  fluwx: ^4.1.0
-  sign_in_with_apple: ^6.1.1
-  crypto: ^3.0.3
+  # google_sign_in: ^6.2.1
+  # fluwx: ^4.1.0
+  # sign_in_with_apple: ^6.1.1
+  # crypto: ^3.0.3
 
 dev_dependencies:
   flutter_test:
