@@ -75,6 +75,8 @@ class _PersonalPageState extends State<PersonalPage> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is PersonalLoaded) {
                     final issues = state.issues;
+                    // Sort issues by latest date first
+                    issues.sort((a, b) => b.createdAt.compareTo(a.createdAt));
                     return RefreshIndicator(
                       onRefresh: () async {
                         context.read<PersonalCubit>().loadPersonalDetails(
