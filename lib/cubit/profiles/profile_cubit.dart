@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:m2health/models/profile.dart';
@@ -52,31 +53,31 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<void> updateProfile(Profile profile) async {
-    try {
-      final token = await Utils.getSpString(Const.TOKEN);
-      final response = await _dio.put(
-        '${Const.URL_API}/profiles/${profile.id}',
-        data: profile.toJson(),
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
+  // Future<void> updateProfile(Profile profile) async {
+  //   try {
+  //     final token = await Utils.getSpString(Const.TOKEN);
+  //     final response = await _dio.put(
+  //       '${Const.URL_API}/profiles',
+  //       data: profile.toJson(),
+  //       options: Options(
+  //         headers: {
+  //           'Authorization': 'Bearer $token',
+  //         },
+  //       ),
+  //     );
 
-      if (response.statusCode == 200) {
-        final updatedProfile = Profile.fromJson(response.data['data']);
-        emit(ProfileUpdateSuccess(updatedProfile));
-      } else if (response.statusCode == 401) {
-        emit(ProfileUnauthenticated());
-      } else {
-        emit(ProfileError('Failed to update profile'));
-      }
-    } catch (e) {
-      emit(ProfileError(e.toString()));
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final updatedProfile = Profile.fromJson(response.data['data']);
+  //       emit(ProfileUpdateSuccess(updatedProfile));
+  //     } else if (response.statusCode == 401) {
+  //       emit(ProfileUnauthenticated());
+  //     } else {
+  //       emit(ProfileError('Failed to update profile'));
+  //     }
+  //   } catch (e) {
+  //     emit(ProfileError(e.toString()));
+  //   }
+  // }
 
   Future<void> updateProfileWithImage(Profile profile, File? image) async {
     try {
@@ -92,6 +93,8 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       // Add profile data fields
       formData.fields.addAll([
+        MapEntry('username', profile.username),
+        MapEntry('email', profile.email),
         MapEntry('age', profile.age.toString()),
         MapEntry('gender', profile.gender),
         MapEntry('weight', profile.weight.toString()),
@@ -112,7 +115,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
 
       final response = await _dio.put(
-        '${Const.BASE_URL}/v1/profiles',
+        '${Const.URL_API}/profiles',
         data: formData,
         options: Options(
           headers: {
@@ -124,7 +127,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       if (response.statusCode == 200) {
         // Update the profile with the response data
-        final updatedProfileData = response.data;
+        final updatedProfileData = response.data['data'];
         final updatedProfile = Profile.fromJson(updatedProfileData);
 
         // Save to local storage if needed

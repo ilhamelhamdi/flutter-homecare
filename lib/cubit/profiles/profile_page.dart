@@ -92,13 +92,18 @@ class ProfilePage extends StatelessWidget {
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => EditProfilePage(
-                                          profile: state.profile)),
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<ProfileCubit>(),
+                                      child: EditProfilePage(
+                                          profile: state.profile),
+                                    ),
+                                  ),
                                 );
+                                context.read<ProfileCubit>().fetchProfile();
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -304,13 +309,18 @@ class ProfilePage extends StatelessWidget {
                             ),
                             IconButton(
                               icon: const Icon(Icons.edit),
-                              onPressed: () {
-                                Navigator.push(
+                              onPressed: () async {
+                                await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => EditProfilePage(
-                                          profile: state.profile)),
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<ProfileCubit>(),
+                                      child: EditProfilePage(
+                                          profile: state.profile),
+                                    ),
+                                  ),
                                 );
+                                context.read<ProfileCubit>().fetchProfile();
                               },
                             ),
                           ],
