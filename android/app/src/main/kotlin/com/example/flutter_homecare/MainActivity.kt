@@ -1,4 +1,4 @@
-package com.example.flutter_homecare
+package org.medmap.homecare
 
 import io.flutter.embedding.android.FlutterActivity
 

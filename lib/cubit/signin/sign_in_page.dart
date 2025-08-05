@@ -2,7 +2,7 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_homecare/route/app_routes.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'sign_in_cubit.dart';
 
 class SignInPage extends StatefulWidget {
@@ -42,9 +42,9 @@ class _SignInPageState extends State<SignInPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Sign In'),
+          title: const Text('Sign In'),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               context.go(AppRoutes.home); // Redirect to home
             },
@@ -56,17 +56,17 @@ class _SignInPageState extends State<SignInPage> {
           child: BlocConsumer<SignInCubit, SignInState>(
             listener: (context, state) {
               if (state is SignInSuccess) {
-                context.go(AppRoutes.home);
+                context.go('/dasboard');
               } else if (state is SignInError) {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Error'),
+                      title: const Text('Error'),
                       content: Text(state.message),
                       actions: <Widget>[
                         TextButton(
-                          child: Text('OK'),
+                          child: const Text('OK'),
                           onPressed: () {
                             context.pop();
                           },
@@ -78,7 +78,7 @@ class _SignInPageState extends State<SignInPage> {
               }
             },
             builder: (context, state) {
-              final logo = Hero(
+              Hero(
                 tag: 'logo',
                 child: CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -93,36 +93,37 @@ class _SignInPageState extends State<SignInPage> {
                 autofocus: false,
                 decoration: InputDecoration(
                   hintText: 'Email',
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
+                      borderRadius: BorderRadius.circular(10.0)),
                 ),
               );
-
               final password = TextFormField(
                 controller: passwordController,
                 autofocus: false,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'Password',
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
+                      borderRadius: BorderRadius.circular(10.0)),
                 ),
               );
 
               final loginButton = Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: const Color(0xFF35C5CF),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     elevation: 5.0,
                     side: BorderSide.none,
-                    padding: EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(12.0),
                   ),
                   onPressed: () {
                     String emailValue = emailController.text;
@@ -131,48 +132,130 @@ class _SignInPageState extends State<SignInPage> {
                         .read<SignInCubit>()
                         .signIn(emailValue, passwordValue);
                   },
-                  child: Text('Sign In', style: TextStyle(fontSize: 18)),
+                  child: const Text('Sign In', style: TextStyle(fontSize: 18)),
                 ),
               );
 
-              final btnSignUp = Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    elevation: 5.0,
-                    side: BorderSide.none,
-                    padding: EdgeInsets.all(12.0),
-                  ),
-                  onPressed: () {
+              final createAccountText = Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: GestureDetector(
+                  onTap: () {
                     context.push(AppRoutes.signUp);
                   },
-                  child: Text('Sign Up',
-                      style: TextStyle(fontSize: 18, color: Colors.blue)),
+                  child: const Text(
+                    'Create new account',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF35C5CF), // Turquoise green color
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               );
+
+              const continueWithText = Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  'Or continue with',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              );
+
+              final socialIcons = Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Image.asset('assets/icons/ic_fb.png'),
+                      iconSize: 40,
+                      onPressed: () {
+                        // Handle Facebook login
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      icon: Image.asset('assets/icons/ic_google.png'),
+                      iconSize: 40,
+                      onPressed: () {
+                        // Handle Google login
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      icon: Image.asset('assets/icons/ic_wechat.png'),
+                      iconSize: 40,
+                      onPressed: () {
+                        // Handle WeChat login
+                      },
+                    ),
+                  ],
+                ),
+              );
+
+              // final btnSignUp = Padding(
+              //   padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.white,
+              //       foregroundColor: Colors.blue,
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(30.0),
+              //       ),
+              //       elevation: 5.0,
+              //       side: BorderSide.none,
+              //       padding: EdgeInsets.all(12.0),
+              //     ),
+              //     onPressed: () {
+              //       context.push(AppRoutes.signUp);
+              //     },
+              //     child: Text('Sign Up',
+              //         style: TextStyle(fontSize: 18, color: Colors.blue)),
+              //   ),
+              // );
 
               return Center(
                 child: ListView(
                   shrinkWrap: true,
-                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                  padding: const EdgeInsets.only(left: 24.0, right: 24.0),
                   children: <Widget>[
-                    if (state is SignInLoading)
-                      CircularProgressIndicator()
-                    else
-                      logo,
-                    SizedBox(height: 48.0),
+                    const Text(
+                      'Login Here',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF35C5CF), // Turquoise green color
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8.0),
+                    const Text(
+                      "Welcome Back you've\nbeen missed",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    // if (state is SignInLoading)
+                    //   CircularProgressIndicator()
+                    // else
+                    //   logo,
+                    const SizedBox(height: 48.0),
                     email,
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     password,
-                    SizedBox(height: 24.0),
+                    const SizedBox(height: 24.0),
                     loginButton,
-                    SizedBox(height: 11.0),
-                    btnSignUp
+                    const SizedBox(height: 11.0),
+                    createAccountText,
+                    continueWithText,
+                    socialIcons,
+                    // btnSignUp
                   ],
                 ),
               );

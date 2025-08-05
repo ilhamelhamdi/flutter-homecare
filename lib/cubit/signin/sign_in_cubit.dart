@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_homecare/const.dart';
-import 'package:flutter_homecare/models/r_profile.dart';
-import 'package:flutter_homecare/utils.dart';
+import 'package:m2health/const.dart';
+import 'package:m2health/utils.dart';
 import 'package:omega_dio_logger/omega_dio_logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'sign_in_state.dart';
 
@@ -42,6 +43,11 @@ class SignInCubit extends Cubit<SignInState> {
       Utils.setSpString(Const.ROLE, response.data['user']['role']);
       Utils.setSpString(Const.USER_ID, response.data['user']['id'].toString());
 
+      // Simpan nama pengguna ke SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', response.data['user']['username']);
+      debugPrint('Username saved: ${response.data['user']['username']}');
+
       if (response.data['user']['role'] == 'admin') {
         emit(SignInSuccess());
       } else {
@@ -57,21 +63,56 @@ class SignInCubit extends Cubit<SignInState> {
     dio.interceptors.add(const OmegaDioLogger());
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
-      var response = await dio.get(Const.URL_API + "/$role/profile",
+      var response = await dio.get(Const.URL_API + "/profiles",
           options: Options(validateStatus: (status) {
         return true;
       }));
 
+      print('Response status: ${response.statusCode}');
+      print('Response data: ${response.data}');
+
       if (response.statusCode != 200) {
-        emit(SignInError(response.data['message']));
+        final errorMessage =
+            response.data['message'] ?? 'Failed to get user profile';
+        emit(SignInError(errorMessage));
         return;
       }
 
-      rProfile mData = rProfile.fromJson(response.data);
-      Utils.setProfile(mData);
+      // Check if response has the expected structure
+      if (response.data == null) {
+        emit(SignInError('No response data received'));
+        return;
+      }
+
+      final responseData = response.data;
+      if (responseData['data'] == null) {
+        emit(SignInError('Profile data not found in response'));
+        return;
+      }
+
+      final profileData = responseData['data'];
+      if (profileData['id'] == null) {
+        emit(SignInError('Profile ID not found'));
+        return;
+      }
+
+      // Successfully got profile data
+      print('Profile retrieved successfully:');
+      print('Profile ID: ${profileData['id']}');
+      print('User ID: ${profileData['user_id']}');
+      print('Username: ${profileData['username']}');
+      print('Email: ${profileData['email']}');
+
+      // Optional: Save additional profile information
+      await Utils.setSpString('profile_id', profileData['id'].toString());
+      if (profileData['username'] != null) {
+        await Utils.setSpString('profile_username', profileData['username']);
+      }
+
       emit(SignInSuccess());
     } catch (e) {
-      emit(SignInError(e.toString()));
+      print('Exception in getUser: $e');
+      emit(SignInError('Failed to get user profile: ${e.toString()}'));
     }
   }
 }

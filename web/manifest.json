@@ -1,6 +1,6 @@
 {
-    "name": "flutter_homecare",
-    "short_name": "flutter_homecare",
+    "name": "m2health",
+    "short_name": "m2health",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
