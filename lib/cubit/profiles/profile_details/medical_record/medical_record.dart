@@ -280,17 +280,18 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
                     },
                   ),
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isAddingNewRecord = true;
-                      });
-                    },
-                    child: Text('Add Medical Record'),
+                if (!_isAddingNewRecord)
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _isAddingNewRecord = true;
+                        });
+                      },
+                      child: Text('Add Medical Record'),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -377,7 +378,7 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
             //   maxLines: 2,
             //   decoration: const InputDecoration(border: OutlineInputBorder()),
             // ),
-            // const SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
