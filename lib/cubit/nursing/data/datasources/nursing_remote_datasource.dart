@@ -6,6 +6,7 @@ import 'package:m2health/utils.dart';
 
 abstract class NursingRemoteDataSource {
   Future<List<NursingServiceModel>> getNursingServices();
+  Future<List<NursingCaseModel>> getNursingCases();
   Future<void> createNursingCase(NursingCaseModel nursingCase);
   Future<List<Map<String, dynamic>>> getMedicalRecords();
   Future<void> updateNursingCase(String id, Map<String, dynamic> data);
@@ -37,6 +38,28 @@ class NursingRemoteDataSourceImpl implements NursingRemoteDataSource {
       return services;
     } else {
       throw Exception('Failed to load nursing services');
+    }
+  }
+
+  @override
+  Future<List<NursingCaseModel>> getNursingCases() async {
+    final token = await Utils.getSpString(Const.TOKEN);
+    final response = await dio.get(
+      Const.API_NURSING_PERSONAL_CASES,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      final cases = (response.data['data'] as List)
+          .map((caseData) => NursingCaseModel.fromJson(caseData))
+          .toList();
+      return cases;
+    } else {
+      throw Exception('Failed to load nursing cases');
     }
   }
 

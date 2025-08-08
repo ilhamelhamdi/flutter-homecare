@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Const {
-  // static const String BASE_URL = 'http://192.168.1.2:3333';
-  static const String BASE_URL = 'https://homecare-api.med-map.org';
+  static const String BASE_URL = 'http://192.168.1.2:3333';
+  // static const String BASE_URL = 'https://homecare-api.med-map.org';
   // static const String BASE_URL = 'http://192.168.56.1:3333';
   static const String URL_API = BASE_URL + '/v1';
   static const String URL_IMG_PLACEHOLDER = 'https://placehold.co/100x100';
@@ -14,6 +14,16 @@ class Const {
   static const String API_PROFILE = URL_API + '/profiles';
   static const String API_MEDICAL_RECORDS = URL_API + '/medical-records';
   static const String API_PERSONAL_CASES = URL_API + '/personal-cases';
+
+  // Personal Cases
+  static const String API_NURSING_PERSONAL_CASES =
+      URL_API + '/nursing/personal-cases';
+  static const String API_PHARMACIST_PERSONAL_CASES =
+      URL_API + '/pharmacist/personal-cases';
+
+  // Pharmacogenomics
+  static const String API_PHARMACOGENOMICS = URL_API + '/pharmacogenomics';
+
   static const String API_PHARMACIST_SERVICES =
       URL_API + '/pharmacist-services';
   static const String API_NURSE_SERVICES = URL_API + '/nurse-services';

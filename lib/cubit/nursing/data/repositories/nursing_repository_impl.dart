@@ -17,6 +17,12 @@ class NursingRepositoryImpl implements NursingRepository {
   }
 
   @override
+  Future<List<NursingCase>> getNursingCases() async {
+    final nursingCaseModels = await remoteDataSource.getNursingCases();
+    return nursingCaseModels;
+  }
+
+  @override
   Future<void> createNursingCase(NursingCase nursingCase) async {
     final nursingCaseModel = NursingCaseModel(
       title: nursingCase.title,
