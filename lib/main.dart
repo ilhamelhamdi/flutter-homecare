@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:m2health/cubit/nursing/presentation/bloc/nursing_services/nursing_services_bloc.dart';
+import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_services/nursing_services_bloc.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
+import 'package:m2health/cubit/nursing/personal/nursing_personal_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -26,19 +27,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 
 // nursing module
-import 'package:m2health/cubit/nursing/data/datasources/nursing_remote_datasource.dart';
-import 'package:m2health/cubit/nursing/data/repositories/nursing_repository_impl.dart';
-import 'package:m2health/cubit/nursing/domain/repositories/nursing_repository.dart';
-import 'package:m2health/cubit/nursing/domain/usecases/create_nursing_case.dart';
-import 'package:m2health/cubit/nursing/domain/usecases/get_nursing_cases.dart';
-import 'package:m2health/cubit/nursing/domain/usecases/get_nursing_services.dart';
-import 'package:m2health/cubit/nursing/domain/usecases/get_medical_records.dart';
-import 'package:m2health/cubit/nursing/domain/usecases/update_nursing_case.dart';
-import 'package:m2health/cubit/nursing/domain/usecases/get_professionals.dart';
-import 'package:m2health/cubit/nursing/domain/usecases/toggle_favorite.dart';
-import 'package:m2health/cubit/nursing/presentation/bloc/nursing_case/nursing_case_bloc.dart';
-import 'package:m2health/cubit/nursing/presentation/bloc/nursing_services/nursing_services_bloc.dart';
-import 'package:m2health/cubit/nursing/presentation/bloc/professional/professional_bloc.dart';
+import 'package:m2health/cubit/nursingclean/data/datasources/nursing_remote_datasource.dart';
+import 'package:m2health/cubit/nursingclean/data/repositories/nursing_repository_impl.dart';
+import 'package:m2health/cubit/nursingclean/domain/repositories/nursing_repository.dart';
+import 'package:m2health/cubit/nursingclean/domain/usecases/create_nursing_case.dart';
+import 'package:m2health/cubit/nursingclean/domain/usecases/get_nursing_cases.dart';
+import 'package:m2health/cubit/nursingclean/domain/usecases/get_nursing_services.dart';
+import 'package:m2health/cubit/nursingclean/domain/usecases/get_medical_records.dart';
+import 'package:m2health/cubit/nursingclean/domain/usecases/update_nursing_case.dart';
+import 'package:m2health/cubit/nursingclean/domain/usecases/get_professionals.dart';
+import 'package:m2health/cubit/nursingclean/domain/usecases/toggle_favorite.dart';
+import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_bloc.dart';
+import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_services/nursing_services_bloc.dart';
+import 'package:m2health/cubit/nursingclean/presentation/bloc/professional/professional_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +55,8 @@ void main() async {
         BlocProvider(create: (context) => ProviderAppointmentCubit(Dio())),
         BlocProvider(
             create: (context) => PersonalCubit()..loadPersonalDetails()),
+        BlocProvider(
+            create: (context) => NursingPersonalCubit()..loadPersonalDetails()),
         BlocProvider(create: (context) => ProfileCubit(Dio())),
         BlocProvider(
           create: (context) => ProfileCubit(context.read<Dio>()),
