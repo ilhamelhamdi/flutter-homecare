@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:m2health/cubit/nursing/pages/nursing_services.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:m2health/views/diabetic_care.dart';
 import 'package:m2health/views/home_health_screening.dart';
@@ -14,7 +15,6 @@ import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/cubit/precision/precision_page.dart';
-import 'package:m2health/cubit/nursing/presentation/pages/nursing_services_page.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({

@@ -27,7 +27,46 @@ class Appointment {
     required this.profileServiceData,
   });
 
+  // factory Appointment.fromJson(Map<String, dynamic> json) {
+  //   return Appointment(
+  //     id: json['id'] ?? 0,
+  //     type: json['type'] ?? '',
+  //     status: json['status'] ?? '',
+  //     date: json['date'] ?? '',
+  //     hour: json['hour'] ?? '',
+  //     summary: json['summary'] ?? '',
+  //     payTotal: (json['pay_total'] as num?)?.toDouble() ?? 0.0,
+  //     userId: json['user_id'] ?? 0,
+  //     createdAt: json['created_at'] ?? '',
+  //     updatedAt: json['updated_at'] ?? '',
+  //     // Fix: Handle null profile_services_data properly
+  //     profileServiceData: json['profile_services_data'] != null
+  //         ? (json['profile_services_data'] is String
+  //             ? jsonDecode(json['profile_services_data'])
+  //             : json['profile_services_data'])
+  //         : <String, dynamic>{}, // Return empty map instead of null
+  //   );
+  // }
+
   factory Appointment.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> parsedProfileData = {};
+
+    if (json['profile_services_data'] != null) {
+      if (json['profile_services_data'] is String) {
+        final raw = json['profile_services_data'].toString().trim();
+        if (raw.isNotEmpty) {
+          try {
+            parsedProfileData = jsonDecode(raw);
+          } catch (e) {
+            print("Warning: Failed to parse profile_services_data: $e");
+            parsedProfileData = {};
+          }
+        }
+      } else if (json['profile_services_data'] is Map<String, dynamic>) {
+        parsedProfileData = json['profile_services_data'];
+      }
+    }
+
     return Appointment(
       id: json['id'] ?? 0,
       type: json['type'] ?? '',
@@ -39,12 +78,7 @@ class Appointment {
       userId: json['user_id'] ?? 0,
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
-      // Fix: Handle null profile_services_data properly
-      profileServiceData: json['profile_services_data'] != null
-          ? (json['profile_services_data'] is String
-              ? jsonDecode(json['profile_services_data'])
-              : json['profile_services_data'])
-          : <String, dynamic>{}, // Return empty map instead of null
+      profileServiceData: parsedProfileData,
     );
   }
 
