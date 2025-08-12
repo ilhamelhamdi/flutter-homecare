@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:m2health/cubit/pharmacogenomics/presentation/pharmagenomical_detail.dart';
-import 'package:m2health/cubit/profiles/profile_details/pharmagenomics_profile/pharmagenomical_detail.dart';
 
 class PharmagenomicsProfilePage extends StatefulWidget {
   @override
