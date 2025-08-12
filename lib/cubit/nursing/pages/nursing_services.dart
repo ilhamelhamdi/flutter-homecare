@@ -158,9 +158,13 @@ class _NursingState extends State<NursingService> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => NursingService(
-                                  // item: tender,
-                                  ),
+                              builder: (context) => PersonalPage(
+                                title: "Nurse Services Case",
+                                serviceType: "Nurse",
+                                onItemTap: (item) {
+                                  // Handle item tap
+                                },
+                              ),
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
