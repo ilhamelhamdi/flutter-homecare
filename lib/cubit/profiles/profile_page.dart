@@ -242,7 +242,21 @@ class ProfilePage extends StatelessWidget {
                                       const Text('Wellness Genomics Profile'),
                                   trailing: const Icon(Icons.arrow_forward_ios),
                                   onTap: () {
-                                    // Handle Pharma Profile tap
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Coming Soon'),
+                                        content: const Text(
+                                            'This feature is under development.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
                                   },
                                 ),
                                 if (isAdmin)

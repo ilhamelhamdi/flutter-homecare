@@ -1,25 +1,16 @@
 import 'package:m2health/cubit/pharmacogenomics/domain/entities/pharmacogenomics.dart';
 
 class PharmacogenomicsModel extends Pharmacogenomics {
-  final int userId;
-  final String gene;
-  final String genotype;
-  final String phenotype;
-  final String medicationGuidance;
-  final String? fullReportPath;
-  final String? createdAt;
-  final String? updatedAt;
-
   const PharmacogenomicsModel({
     required int id,
-    required this.userId,
-    required this.gene,
-    required this.genotype,
-    required this.phenotype,
-    required this.medicationGuidance,
-    this.fullReportPath,
-    this.createdAt,
-    this.updatedAt,
+    required int userId,
+    required String gene,
+    required String genotype,
+    required String phenotype,
+    required String medicationGuidance,
+    String? fullReportPath,
+    String? createdAt,
+    String? updatedAt,
   }) : super(
           id: id,
           userId: userId,
@@ -27,7 +18,7 @@ class PharmacogenomicsModel extends Pharmacogenomics {
           genotype: genotype,
           phenotype: phenotype,
           medicationGuidance: medicationGuidance,
-          fileUrl: fullReportPath,
+          fullReportPath: fullReportPath,
           createdAt: createdAt,
           updatedAt: updatedAt,
         );

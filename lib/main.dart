@@ -103,46 +103,46 @@ void main() async {
             deletePharmacogenomic: context.read<DeletePharmacogenomic>(),
           ),
         ),
-        // // Nursing Module Dependencies
-        // RepositoryProvider<NursingRepository>(
-        //   create: (context) => NursingRepositoryImpl(
-        //     remoteDataSource:
-        //         NursingRemoteDataSourceImpl(dio: context.read<Dio>()),
-        //   ),
-        // ),
-        // Provider<GetNursingServices>(
-        //   create: (context) =>
-        //       GetNursingServices(context.read<NursingRepository>()),
-        // ),
-        // Provider<GetNursingCases>(
-        //   create: (context) =>
-        //       GetNursingCases(context.read<NursingRepository>()),
-        // ),
-        // Provider<CreateNursingCase>(
-        //   create: (context) =>
-        //       CreateNursingCase(context.read<NursingRepository>()),
-        // ),
-        // Provider<GetMedicalRecords>(
-        //   create: (context) =>
-        //       GetMedicalRecords(context.read<NursingRepository>()),
-        // ),
-        // Provider<UpdateNursingCase>(
-        //   create: (context) =>
-        //       UpdateNursingCase(context.read<NursingRepository>()),
-        // ),
-        // BlocProvider(
-        //   create: (context) => NursingServicesBloc(
-        //     getNursingServices: context.read<GetNursingServices>(),
-        //   ),
-        // ),
-        // BlocProvider(
-        //   create: (context) => NursingCaseBloc(
-        //     getNursingCases: context.read<GetNursingCases>(),
-        //     createNursingCase: context.read<CreateNursingCase>(),
-        //     getMedicalRecords: context.read<GetMedicalRecords>(),
-        //     updateNursingCase: context.read<UpdateNursingCase>(),
-        //   ),
-        // ),
+        // Nursing Module Dependencies
+        RepositoryProvider<NursingRepository>(
+          create: (context) => NursingRepositoryImpl(
+            remoteDataSource:
+                NursingRemoteDataSourceImpl(dio: context.read<Dio>()),
+          ),
+        ),
+        Provider<GetNursingServices>(
+          create: (context) =>
+              GetNursingServices(context.read<NursingRepository>()),
+        ),
+        Provider<GetNursingCases>(
+          create: (context) =>
+              GetNursingCases(context.read<NursingRepository>()),
+        ),
+        Provider<CreateNursingCase>(
+          create: (context) =>
+              CreateNursingCase(context.read<NursingRepository>()),
+        ),
+        Provider<GetMedicalRecords>(
+          create: (context) =>
+              GetMedicalRecords(context.read<NursingRepository>()),
+        ),
+        Provider<UpdateNursingCase>(
+          create: (context) =>
+              UpdateNursingCase(context.read<NursingRepository>()),
+        ),
+        BlocProvider(
+          create: (context) => NursingServicesBloc(
+            getNursingServices: context.read<GetNursingServices>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => NursingCaseBloc(
+            getNursingCases: context.read<GetNursingCases>(),
+            createNursingCase: context.read<CreateNursingCase>(),
+            getMedicalRecords: context.read<GetMedicalRecords>(),
+            updateNursingCase: context.read<UpdateNursingCase>(),
+          ),
+        ),
         Provider<GetProfessionals>(
           create: (context) =>
               GetProfessionals(context.read<NursingRepository>()),

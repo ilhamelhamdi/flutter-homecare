@@ -7,7 +7,7 @@ class Pharmacogenomics extends Equatable {
   final String genotype;
   final String phenotype;
   final String medicationGuidance;
-  final String? fileUrl;
+  final String? fullReportPath;
   final String? createdAt;
   final String? updatedAt;
 
@@ -18,7 +18,7 @@ class Pharmacogenomics extends Equatable {
     required this.genotype,
     required this.phenotype,
     required this.medicationGuidance,
-    this.fileUrl,
+    this.fullReportPath,
     this.createdAt,
     this.updatedAt,
   });
@@ -31,7 +31,7 @@ class Pharmacogenomics extends Equatable {
         genotype,
         phenotype,
         medicationGuidance,
-        fileUrl,
+        fullReportPath,
         createdAt,
         updatedAt,
       ];
