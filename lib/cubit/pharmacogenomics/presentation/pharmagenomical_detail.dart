@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m2health/cubit/pharmacogenomics/presentation/bloc/pharmacogenomics_cubit.dart';
 
 class GeneDetailPage extends StatefulWidget {
+  final int id;
   final String gene;
   final String genotype;
   final String phenotype;
@@ -8,6 +11,7 @@ class GeneDetailPage extends StatefulWidget {
 
   const GeneDetailPage({
     Key? key,
+    required this.id,
     required this.gene,
     required this.genotype,
     required this.phenotype,
@@ -79,18 +83,30 @@ class _GeneDetailPageState extends State<GeneDetailPage> {
               },
               child: const Text('Cancel'),
             ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  gene = geneController.text;
-                  genotype = genotypeController.text;
-                  phenotype = phenotypeController.text;
-                  medicationGuidance = guidanceController.text;
-                });
-                Navigator.pop(context);
-              },
-              child: const Text('Save'),
-            ),
+            // TextButton(
+            //   onPressed: () async {
+            //     // Call Cubit update
+            //     await context.read<PharmacogenomicsCubit>().update(
+            //           widget.id,
+            //           geneController.text,
+            //           genotypeController.text,
+            //           phenotypeController.text,
+            //           guidanceController.text,
+            //           null, // No file update in this dialog
+            //         );
+            //     setState(() {
+            //       gene = geneController.text;
+            //       genotype = genotypeController.text;
+            //       phenotype = phenotypeController.text;
+            //       medicationGuidance = guidanceController.text;
+            //     });
+            //     Navigator.pop(context);
+            //     ScaffoldMessenger.of(context).showSnackBar(
+            //       const SnackBar(content: Text('Details updated')),
+            //     );
+            //   },
+            //   child: const Text('Save'),
+            // ),
           ],
         );
       },
@@ -112,9 +128,13 @@ class _GeneDetailPageState extends State<GeneDetailPage> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await context.read<PharmacogenomicsCubit>().delete(widget.id);
                 Navigator.pop(context);
                 Navigator.pop(context); // Go back to the previous screen
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Record deleted')),
+                );
               },
               child: const Text('Delete'),
             ),

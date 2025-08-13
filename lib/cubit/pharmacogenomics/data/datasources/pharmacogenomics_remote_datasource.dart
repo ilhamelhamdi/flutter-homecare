@@ -4,9 +4,9 @@ import 'package:m2health/cubit/pharmacogenomics/data/models/pharmacogenomics_mod
 abstract class PharmacogenomicsRemoteDataSource {
   Future<List<PharmacogenomicsModel>> getPharmacogenomics();
   Future<PharmacogenomicsModel> getPharmacogenomicById(int id);
-  Future<void> createPharmacogenomic(
-      String title, String? description, File? file);
-  Future<void> updatePharmacogenomic(
-      int id, String title, String? description, File? file);
+  Future<void> createPharmacogenomic(String gene, String genotype,
+      String phenotype, String medicationGuidance, File fullPathReport);
+  Future<void> updatePharmacogenomic(int id, String gene, String genotype,
+      String phenotype, String medicationGuidance, File fullPathReport);
   Future<void> deletePharmacogenomic(int id);
 }

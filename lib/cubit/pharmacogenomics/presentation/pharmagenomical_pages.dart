@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:io';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/cubit/pharmacogenomics/presentation/pharmagenomical_detail.dart';
+import 'package:m2health/cubit/pharmacogenomics/presentation/bloc/pharmacogenomics_cubit.dart';
+import 'package:m2health/cubit/pharmacogenomics/presentation/bloc/pharmacogenomics_state.dart';
 
 class PharmagenomicsProfilePage extends StatefulWidget {
   @override
@@ -9,29 +13,40 @@ class PharmagenomicsProfilePage extends StatefulWidget {
 }
 
 class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
-  final List<PharmagenomicsProfile> _profiles = [
-    PharmagenomicsProfile(
-        gene: 'Clopidogrel', genotype: 'Genotype1', phenotype: 'Phenotype1'),
-    PharmagenomicsProfile(
-        gene: 'Codeine', genotype: 'Genotype2', phenotype: 'Phenotype2'),
-    PharmagenomicsProfile(
-        gene: 'Warfarin', genotype: 'Genotype3', phenotype: 'Phenotype3'),
-    PharmagenomicsProfile(
-        gene: 'Simvastatin', genotype: 'Genotype4', phenotype: 'Phenotype4'),
-    PharmagenomicsProfile(
-        gene: 'Abacavir', genotype: 'Genotype5', phenotype: 'Phenotype5'),
-  ];
+  final TextEditingController _geneController = TextEditingController();
+  final TextEditingController _genotypeController = TextEditingController();
+  final TextEditingController _phenotypeController = TextEditingController();
+  final TextEditingController _medicationGuidanceController =
+      TextEditingController();
 
+  File? _selectedFile;
   String? _uploadedFileName;
 
-  void _pickFile() async {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PharmacogenomicsCubit>().fetchPharmacogenomics();
+    });
+  }
+
+  @override
+  void dispose() {
+    _geneController.dispose();
+    _genotypeController.dispose();
+    _phenotypeController.dispose();
+    _medicationGuidanceController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['csv', 'pdf'],
     );
-
-    if (result != null) {
+    if (result != null && result.files.single.path != null) {
       setState(() {
+        _selectedFile = File(result.files.single.path!);
         _uploadedFileName = result.files.single.name;
       });
     }
@@ -39,8 +54,43 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
 
   void _removeFile() {
     setState(() {
+      _selectedFile = null;
       _uploadedFileName = null;
     });
+  }
+
+  Future<void> _saveReport() async {
+    if (_geneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Gene cannot be empty")),
+      );
+      return;
+    }
+
+    final gene = _geneController.text;
+    final genotype = _genotypeController.text;
+    final phenotype = _phenotypeController.text;
+    final medicationGuidance = _medicationGuidanceController.text;
+    final fullReportPath = _selectedFile ?? File('');
+
+    await context.read<PharmacogenomicsCubit>().create(
+          gene,
+          genotype,
+          phenotype,
+          medicationGuidance,
+          fullReportPath,
+        );
+
+    await context.read<PharmacogenomicsCubit>().fetchPharmacogenomics();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Report submitted")),
+    );
+    _geneController.clear();
+    _genotypeController.clear();
+    _phenotypeController.clear();
+    _medicationGuidanceController.clear();
+    _removeFile();
   }
 
   @override
@@ -63,42 +113,61 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // List of Profiles
             Expanded(
-              child: ListView.builder(
-                itemCount: _profiles.length,
-                itemBuilder: (context, index) {
-                  final profile = _profiles[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: ListTile(
-                      title: Text(
-                        profile.gene,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GeneDetailPage(
-                              gene: profile.gene,
-                              genotype: profile.genotype,
-                              phenotype: profile.phenotype,
-                              medicationGuidance:
-                                  'Sample medication guidance for ${profile.gene}', // Replace with actual data
+              child: BlocBuilder<PharmacogenomicsCubit, PharmacogenomicsState>(
+                builder: (context, state) {
+                  if (state is PharmacogenomicsLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (state is PharmacogenomicsLoaded) {
+                    final items = state.pharmacogenomics;
+                    if (items.isEmpty) {
+                      return Center(child: Text('No pharmacogenomics data.'));
+                    }
+                    return ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            title: Text(
+                              item.gene,
+                              style: const TextStyle(fontSize: 16),
                             ),
+                            subtitle: Text(
+                              'Genotype: ${item.genotype}\nPhenotype: ${item.phenotype}\nGuidance: ${item.medicationGuidance}\nFile: ${item.fileUrl ?? '-'}',
+                            ),
+                            trailing: item.fileUrl != null
+                                ? Icon(Icons.file_present)
+                                : null,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GeneDetailPage(
+                                    id: item.id,
+                                    gene: item.gene,
+                                    genotype: item.genotype,
+                                    phenotype: item.phenotype,
+                                    medicationGuidance: item.medicationGuidance,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },
-                    ),
-                  );
+                    );
+                  }
+                  if (state is PharmacogenomicsError) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  }
+                  return Center(child: Text('No pharmacogenomics data.'));
                 },
               ),
             ),
             const SizedBox(height: 16),
-
-            // Upload Full Report Section
             const Text(
               'Upload Full Report',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -120,33 +189,59 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: _pickFile,
+                  child: const Text('Choose File'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    foregroundColor: Colors.white,
                   ),
-                  child: const Text('Choose File'),
                 ),
+                if (_uploadedFileName != null)
+                  IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: _removeFile,
+                  ),
               ],
             ),
-            if (_uploadedFileName != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  '$_uploadedFileName uploaded',
-                  style: const TextStyle(color: Colors.green),
-                ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _geneController,
+              decoration: const InputDecoration(
+                hintText: 'Gene',
+                border: OutlineInputBorder(),
               ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _genotypeController,
+              decoration: const InputDecoration(
+                hintText: 'Genotype',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _phenotypeController,
+              decoration: const InputDecoration(
+                hintText: 'Phenotype',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _medicationGuidanceController,
+              decoration: const InputDecoration(
+                hintText: 'Medication Guidance',
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 16),
-
-            // Save Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // Handle save action
-                },
+                onPressed: _saveReport,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.cyan,
                   shape: RoundedRectangleBorder(
@@ -165,17 +260,4 @@ class _PharmagenomicsProfilePageState extends State<PharmagenomicsProfilePage> {
       ),
     );
   }
-}
-
-// Data Model for Pharmagenomics Profile
-class PharmagenomicsProfile {
-  final String gene;
-  final String genotype;
-  final String phenotype;
-
-  PharmagenomicsProfile({
-    required this.gene,
-    required this.genotype,
-    required this.phenotype,
-  });
 }

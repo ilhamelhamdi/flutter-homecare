@@ -10,7 +10,11 @@ class PharmacogenomicsRepositoryImpl implements PharmacogenomicsRepository {
 
   @override
   Future<List<Pharmacogenomics>> getPharmacogenomics() async {
-    return await remoteDataSource.getPharmacogenomics();
+    print('[DEBUG] Repository: fetching pharmacogenomics');
+    final result = await remoteDataSource.getPharmacogenomics();
+    print(
+        '[DEBUG] Repository: fetched pharmacogenomics, count: ${result.length}');
+    return result;
   }
 
   @override
@@ -19,15 +23,28 @@ class PharmacogenomicsRepositoryImpl implements PharmacogenomicsRepository {
   }
 
   @override
-  Future<void> createPharmacogenomic(
-      String title, String? description, File? file) async {
-    await remoteDataSource.createPharmacogenomic(title, description, file);
+  Future<void> createPharmacogenomic(String gene, String genotype,
+      String phenotype, String medicationGuidance, File fullPathReport) async {
+    await remoteDataSource.createPharmacogenomic(
+      gene,
+      genotype,
+      phenotype,
+      medicationGuidance,
+      fullPathReport,
+    );
   }
 
   @override
-  Future<void> updatePharmacogenomic(
-      int id, String title, String? description, File? file) async {
-    await remoteDataSource.updatePharmacogenomic(id, title, description, file);
+  Future<void> updatePharmacogenomic(int id, String gene, String genotype,
+      String phenotype, String medicationGuidance, File fullPathReport) async {
+    await remoteDataSource.updatePharmacogenomic(
+      id,
+      gene,
+      genotype,
+      phenotype,
+      medicationGuidance,
+      fullPathReport,
+    );
   }
 
   @override

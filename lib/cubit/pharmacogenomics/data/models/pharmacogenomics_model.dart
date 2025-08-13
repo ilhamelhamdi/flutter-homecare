@@ -1,39 +1,68 @@
 import 'package:m2health/cubit/pharmacogenomics/domain/entities/pharmacogenomics.dart';
 
 class PharmacogenomicsModel extends Pharmacogenomics {
+  final int userId;
+  final String gene;
+  final String genotype;
+  final String phenotype;
+  final String medicationGuidance;
+  final String? fullReportPath;
+  final String? createdAt;
+  final String? updatedAt;
+
   const PharmacogenomicsModel({
     required int id,
-    required String title,
-    String? description,
-    String? fileUrl,
+    required this.userId,
+    required this.gene,
+    required this.genotype,
+    required this.phenotype,
+    required this.medicationGuidance,
+    this.fullReportPath,
+    this.createdAt,
+    this.updatedAt,
   }) : super(
           id: id,
-          title: title,
-          description: description,
-          fileUrl: fileUrl,
+          userId: userId,
+          gene: gene,
+          genotype: genotype,
+          phenotype: phenotype,
+          medicationGuidance: medicationGuidance,
+          fileUrl: fullReportPath,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
         );
 
   factory PharmacogenomicsModel.fromJson(Map<String, dynamic> json) {
+    print('[DEBUG] PharmacogenomicsModel.fromJson input: $json');
     return PharmacogenomicsModel(
-      // PERBAIKAN: Lakukan parsing dari String ke int dengan aman.
-      // Jika 'id' dari API berupa String "123", ini akan mengubahnya menjadi int 123.
-      // Jika data null atau tidak valid, akan diberi nilai default -1 untuk keamanan.
-      id: int.tryParse(json['id'].toString()) ?? -1,
-
-      // PENINGKATAN: Beri nilai default jika data null untuk menghindari error.
-      title: json['title'] ?? 'No Title',
-
-      description: json['description'],
-      fileUrl: json['file_url'],
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id'].toString()) ?? -1,
+      userId: json['user_id'] is int
+          ? json['user_id']
+          : int.tryParse(json['user_id'].toString()) ?? -1,
+      gene: json['gene']?.toString() ?? '',
+      genotype: json['genotype']?.toString() ?? '',
+      phenotype: json['phenotype']?.toString() ?? '',
+      medicationGuidance: json['medication_guidance']?.toString() ?? '',
+      fullReportPath: json['full_report_path']?.toString(),
+      createdAt: json['created_at']?.toString(),
+      updatedAt: json['updated_at']?.toString(),
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
-      'description': description,
-      'file_url': fileUrl,
+      'user_id': userId,
+      'gene': gene,
+      'genotype': genotype,
+      'phenotype': phenotype,
+      'medication_guidance': medicationGuidance,
+      'full_report_path': fullReportPath,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
     };
   }
 }

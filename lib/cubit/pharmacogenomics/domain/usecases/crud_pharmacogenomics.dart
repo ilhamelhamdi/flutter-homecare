@@ -6,8 +6,20 @@ class CreatePharmacogenomic {
 
   CreatePharmacogenomic(this.repository);
 
-  Future<void> call(String title, String? description, File? file) async {
-    await repository.createPharmacogenomic(title, description, file);
+  Future<void> call(
+    String gene,
+    String genotype,
+    String phenotype,
+    String medicationGuidance,
+    File fullPathReport,
+  ) async {
+    await repository.createPharmacogenomic(
+      gene,
+      genotype,
+      phenotype,
+      medicationGuidance,
+      fullPathReport,
+    );
   }
 }
 
@@ -17,8 +29,21 @@ class UpdatePharmacogenomic {
   UpdatePharmacogenomic(this.repository);
 
   Future<void> call(
-      int id, String title, String? description, File? file) async {
-    await repository.updatePharmacogenomic(id, title, description, file);
+    int id,
+    String gene,
+    String genotype,
+    String phenotype,
+    String medicationGuidance,
+    File fullPathReport,
+  ) async {
+    await repository.updatePharmacogenomic(
+      id,
+      gene,
+      genotype,
+      phenotype,
+      medicationGuidance,
+      fullPathReport,
+    );
   }
 }
 

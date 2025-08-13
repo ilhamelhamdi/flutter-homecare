@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/pharmacogenomics/presentation/pharmagenomical_pages.dart';
 import 'package:m2health/cubit/profiles/ServicesEdit_admin.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_details/edit_profile.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:m2health/cubit/profiles/profile_details/medical_record/medical_record.dart';
-import 'package:m2health/cubit/profiles/profile_details/pharmagenomics_profile/pharmagenomical.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/views/appointment/appointment_detail_page.dart';
