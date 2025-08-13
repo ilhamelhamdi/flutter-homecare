@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:m2health/cubit/pharmacogenomics/presentation/bloc/pharmacogenomics_cubit.dart';
 
 class GeneDetailPage extends StatefulWidget {
+  final int id;
   final String gene;
   final String genotype;
   final String phenotype;
   final String medicationGuidance;
+  final String? fullReportPath;
 
   const GeneDetailPage({
     Key? key,
+    required this.id,
     required this.gene,
     required this.genotype,
     required this.phenotype,
     required this.medicationGuidance,
+    this.fullReportPath,
   }) : super(key: key);
 
   @override
@@ -23,6 +32,8 @@ class _GeneDetailPageState extends State<GeneDetailPage> {
   late String genotype;
   late String phenotype;
   late String medicationGuidance;
+  String? fullReportPath;
+  File? pickedFile;
 
   @override
   void initState() {
@@ -31,70 +42,189 @@ class _GeneDetailPageState extends State<GeneDetailPage> {
     genotype = widget.genotype;
     phenotype = widget.phenotype;
     medicationGuidance = widget.medicationGuidance;
+    fullReportPath = widget.fullReportPath;
   }
 
-  void _editDetails() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final TextEditingController geneController =
-            TextEditingController(text: gene);
-        final TextEditingController genotypeController =
-            TextEditingController(text: genotype);
-        final TextEditingController phenotypeController =
-            TextEditingController(text: phenotype);
-        final TextEditingController guidanceController =
-            TextEditingController(text: medicationGuidance);
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        pickedFile = File(result.files.single.path!);
+        fullReportPath = null; // Will be updated after successful upload
+      });
+    }
+  }
 
-        return AlertDialog(
-          title: const Text('Edit Details'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  controller: geneController,
-                  decoration: const InputDecoration(labelText: 'Gene'),
-                ),
-                TextField(
-                  controller: genotypeController,
-                  decoration: const InputDecoration(labelText: 'Genotype'),
-                ),
-                TextField(
-                  controller: phenotypeController,
-                  decoration: const InputDecoration(labelText: 'Phenotype'),
-                ),
-                TextField(
-                  controller: guidanceController,
-                  decoration:
-                      const InputDecoration(labelText: 'Medication Guidance'),
-                  maxLines: 3,
-                ),
-              ],
-            ),
+  void _editDetailsModal() {
+    final geneController = TextEditingController(text: gene);
+    final genotypeController = TextEditingController(text: genotype);
+    final phenotypeController = TextEditingController(text: phenotype);
+    final guidanceController = TextEditingController(text: medicationGuidance);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  gene = geneController.text;
-                  genotype = genotypeController.text;
-                  phenotype = phenotypeController.text;
-                  medicationGuidance = guidanceController.text;
-                });
-                Navigator.pop(context);
-              },
-              child: const Text('Save'),
-            ),
-          ],
+          child: StatefulBuilder(
+            builder: (context, setModalState) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 5,
+                        width: 50,
+                        margin: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      'Edit Pharmacogenomics',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: geneController,
+                      decoration: const InputDecoration(
+                        labelText: 'Gene',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: genotypeController,
+                      decoration: const InputDecoration(
+                        labelText: 'Genotype',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: phenotypeController,
+                      decoration: const InputDecoration(
+                        labelText: 'Phenotype',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: guidanceController,
+                      decoration: const InputDecoration(
+                        labelText: 'Medication Guidance',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            pickedFile != null
+                                ? pickedFile!.path.split('/').last
+                                : fullReportPath != null
+                                    ? fullReportPath!.split('/').last
+                                    : 'Choose PDF file',
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['pdf'],
+                            );
+                            if (result != null &&
+                                result.files.single.path != null) {
+                              setModalState(() {
+                                pickedFile = File(result.files.single.path!);
+                                fullReportPath = null;
+                              });
+                            }
+                          },
+                          child: const Text('Choose File'),
+                        ),
+                        if (pickedFile != null)
+                          IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () =>
+                                setModalState(() => pickedFile = null),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Save',
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () async {
+                          await context.read<PharmacogenomicsCubit>().update(
+                                widget.id,
+                                geneController.text,
+                                genotypeController.text,
+                                phenotypeController.text,
+                                guidanceController.text,
+                                pickedFile ?? File(''),
+                              );
+                          setState(() {
+                            gene = geneController.text;
+                            genotype = genotypeController.text;
+                            phenotype = phenotypeController.text;
+                            medicationGuidance = guidanceController.text;
+                          });
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Details updated')),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );
+  }
+
+  Future<void> _openPdf() async {
+    if (fullReportPath == null || fullReportPath!.isEmpty) return;
+    final uri = Uri.parse(fullReportPath!);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open PDF file')),
+      );
+    }
   }
 
   void _deleteDetails() {
@@ -112,9 +242,13 @@ class _GeneDetailPageState extends State<GeneDetailPage> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await context.read<PharmacogenomicsCubit>().delete(widget.id);
                 Navigator.pop(context);
                 Navigator.pop(context); // Go back to the previous screen
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Record deleted')),
+                );
               },
               child: const Text('Delete'),
             ),
@@ -176,6 +310,17 @@ class _GeneDetailPageState extends State<GeneDetailPage> {
                           medicationGuidance,
                           style: const TextStyle(fontSize: 14),
                         ),
+                        const SizedBox(height: 8),
+                        if (fullReportPath != null &&
+                            fullReportPath!.isNotEmpty)
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.picture_as_pdf),
+                            label: const Text('View PDF'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                            ),
+                            onPressed: _openPdf,
+                          ),
                       ],
                     ),
                   ),
@@ -183,7 +328,7 @@ class _GeneDetailPageState extends State<GeneDetailPage> {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onTap: _editDetails,
+                          onTap: _editDetailsModal,
                           child: Container(
                             height: 50,
                             decoration: BoxDecoration(

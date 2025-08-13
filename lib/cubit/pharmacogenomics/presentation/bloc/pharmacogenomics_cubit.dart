@@ -18,18 +18,35 @@ class PharmacogenomicsCubit extends Cubit<PharmacogenomicsState> {
   }) : super(PharmacogenomicsInitial());
 
   Future<void> fetchPharmacogenomics() async {
+    print('[DEBUG] Cubit: fetchPharmacogenomics() called');
     try {
       emit(PharmacogenomicsLoading());
       final result = await getPharmacogenomics();
+      print(
+          '[DEBUG] Cubit: fetchPharmacogenomics() result count: ${result.length}');
       emit(PharmacogenomicsLoaded(result));
-    } catch (e) {
+    } catch (e, s) {
+      print('[DEBUG] Cubit: fetchPharmacogenomics() error: $e');
+      print('[DEBUG] Cubit: Stacktrace: $s');
       emit(PharmacogenomicsError(e.toString()));
     }
   }
 
-  Future<void> create(String title, String? description, File? file) async {
+  Future<void> create(
+    String gene,
+    String genotype,
+    String phenotype,
+    String medicationGuidance,
+    File fullPathReport,
+  ) async {
     try {
-      await createPharmacogenomic(title, description, file);
+      await createPharmacogenomic(
+        gene,
+        genotype,
+        phenotype,
+        medicationGuidance,
+        fullPathReport,
+      );
       fetchPharmacogenomics();
     } catch (e) {
       emit(PharmacogenomicsError(e.toString()));
@@ -37,9 +54,22 @@ class PharmacogenomicsCubit extends Cubit<PharmacogenomicsState> {
   }
 
   Future<void> update(
-      int id, String title, String? description, File? file) async {
+    int id,
+    String gene,
+    String genotype,
+    String phenotype,
+    String medicationGuidance,
+    File fullPathReport,
+  ) async {
     try {
-      await updatePharmacogenomic(id, title, description, file);
+      await updatePharmacogenomic(
+        id,
+        gene,
+        genotype,
+        phenotype,
+        medicationGuidance,
+        fullPathReport,
+      );
       fetchPharmacogenomics();
     } catch (e) {
       emit(PharmacogenomicsError(e.toString()));

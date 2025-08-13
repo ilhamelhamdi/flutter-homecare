@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/pharmacogenomics/presentation/pharmagenomical_pages.dart';
 import 'package:m2health/cubit/profiles/ServicesEdit_admin.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_details/edit_profile.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:m2health/cubit/profiles/profile_details/medical_record/medical_record.dart';
-import 'package:m2health/cubit/profiles/profile_details/pharmagenomics_profile/pharmagenomical.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/views/appointment/appointment_detail_page.dart';
@@ -242,7 +242,21 @@ class ProfilePage extends StatelessWidget {
                                       const Text('Wellness Genomics Profile'),
                                   trailing: const Icon(Icons.arrow_forward_ios),
                                   onTap: () {
-                                    // Handle Pharma Profile tap
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Coming Soon'),
+                                        content: const Text(
+                                            'This feature is under development.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
                                   },
                                 ),
                                 if (isAdmin)
