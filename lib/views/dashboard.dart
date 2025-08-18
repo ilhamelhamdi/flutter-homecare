@@ -422,11 +422,7 @@ class _DashboardState extends State<Dashboard> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProfilePage()),
-                              );
+                              context.go(AppRoutes.profile);
                             },
                             child: const Text('View all',
                                 style: TextStyle(
