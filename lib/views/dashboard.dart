@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m2health/cubit/nursing/pages/nursing_services.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/views/diabetic_care.dart';
 import 'package:m2health/views/home_health_screening.dart';
 import 'package:m2health/views/pharmacist_services.dart';
@@ -181,12 +183,7 @@ class _DashboardState extends State<Dashboard> {
                           const Spacer(),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProfilePage(),
-                                ),
-                              );
+                              context.go(AppRoutes.profile);
                             },
                             child: Container(
                               width: 56,
@@ -310,11 +307,7 @@ class _DashboardState extends State<Dashboard> {
                       RectangularIconWithTitle(
                         onTap: () {
                           // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PharmaServices()),
-                          );
+                          context.push(AppRoutes.pharmaServices);
                         },
                         iconPath:
                             'assets/icons/ic_pharma_service.png', // Replace with your actual image path
@@ -327,11 +320,7 @@ class _DashboardState extends State<Dashboard> {
                       RectangularIconWithTitle(
                         onTap: () {
                           // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NursingService()),
-                          );
+                          context.push(AppRoutes.nursingServices);
                         },
                         iconPath:
                             'assets/icons/ic_nurse.png', // Replace with your actual image path
@@ -344,11 +333,7 @@ class _DashboardState extends State<Dashboard> {
                       RectangularIconWithTitle(
                         onTap: () {
                           // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DiabeticCare()),
-                          );
+                          context.go(AppRoutes.diabeticCare);
                         },
                         iconPath:
                             'assets/icons/ic_diabetic.png', // Replace with your actual image path

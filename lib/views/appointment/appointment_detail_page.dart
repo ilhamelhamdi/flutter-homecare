@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/cubit/appointment/appointment_detail.dart';
 import 'package:m2health/main.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/views/appointment/appointment_detail_page.dart';
 import 'package:m2health/cubit/appointment/appointment_manager.dart';
 import 'package:m2health/models/appointment.dart';
@@ -147,13 +149,7 @@ class _AppointmentPageState extends State<AppointmentPage>
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pop(context);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
-            );
+            context.go(AppRoutes.home);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Const.tosca,

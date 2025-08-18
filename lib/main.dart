@@ -19,6 +19,7 @@ import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/cubit/appointment/provider_appointment_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:navbar_router/navbar_router.dart';
 
 import 'const.dart';
@@ -341,285 +342,93 @@ class AppSetting extends ChangeNotifier {
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class AppShell extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
-  bool _resumedFromBackground = false;
-  bool _showBottomBar = true;
-
-  late TabController tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    tabController = TabController(length: 5, vsync: this);
-    tabController.addListener(_handleTabSelection);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    tabController.removeListener(_handleTabSelection);
-    tabController.dispose();
-    super.dispose();
-  }
-
-  void _handleTabSelection() {
-    setState(() {
-      // Hide BottomBar on the third tab (index 2)
-      _showBottomBar = tabController.index != 2;
-    });
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _resumedFromBackground = true;
-      print("onResume");
-    }
-  }
+  const AppShell({
+    super.key,
+    required this.navigationShell,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (_resumedFromBackground) {
-          _resumedFromBackground = false;
-          return false; // Prevent default back button behavior
-        } else {
-          return true; // Allow default back button behavior
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(
-            top: .0), // Adjust the bottom padding as needed
-        child: Stack(
-          children: [
-            BottomBar(
-              fit: StackFit.expand,
-              icon: (width, height) => Center(
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.arrow_upward_rounded,
-                    color: Colors.grey, // Replace with your unselected color
-                    size: width,
-                  ),
-                ),
-              ),
-              borderRadius: BorderRadius.circular(
-                  20), // Adjust the border radius as needed
-              duration: const Duration(seconds: 1),
-              curve: Curves.decelerate,
-              showIcon: true,
-              width: MediaQuery.of(context).size.width * 0.8,
-              barColor: Colors.white, // Replace with your bar color
-              start: 2,
-              end: 0,
-              offset: 10,
-              barAlignment: Alignment.bottomCenter,
-              iconHeight: 35,
-              iconWidth: 35,
-              reverse: false,
-              barDecoration: BoxDecoration(
-                color: Colors.blue, // Replace with your current page color
-                borderRadius: BorderRadius.circular(
-                    20), // Adjust the border radius as needed
-              ),
-              iconDecoration: BoxDecoration(
-                color: Colors.blue, // Replace with your current page color
-                borderRadius: BorderRadius.circular(
-                    20), // Adjust the border radius as needed
-              ),
-              hideOnScroll: true,
-              scrollOpposite: false,
-              onBottomBarHidden: () {},
-              onBottomBarShown: () {},
-              body: (context, controller) => TabBarView(
-                controller: tabController,
-                dragStartBehavior: DragStartBehavior.down,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  Dashboard(),
-                  AppointmentPage(),
-                  MedicalStorePage(),
-                  FavouritesPage(),
-                  ProfilePage(), // Add your pages here
-                ],
-              ),
-              child: TabBar(
-                controller: tabController,
-                tabs: const [
-                  Tab(icon: Icon(Icons.home_outlined)),
-                  Tab(icon: Icon(Icons.calendar_month_outlined)),
-                  Tab(icon: Icon(Icons.add_shopping_cart_outlined)),
-                  Tab(icon: Icon(Icons.favorite_border_outlined)),
-                  Tab(icon: Icon(Icons.person_outline)),
-                ],
-                indicatorColor: const Color(0xFF40E0D0), // Warna tosca
-              ),
-            ),
-            if (!_showBottomBar)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 0, // Hide BottomBar by setting height to 0
-                ),
-              ),
-          ],
-        ),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 32),
+            child: navigationShell,
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: _buildFloatingNavBar(context),
+          ),
+        ],
       ),
     );
   }
-}
 
-class BottomAppBar extends StatefulWidget {
-  const BottomAppBar({Key? key}) : super(key: key);
+  Widget _buildFloatingNavBar(BuildContext context) {
+    final currentIndex = navigationShell.currentIndex;
 
-  @override
-  _CustomBottomAppBarState createState() => _CustomBottomAppBarState();
-}
-
-class _CustomBottomAppBarState extends State<BottomAppBar>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
-  bool _resumedFromBackground = false;
-  bool _showBottomBar = true;
-
-  late TabController tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    tabController = TabController(length: 5, vsync: this);
-    tabController.addListener(_handleTabSelection);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    tabController.removeListener(_handleTabSelection);
-    tabController.dispose();
-    super.dispose();
-  }
-
-  void _handleTabSelection() {
-    setState(() {
-      // Hide BottomBar on the third tab (index 2)
-      _showBottomBar = tabController.index != 2;
-    });
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _resumedFromBackground = true;
-      print("onResume");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (_resumedFromBackground) {
-          _resumedFromBackground = false;
-          return false; // Prevent default back button behavior
-        } else {
-          return true; // Allow default back button behavior
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(
-            top: .0), // Adjust the bottom padding as needed
-        child: Stack(
-          children: [
-            BottomBar(
-              fit: StackFit.expand,
-              icon: (width, height) => Center(
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.arrow_upward_rounded,
-                    color: Colors.grey, // Replace with your unselected color
-                    size: width,
-                  ),
-                ),
-              ),
-              borderRadius: BorderRadius.circular(
-                  20), // Adjust the border radius as needed
-              duration: const Duration(seconds: 1),
-              curve: Curves.decelerate,
-              showIcon: true,
-              width: MediaQuery.of(context).size.width * 0.8,
-              barColor: Colors.white, // Replace with your bar color
-              start: 2,
-              end: 0,
-              offset: 10,
-              barAlignment: Alignment.bottomCenter,
-              iconHeight: 35,
-              iconWidth: 35,
-              reverse: false,
-              barDecoration: BoxDecoration(
-                color: Colors.blue, // Replace with your current page color
-                borderRadius: BorderRadius.circular(
-                    20), // Adjust the border radius as needed
-              ),
-              iconDecoration: BoxDecoration(
-                color: Colors.blue, // Replace with your current page color
-                borderRadius: BorderRadius.circular(
-                    20), // Adjust the border radius as needed
-              ),
-              hideOnScroll: true,
-              scrollOpposite: false,
-              onBottomBarHidden: () {},
-              onBottomBarShown: () {},
-              body: (context, controller) => TabBarView(
-                controller: tabController,
-                dragStartBehavior: DragStartBehavior.down,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  Dashboard(),
-                  AppointmentPage(),
-                  MedicalStorePage(),
-                  FavouritesPage(),
-                  ProfilePage(), // Add your pages here
-                ],
-              ),
-              child: TabBar(
-                controller: tabController,
-                tabs: const [
-                  Tab(icon: Icon(Icons.home_outlined)),
-                  Tab(icon: Icon(Icons.calendar_month_outlined)),
-                  Tab(icon: Icon(Icons.add_shopping_cart_outlined)),
-                  Tab(icon: Icon(Icons.favorite_border_outlined)),
-                  Tab(icon: Icon(Icons.person_outline)),
-                ],
-                indicatorColor: const Color(0xFF40E0D0), // Warna tosca
-              ),
-            ),
-            if (!_showBottomBar)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 0, // Hide BottomBar by setting height to 0
-                ),
-              ),
-          ],
-        ),
+    return Container(
+      height: 80,
+      margin: const EdgeInsets.only(bottom: 20, left: 24, right: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(
+            onPressed: () => navigationShell.goBranch(0),
+            icon: const Icon(Icons.home_outlined),
+            iconSize: 28,
+            color: currentIndex == 0
+                ? const Color(0xFF40E0D0)
+                : const Color(0xFF8A96BC),
+          ),
+          IconButton(
+            onPressed: () => navigationShell.goBranch(1),
+            icon: const Icon(Icons.calendar_month_outlined),
+            iconSize: 28,
+            color: currentIndex == 1
+                ? const Color(0xFF40E0D0)
+                : const Color(0xFF8A96BC),
+          ),
+          IconButton(
+            onPressed: () => navigationShell.goBranch(2),
+            icon: const Icon(Icons.add_shopping_cart_outlined),
+            iconSize: 28,
+            color: currentIndex == 2
+                ? const Color(0xFF40E0D0)
+                : const Color(0xFF8A96BC),
+          ),
+          IconButton(
+            onPressed: () => navigationShell.goBranch(3),
+            icon: const Icon(Icons.favorite_border_outlined),
+            iconSize: 28,
+            color: currentIndex == 3
+                ? const Color(0xFF40E0D0)
+                : const Color(0xFF8A96BC),
+          ),
+          IconButton(
+            onPressed: () => navigationShell.goBranch(4),
+            icon: const Icon(Icons.person_outline),
+            iconSize: 28,
+            color: currentIndex == 4
+                ? const Color(0xFF40E0D0)
+                : const Color(0xFF8A96BC),
+          ),
+        ],
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/cubit/appointment/appointment_page.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/widgets/bottombar.dart';
 // import 'package:navbar_router/navbar_router.dart';
 
@@ -326,13 +327,7 @@ class PaymentSuccessDialog extends StatelessWidget {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
-                );
+                context.go(AppRoutes.home);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Const.tosca,
@@ -596,16 +591,8 @@ class FeedbackDetails extends StatelessWidget {
                 width: 300,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(),
-                      ),
-                    ).then((_) {
-                      // Show the bottom navigation bar after navigation completes
-                      MyApp.showBottomAppBar(context);
-                    });
+                    context.go(AppRoutes.home);
+                    MyApp.showBottomAppBar(context);
                   },
                   child: const Text(
                     'View Detail',

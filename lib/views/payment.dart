@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/views/appointment/appointment_detail_page.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -312,13 +314,7 @@ class PaymentSuccessDialog extends StatelessWidget {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
-                );
+                context.go(AppRoutes.home);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Const.tosca,
