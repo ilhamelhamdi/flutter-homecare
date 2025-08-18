@@ -25,3 +25,9 @@ class ProfileError extends ProfileState {
 
   ProfileError(this.message);
 }
+
+class ProfileUpdateSuccessWithImage extends ProfileState {
+  final Profile profile;
+
+  ProfileUpdateSuccessWithImage(this.profile);
+}

@@ -4,7 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'sign_up_cubit.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -13,27 +18,38 @@ class SignUpPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String? _passwordError;
-  String? role;
+  String? _selectedRole;
 
   void _validatePasswords() {
-    if (_passwordController.text != _confirmPasswordController.text) {
-      _passwordError = 'Passwords do not match';
-    } else {
-      _passwordError = null;
-    }
+    setState(() {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        _passwordError = 'Passwords do not match';
+      } else {
+        _passwordError = null;
+      }
+    });
   }
 
-  // void _submitForm(BuildContext context) {
-  //   _validatePasswords();
-  //   if (_formKey.currentState!.validate() && _passwordError == null) {
-  //     context.read<SignUpCubit>().signUp(
-  //           _emailController.text,
-  //           _passwordController.text,
-  //           _usernameController.text,
-  //           role?.toLowerCase() ?? 'user',
-  //         );
-  //   }
-  // }
+  void _submitForm(BuildContext context) {
+    _validatePasswords();
+    if (_formKey.currentState!.validate() &&
+        _passwordError == null &&
+        _selectedRole != null) {
+      context.read<SignUpCubit>().signUp(
+            _emailController.text.trim(),
+            _passwordController.text,
+            _usernameController.text.trim(),
+            _selectedRole!,
+          );
+    } else if (_selectedRole == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select a user type'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +129,7 @@ class SignUpPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 30),
                     const SizedBox(height: 10),
-                    TextField(
+                    TextFormField(
                       controller: _usernameController,
                       decoration: InputDecoration(
                         hintText: 'Username',
@@ -123,9 +139,15 @@ class SignUpPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter a username';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
-                    TextField(
+                    TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
@@ -136,9 +158,19 @@ class SignUpPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter an email';
+                        }
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                            .hasMatch(value)) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
-                    TextField(
+                    TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
                         hintText: 'Password',
@@ -149,9 +181,18 @@ class SignUpPage extends StatelessWidget {
                         ),
                       ),
                       obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
-                    TextField(
+                    TextFormField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
                         hintText: 'Confirm Password',
@@ -166,6 +207,15 @@ class SignUpPage extends StatelessWidget {
                       onChanged: (value) {
                         _validatePasswords();
                       },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password';
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
                     DropdownButtonFormField<String>(
@@ -175,15 +225,28 @@ class SignUpPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      items: <String>['patient', 'nurse', 'manufacturer']
-                          .map<DropdownMenuItem<String>>((String value) {
+                      value: _selectedRole,
+                      items: <String>[
+                        'Patient',
+                        'Nurse',
+                        'Pharmacist',
+                        'Radiologist'
+                      ].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
-                          value: value,
+                          value: value.toLowerCase(),
                           child: Text(value),
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
-                        role = newValue;
+                        setState(() {
+                          _selectedRole = newValue;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a user type';
+                        }
+                        return null;
                       },
                     ),
                     const SizedBox(height: 30),
@@ -200,14 +263,9 @@ class SignUpPage extends StatelessWidget {
                           side: BorderSide.none,
                           padding: const EdgeInsets.all(12.0),
                         ),
-                        onPressed: () {
-                          context.read<SignUpCubit>().signUp(
-                                _emailController.text,
-                                _passwordController.text,
-                                _usernameController.text,
-                                role?.toLowerCase() ?? 'patient',
-                              );
-                        },
+                        onPressed: state is SignUpLoading
+                            ? null
+                            : () => _submitForm(context),
                         child: const Text('Sign Up'),
                       ),
                     ),
@@ -241,7 +299,19 @@ class SignUpPage extends StatelessWidget {
                             icon: Image.asset('assets/icons/ic_fb.png'),
                             iconSize: 40,
                             onPressed: () {
-                              // Handle Facebook login
+                              if (_selectedRole == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Please select a user type first'),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                                return;
+                              }
+                              // context
+                              //     .read<SignUpCubit>()
+                              //     .signUpWithFacebook(_selectedRole!);
                             },
                           ),
                           const SizedBox(width: 16),
@@ -249,7 +319,19 @@ class SignUpPage extends StatelessWidget {
                             icon: Image.asset('assets/icons/ic_google.png'),
                             iconSize: 40,
                             onPressed: () {
-                              // Handle Google login
+                              if (_selectedRole == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Please select a user type first'),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                                return;
+                              }
+                              // context
+                              //     .read<SignUpCubit>()
+                              //     .signUpWithGoogle(_selectedRole!);
                             },
                           ),
                           const SizedBox(width: 16),
@@ -257,7 +339,19 @@ class SignUpPage extends StatelessWidget {
                             icon: Image.asset('assets/icons/ic_wechat.png'),
                             iconSize: 40,
                             onPressed: () {
-                              // Handle WeChat login
+                              if (_selectedRole == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Please select a user type first'),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                                return;
+                              }
+                              // context
+                              //     .read<SignUpCubit>()
+                              //     .signUpWithWeChat(_selectedRole!);
                             },
                           ),
                         ],

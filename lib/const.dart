@@ -1,32 +1,48 @@
 import 'package:flutter/material.dart';
 
 class Const {
-  // static const String BASE_URL = 'http://192.168.1.4:3333';
+  // static const String BASE_URL = 'http://192.168.1.2:3333';
   static const String BASE_URL = 'https://homecare-api.med-map.org';
   // static const String BASE_URL = 'http://192.168.56.1:3333';
   static const String URL_API = BASE_URL + '/v1';
-
   static const String URL_IMG_PLACEHOLDER = 'https://placehold.co/100x100';
-
   static const String API_SERVICE_REQUESTS = URL_API + '/service-requests';
-
-  static const String API_PARTNERSHIP_LIST =
-      URL_API + '/demo-requests?page=1&limit=10&sort=id&order=desc';
   static const String API_PRODUCTS = URL_API + '/products/';
   static const String API_LOGIN = URL_API + '/auth/login';
   static const String API_REGISTER = URL_API + '/auth/register/';
-  // new API homecare
   static const String API_APPOINTMENT = URL_API + '/appointments';
   static const String API_PROFILE = URL_API + '/profiles';
   static const String API_MEDICAL_RECORDS = URL_API + '/medical-records';
   static const String API_PERSONAL_CASES = URL_API + '/personal-cases';
+
+  // Personal Cases
+  static const String API_NURSING_PERSONAL_CASES =
+      URL_API + '/nursing/personal-cases';
+  static const String API_PHARMACIST_PERSONAL_CASES =
+      URL_API + '/pharmacist/personal-cases';
+
+  // Pharmacogenomics
+  static const String API_PHARMACOGENOMICS = URL_API + '/pharmacogenomics';
+
   static const String API_PHARMACIST_SERVICES =
       URL_API + '/pharmacist-services';
   static const String API_NURSE_SERVICES = URL_API + '/nurse-services';
+  static const String API_RADIOLOGIST_SERVICES =
+      URL_API + '/radiologist-services';
+  static const String API_PROVIDERS_AVAILABLE =
+      URL_API + '/providers/available';
+  static const String API_SERVICE_TITLES = URL_API + '/service-titles';
   static const String API_FAVORITES = URL_API + '/favorites';
-// end new api
-  // static const String URL_PRIVACY = URL_WEB + '/privacy-policy';
+  // Existing constants...
+  static const String API_PROVIDER_APPOINTMENTS =
+      URL_API + '/provider/appointments';
 
+  // Provider appointment actions
+  static const String API_PROVIDER_ACCEPT = URL_API + '/provider/appointments';
+  static const String API_PROVIDER_REJECT = URL_API + '/provider/appointments';
+  static const String API_PROVIDER_COMPLETE =
+      URL_API + '/provider/appointments';
+// end new api
   static const String ROLE = 'role';
   static const String IS_LOGED_IN = 'is_logged_in';
   static const String TOKEN = 'token';

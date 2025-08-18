@@ -33,9 +33,14 @@ class _AddOnState extends State<AddOn> {
       final token = await Utils.getSpString(Const.TOKEN);
 
       // Determine endpoint based on service type
-      final endpoint = widget.serviceType == "Pharma"
-          ? '${Const.URL_API}/service-titles/pharma'
-          : '${Const.URL_API}/service-titles/nurse';
+      String endpoint;
+      if (widget.serviceType == "Pharma") {
+        endpoint = '${Const.URL_API}/service-titles/pharma';
+      } else if (widget.serviceType == "Radiologist") {
+        endpoint = '${Const.URL_API}/service-titles/radiologist';
+      } else {
+        endpoint = '${Const.URL_API}/service-titles/nurse';
+      }
 
       final response = await Dio().get(
         endpoint,
@@ -71,6 +76,14 @@ class _AddOnState extends State<AddOn> {
         {'id': 1, 'title': 'Medication Review', 'price': 15.0},
         {'id': 2, 'title': 'Prescription Consultation', 'price': 10.0},
         {'id': 3, 'title': 'Medication Management Plan', 'price': 25.0},
+      ];
+    } else if (widget.serviceType == "Radiologist") {
+      serviceData = [
+        {'id': 1, 'title': 'Image Analysis & Interpretation', 'price': 150.0},
+        {'id': 2, 'title': 'CT Scan Review', 'price': 200.0},
+        {'id': 3, 'title': 'MRI Scan Analysis', 'price': 250.0},
+        {'id': 4, 'title': 'X-Ray Examination', 'price': 100.0},
+        {'id': 5, 'title': 'Ultrasound Analysis', 'price': 120.0},
       ];
     } else if (widget.serviceType == "Nurse") {
       serviceData = [
@@ -151,7 +164,9 @@ class _AddOnState extends State<AddOn> {
           title: Text(
             widget.serviceType == "Pharma"
                 ? 'Pharmacist Add-On Services'
-                : 'Nursing Add-On Services',
+                : widget.serviceType == "Radiologist"
+                    ? 'Radiologist Add-On Services'
+                    : 'Nursing Add-On Services',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
@@ -160,14 +175,15 @@ class _AddOnState extends State<AddOn> {
         ),
       );
     }
-
     if (serviceData == null || serviceData!.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           title: Text(
             widget.serviceType == "Pharma"
                 ? 'Pharmacist Add-On Services'
-                : 'Nursing Add-On Services',
+                : widget.serviceType == "Radiologist"
+                    ? 'Radiologist Add-On Services'
+                    : 'Nursing Add-On Services',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
@@ -176,13 +192,14 @@ class _AddOnState extends State<AddOn> {
         ),
       );
     }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
           widget.serviceType == "Pharma"
               ? 'Pharmacist Add-On Services'
-              : 'Nursing Add-On Services',
+              : widget.serviceType == "Radiologist"
+                  ? 'Radiologist Add-On Services'
+                  : 'Nursing Add-On Services',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),

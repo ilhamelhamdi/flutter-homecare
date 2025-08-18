@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
-import 'package:m2health/cubit/appointment/appointment_page.dart';
-import 'package:go_router/go_router.dart';
-import 'package:m2health/widgets/bottombar.dart';
-// import 'package:navbar_router/navbar_router.dart';
+import 'package:m2health/views/appointment/appointment_detail_page.dart';
 
 class PaymentPage extends StatefulWidget {
   final int appointmentId;
@@ -49,14 +46,20 @@ class _PaymentPageState extends State<PaymentPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 50,
                       height: 50,
-                      decoration: BoxDecoration(
+                      child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: DecorationImage(
-                          image: NetworkImage(profile['avatar']),
+                        child: Image.network(
+                          profile['avatar'],
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/images_budi.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -304,23 +307,6 @@ class PaymentSuccessDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // ElevatedButton(
-          //   onPressed: () {
-          //     // Navigator.of(context).pop();
-          //     context.go('/dashboard');
-          //   },
-          //   style: ElevatedButton.styleFrom(
-          //     backgroundColor:
-          //         Const.tosca, // Set the button color to Const.tosca
-          //     minimumSize:
-          //         const Size(150, 50), // Customize the width and height
-          //   ),
-          //   child: const Text(
-          //     'Return to Home',
-          //     style:
-          //         TextStyle(color: Colors.white), // Set the text color to white
-          //   ),
-          // ),
           SizedBox(
             width: 150,
             height: 50,
@@ -600,7 +586,7 @@ class FeedbackDetails extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HomePage(),
+                        builder: (context) => AppointmentPage(),
                       ),
                     ).then((_) {
                       // Show the bottom navigation bar after navigation completes

@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:m2health/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'details/detail_appointment.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/widgets/time_slot_grid_view.dart';
+import 'package:m2health/services/appointment_service.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> pharmacist;
@@ -29,6 +31,8 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   late DateTime _selectedDay;
   late DateTime _focusedDay;
   late DateTime selectTime;
+  late AppointmentService _appointmentService;
+  bool _isSubmitting = false; // Add loading state to prevent duplicates
 
   @override
   void initState() {
@@ -37,85 +41,137 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
     _selectedDay = widget.initialDate ?? DateTime.now();
     _focusedDay = widget.initialDate ?? DateTime.now();
     selectTime = widget.initialTime ?? DateTime.now();
+    _appointmentService = AppointmentService(context.read<Dio>());
   }
 
   Future<void> _submitAppointment() async {
-    final appointmentData = {
-      'user_id': 1, // Replace with actual user ID
-      'type': widget.pharmacist['role'],
-      'status': 'Upcoming',
-      'date': DateFormat('yyyy-MM-dd').format(_selectedDay),
-      'hour': DateFormat('HH:mm').format(selectTime),
-      'summary': 'Summary',
-      'pay_total': 100,
-      'profile_services_data': widget.pharmacist,
-    };
+    // Prevent duplicate submissions
+    if (_isSubmitting) {
+      print('Already submitting appointment, ignoring duplicate request');
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
 
     try {
-      final token = await Utils.getSpString(Const.TOKEN);
+      final userId = await Utils.getSpString(Const.USER_ID);
+
+      // Extract provider information from pharmacist data
+      final providerId = widget.pharmacist['id'];
+      final providerType = widget.pharmacist['role'] ?? 'pharmacist';
+
+      print('Provider ID: $providerId');
+      print('Provider Type: $providerType');
+      print('Pharmacist data: ${widget.pharmacist}');
+
+      if (providerId == null) {
+        throw Exception(
+            'Provider ID is required but not found in pharmacist data');
+      }
+
+      final appointmentData = {
+        'user_id': int.tryParse(userId ?? '1') ?? 1,
+        'provider_id': providerId, // Add provider_id
+        'provider_type': providerType.toLowerCase(), // Add provider_type
+        'type': providerType,
+        'status': 'pending',
+        'date': DateFormat('yyyy-MM-dd').format(_selectedDay),
+        'hour': DateFormat('HH:mm').format(selectTime),
+        'summary':
+            'Appointment booking with ${widget.pharmacist['name'] ?? 'provider'}',
+        'pay_total': 100.0,
+        'profile_services_data': widget.pharmacist,
+      };
+
+      print('Submitting appointment with data: $appointmentData');
 
       if (widget.appointmentId != null) {
         // Update existing appointment
-        final response = await Dio().put(
-          '${Const.API_APPOINTMENT}/${widget.appointmentId}',
-          data: appointmentData,
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Content-Type': 'application/json',
-            },
-          ),
+        await _appointmentService.updateAppointment(
+          widget.appointmentId!,
+          appointmentData,
         );
 
-        if (response.statusCode == 200) {
-          print('Appointment rescheduled successfully');
-          Navigator.pop(context); // Go back to the previous page
-        } else {
-          throw Exception('Failed to reschedule appointment');
-        }
+        print('Appointment rescheduled successfully');
+        Navigator.pop(context);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Appointment rescheduled successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
       } else {
         // Create a new appointment
-        final response = await Dio().post(
-          Const.API_APPOINTMENT,
-          data: appointmentData,
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Content-Type': 'application/json',
-            },
+        final response =
+            await _appointmentService.createAppointment(appointmentData);
+
+        print('Appointment created successfully');
+
+        // Navigate to appointment detail page
+        final detailData = {
+          'id': response['data']?['id'] ?? 0,
+          'user_id': appointmentData['user_id'],
+          'provider_id': appointmentData['provider_id'],
+          'provider_type': appointmentData['provider_type'],
+          'type': appointmentData['type'],
+          'status': appointmentData['status'],
+          'date': appointmentData['date'],
+          'hour': appointmentData['hour'],
+          'summary': appointmentData['summary'],
+          'pay_total': appointmentData['pay_total'],
+          'profile_services_data': appointmentData['profile_services_data'],
+        };
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailAppointmentPage(
+              appointmentData: detailData,
+            ),
           ),
         );
-
-        if (response.statusCode == 200) {
-          print('Appointment created successfully');
-          final appointmentData = {
-            'user_id': 1, // Replace with actual user ID
-            'type': widget.pharmacist['role'],
-            'status': 'Upcoming',
-            'date': DateFormat('yyyy-MM-dd').format(_selectedDay),
-            'hour': DateFormat('HH:mm').format(selectTime),
-            'summary': 'Summary',
-            'pay_total': 100,
-            'profile_services_data': widget.pharmacist,
-          };
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailAppointmentPage(
-                appointmentData: appointmentData,
-              ),
-            ),
-          );
-        } else {
-          throw Exception('Failed to create appointment');
-        }
       }
     } catch (e) {
+      print('=== APPOINTMENT CREATION ERROR ===');
       print('Error: $e');
+
+      // Enhanced error logging for debugging
+      if (e is DioException && e.response != null) {
+        print('Status Code: ${e.response!.statusCode}');
+        print('Response Data: ${e.response!.data}');
+        print('Request Data: ${e.requestOptions.data}');
+      }
+
+      String errorMessage = 'Failed to create appointment';
+      if (e.toString().contains('Validation error') ||
+          e.toString().contains('E_VALIDATION_FAILURE')) {
+        errorMessage = 'Please check your appointment details and try again';
+      } else if (e.toString().contains('422')) {
+        errorMessage =
+            'Invalid appointment data. Provider may not be available or data is incomplete. Please verify all fields are correct';
+      } else if (e.toString().contains('provider_id')) {
+        errorMessage =
+            'Provider information is missing. Please select a provider again.';
+      } else if (e.toString().contains('provider_type')) {
+        errorMessage =
+            'Provider type is missing. Please select a provider again.';
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
       );
+    } finally {
+      // Always reset the submitting state
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -151,14 +207,20 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
-                      Container(
+                      SizedBox(
                         width: 50,
                         height: 50,
-                        decoration: BoxDecoration(
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
-                          image: DecorationImage(
-                            image: NetworkImage(pharmacist['avatar']),
+                          child: Image.network(
+                            pharmacist['avatar'],
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/images_budi.png',
+                                fit: BoxFit.cover,
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -285,13 +347,36 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: _submitAppointment,
-          child: Text(
-            widget.appointmentId != null ? 'Reschedule' : 'Next',
-            style: TextStyle(color: Colors.white),
-          ),
+          onPressed: _isSubmitting
+              ? null
+              : _submitAppointment, // Disable when submitting
+          child: _isSubmitting
+              ? const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      'Submitting...',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                )
+              : Text(
+                  widget.appointmentId != null ? 'Reschedule' : 'Next',
+                  style: const TextStyle(color: Colors.white),
+                ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF35C5CF),
+            backgroundColor: _isSubmitting
+                ? const Color(0xFF35C5CF).withOpacity(0.6)
+                : const Color(0xFF35C5CF),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),

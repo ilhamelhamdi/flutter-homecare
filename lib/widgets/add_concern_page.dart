@@ -47,7 +47,7 @@ class _AddConcernPageState extends State<AddConcernPage> {
         "title": issueTitle,
         "description": description,
         "mobility_status": "wheel",
-        "related_health_record_id": 33, // Make it null to make it optional
+        "related_health_record_id": "", // Make it null to make it optional
         "add_on": "additional",
         "estimated_budget": 1000,
       });
@@ -90,6 +90,9 @@ class _AddConcernPageState extends State<AddConcernPage> {
       print('Response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Reload the data on the previous page
+        context.read<PersonalCubit>().loadPersonalDetails();
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Issue submitted successfully'),

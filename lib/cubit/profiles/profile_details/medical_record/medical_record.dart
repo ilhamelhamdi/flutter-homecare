@@ -101,30 +101,20 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
       final token = await Utils.getSpString(Const.TOKEN);
       final filePath = _selectedFile?.path.replaceAll(r'\', '/');
 
-      // Only include non-empty fields in the form data
+      // Always include all fields, even if they are empty.
+      // The backend might expect all keys to be present.
       Map<String, dynamic> formFields = {
         'title': _titleController.text,
         'disease_name': _diseaseNameController.text,
         'disease_history': _diseaseHistoryController.text,
+        'symptoms': _symptomsController.text,
+        'special_consideration': _specialConsiderationController.text,
+        'treatment_info': _treatmentInfoController.text,
       };
-
-      // Add optional fields only if they have content
-      if (_symptomsController.text.isNotEmpty) {
-        formFields['symptoms'] = _symptomsController.text;
-      }
-
-      if (_specialConsiderationController.text.isNotEmpty) {
-        formFields['special_consideration'] =
-            _specialConsiderationController.text;
-      }
-
-      if (_treatmentInfoController.text.isNotEmpty) {
-        formFields['treatment_info'] = _treatmentInfoController.text;
-      }
 
       // Add file if selected
       if (_selectedFile != null) {
-        formFields['file_url'] = await MultipartFile.fromFile(
+        formFields['file'] = await MultipartFile.fromFile(
           filePath!,
           filename: _selectedFile!.path.split('/').last,
         );
@@ -160,9 +150,13 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
       }
     } catch (e) {
       print('Error submitting medical record: $e');
+      if (e is DioException) {
+        print('Dio error response: ${e.response?.data}');
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error submitting medical record: $e'),
+          content: Text(
+              'Error submitting medical record. Please check logs for details.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -286,17 +280,18 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
                     },
                   ),
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isAddingNewRecord = true;
-                      });
-                    },
-                    child: Text('Add Medical Record'),
+                if (!_isAddingNewRecord)
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _isAddingNewRecord = true;
+                        });
+                      },
+                      child: Text('Add Medical Record'),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -377,12 +372,12 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
               decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
-            const Text('Treatment Information (Optional)'),
-            TextField(
-              controller: _treatmentInfoController,
-              maxLines: 2,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
-            ),
+            // const Text('Treatment Information (Optional)'),
+            // TextField(
+            //   controller: _treatmentInfoController,
+            //   maxLines: 2,
+            //   decoration: const InputDecoration(border: OutlineInputBorder()),
+            // ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

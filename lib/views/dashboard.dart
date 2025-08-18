@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:m2health/cubit/nursing/pages/nursing_services.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:m2health/views/diabetic_care.dart';
 import 'package:m2health/views/home_health_screening.dart';
-import 'package:m2health/views/nursing_services.dart';
 import 'package:m2health/views/pharmacist_services.dart';
 import 'package:m2health/views/remote_patient_monitoring.dart';
 import 'package:m2health/views/second_opinion.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../const.dart';
-import '../main.dart';
 import '../AppLanguage.dart';
 import '../app_localzations.dart';
 import 'package:provider/provider.dart';
+import 'package:m2health/cubit/profiles/profile_cubit.dart';
+import 'package:m2health/cubit/profiles/profile_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m2health/cubit/precision/precision_page.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({
@@ -23,6 +26,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   String? userName;
+  String? userAvatar; // Add this field
   int currentPage = 1;
   int limitItem = 3;
   String keyword = "";
@@ -33,6 +37,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     _loadUserName();
+    context.read<ProfileCubit>().fetchProfile();
     _scrollController = ScrollController()
       ..addListener(() {
         if (_scrollController.position.pixels ==
@@ -103,121 +108,172 @@ class _DashboardState extends State<Dashboard> {
             ),
             title: Padding(
               padding: const EdgeInsets.only(bottom: 25.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
+              child: BlocBuilder<ProfileCubit, ProfileState>(
+                builder: (context, state) {
+                  Widget avatarWidget;
+                  String displayName = userName ?? 'User';
+
+                  if (state is ProfileLoaded) {
+                    displayName = state.profile.username.isNotEmpty
+                        ? state.profile.username
+                        : userName ?? 'User';
+                    avatarWidget = state.profile.avatar.isNotEmpty
+                        ? Image.network(
+                            state.profile.avatar,
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/icons/ic_avatar.png',
+                                width: 56,
+                                height: 56,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Container(
+                                width: 56,
+                                height: 56,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            'assets/icons/ic_avatar.png',
+                            width: 56,
+                            height: 56,
+                            fit: BoxFit.cover,
+                          );
+                  } else {
+                    // For Loading, Error, or Unauthenticated states
+                    displayName = userName ?? 'User';
+                    avatarWidget = Image.asset(
+                      'assets/icons/ic_avatar.png',
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                    );
+                  }
+
+                  return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Image.asset(
-                        Const.banner,
-                        fit: BoxFit.contain,
-                        height: 25,
-                      ),
-                      const Spacer(), // Menambahkan spacer untuk memisahkan logo dan CircleAvatar
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfilePage(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                15), // Membuat sudut membulat
-                            image: const DecorationImage(
-                              image: AssetImage(
-                                  'assets/icons/ic_avatar.png'), // Ganti dengan path gambar Anda
-                              fit: BoxFit.cover,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            Const.banner,
+                            fit: BoxFit.contain,
+                            height: 25,
+                          ),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfilePage(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: avatarWidget,
+                              ),
                             ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            if (state is ProfileLoading) ...[
+                              const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                "Loading...",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ] else
+                              Text(
+                                "Live Longer & Live Healthier, $displayName!",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      // ...existing code for search field...
+                      const SizedBox(height: 20), // Jarak di bawah teks
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/icons/ic_doctor.png',
+                              width: 24,
+                              height: 24,
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                            ),
+                            const SizedBox(width: 10),
+                            const Expanded(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText:
+                                      "Chat With AI doctor for all your health questions",
+                                  hintStyle: TextStyle(
+                                      color: Color(0xFF8A96BC), fontSize: 13),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Live Longer & Live Healthier, $userName!",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20), // Jarak di bawah teks
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/icons/ic_doctor.png',
-                          width: 24,
-                          height: 24,
-                          color: const Color.fromARGB(255, 0, 0,
-                              0), // Menambahkan warna jika diperlukan
-                        ),
-                        const SizedBox(width: 10),
-                        const Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText:
-                                  "Chat With AI doctor for all your health questions",
-                              hintStyle: TextStyle(
-                                  color: Color(0xFF8A96BC), fontSize: 13),
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
-            actions: [
-              // Padding(
-              //   padding: const EdgeInsets.only(right: 16.0),
-              //   child: IconButton(
-              //     icon: Icon(Icons.perm_identity),
-              //     onPressed: () async {
-              //       // bool isLoggedIn =
-              //       //     await Utils.getSpBool(Const.IS_LOGED_IN) ?? false;
-              //       // if (isLoggedIn == true) {
-              //       //   // final back = await Navigator.push'cekMarketingServices : ' + (
-              //       //   //   context,
-              //       //   //   // MaterialPageRoute(builder: (context) => Submenu()),
-              //       //   //   MaterialPageRoute(builder: (context) => SubmenuPage()),
-              //       //   // );
-              //       //   // if (back == 'back') {
-              //       //   //   navbarVisibility(false);
-              //       //   // }
-              //       //   context.push(AppRoutes.submenu);
-              //       // } else {
-              //       //   context.push(AppRoutes.signIn);
-              //       //   // await Navigator.push(
-              //       //   //   context,
-              //       //   //   MaterialPageRoute(builder: (context) => SignInPage()),
-              //       //   // );
-              //       // }
-              //       // ;
-              //     },
-              //     // color: Colors.white,
-              //   ),
-              // )
-            ],
           ),
           body: Container(
             margin: const EdgeInsets.fromLTRB(0, 0, 0, 60),
@@ -435,34 +491,66 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     itemCount: services.length,
                     itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  8.0), // Match the container's border radius
-                              child: Image.asset(
-                                services[index][
-                                    'image']!, // Use the image path from the list
-                                height: 72,
-                                width: 111,
-                                fit: BoxFit
-                                    .cover, // Ensure the image fills the box
+                      return GestureDetector(
+                          onTap: () {
+                            if (services[index]['name'] ==
+                                'Precision\nNutrition') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PrecisionNutritionPage()),
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    title: const Text('Coming Soon'),
+                                    content: const Text(
+                                        'This feature will be available soon!'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      8.0), // Match the container's border radius
+                                  child: Image.asset(
+                                    services[index][
+                                        'image']!, // Use the image path from the list
+                                    height: 72,
+                                    width: 111,
+                                    fit: BoxFit
+                                        .cover, // Ensure the image fills the box
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            services[index]
-                                ['name']!, // Use the name from the list
-                            style: const TextStyle(
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      );
+                              const SizedBox(height: 10),
+                              Text(
+                                services[index]
+                                    ['name']!, // Use the name from the list
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ));
                     },
                   )
                 ],

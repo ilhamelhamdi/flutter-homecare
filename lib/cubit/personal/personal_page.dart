@@ -29,7 +29,9 @@ class _PersonalPageState extends State<PersonalPage> {
   @override
   void initState() {
     super.initState();
-    context.read<PersonalCubit>().loadPersonalDetails();
+    context
+        .read<PersonalCubit>()
+        .loadPersonalDetails(serviceType: widget.serviceType);
   }
 
   @override
@@ -39,7 +41,9 @@ class _PersonalPageState extends State<PersonalPage> {
         title: Text(
           widget.serviceType == "Pharma"
               ? "Pharmacist Services Case"
-              : "Nurse Services Case",
+              : widget.serviceType == "Radiologist"
+                  ? "Radiologist Services Case"
+                  : "Nurse Services Case",
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
@@ -71,9 +75,12 @@ class _PersonalPageState extends State<PersonalPage> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is PersonalLoaded) {
                     final issues = state.issues;
+                    // Sort issues by latest date first
+                    issues.sort((a, b) => b.createdAt.compareTo(a.createdAt));
                     return RefreshIndicator(
                       onRefresh: () async {
-                        context.read<PersonalCubit>().loadPersonalDetails();
+                        context.read<PersonalCubit>().loadPersonalDetails(
+                            serviceType: widget.serviceType);
                       },
                       child: issues.isEmpty
                           ? const Center(
@@ -154,6 +161,15 @@ class _PersonalPageState extends State<PersonalPage> {
                                                   width: 100,
                                                   height: 100,
                                                   fit: BoxFit.cover,
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Image.asset(
+                                                      'assets/images/no_img.jpg',
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    );
+                                                  },
                                                 );
                                               }).toList(),
                                             ),

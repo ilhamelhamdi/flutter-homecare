@@ -24,6 +24,23 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
   PersonalCase? _personalCase;
   String? _errorMessage;
 
+  // Helper methods for safe type conversion
+  int _safeIntConversion(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  double _safeDoubleConversion(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -137,17 +154,45 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
 
   Future<void> _submitAppointment() async {
     try {
+      // Validate required fields first
+      if (widget.appointmentData['provider_id'] == null) {
+        throw Exception('Provider ID is missing');
+      }
+
+      if (widget.appointmentData['date'] == null ||
+          widget.appointmentData['date'].toString().isEmpty) {
+        throw Exception('Appointment date is missing');
+      }
+
       final token = await Utils.getSpString(Const.TOKEN);
       if (token == null) {
         throw Exception('Token is null');
       }
 
+      // Create validated data with safe conversions
+      final validatedData = {
+        'id': _safeIntConversion(widget.appointmentData['id']),
+        'user_id': _safeIntConversion(widget.appointmentData['user_id']),
+        'provider_id':
+            _safeIntConversion(widget.appointmentData['provider_id']),
+        'provider_type':
+            widget.appointmentData['provider_type']?.toString() ?? 'pharmacist',
+        'type': widget.appointmentData['type']?.toString() ?? 'pharmacist',
+        'status': widget.appointmentData['status']?.toString() ?? 'pending',
+        'date': widget.appointmentData['date']?.toString() ?? '',
+        'hour': widget.appointmentData['hour']?.toString() ?? '',
+        'summary': widget.appointmentData['summary']?.toString() ?? '',
+        'pay_total': _safeDoubleConversion(widget.appointmentData['pay_total']),
+        'profile_services_data':
+            widget.appointmentData['profile_services_data'],
+      };
+
       // Print the data being submitted
-      print('Data being submitted: ${jsonEncode(widget.appointmentData)}');
+      print('Data being submitted: ${jsonEncode(validatedData)}');
 
       final response = await Dio().post(
         Const.API_APPOINTMENT,
-        data: jsonEncode(widget.appointmentData), // Convert to JSON string
+        data: jsonEncode(validatedData), // Convert to JSON string
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -165,7 +210,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
             context,
             MaterialPageRoute(
               builder: (context) => PaymentPage(
-                appointmentId: responseData['data']['id'],
+                appointmentId: _safeIntConversion(responseData['data']['id']),
                 profileServiceData:
                     widget.appointmentData['profile_services_data'],
               ),
@@ -193,12 +238,30 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
         throw Exception('Token is null');
       }
 
+      // Create validated data with safe conversions for cancellation
+      final cancelData = {
+        'id': _safeIntConversion(widget.appointmentData['id']),
+        'user_id': _safeIntConversion(widget.appointmentData['user_id']),
+        'provider_id':
+            _safeIntConversion(widget.appointmentData['provider_id']),
+        'provider_type':
+            widget.appointmentData['provider_type']?.toString() ?? 'pharmacist',
+        'type': widget.appointmentData['type']?.toString() ?? 'pharmacist',
+        'status': 'cancelled', // Set status to cancelled
+        'date': widget.appointmentData['date']?.toString() ?? '',
+        'hour': widget.appointmentData['hour']?.toString() ?? '',
+        'summary': widget.appointmentData['summary']?.toString() ?? '',
+        'pay_total': _safeDoubleConversion(widget.appointmentData['pay_total']),
+        'profile_services_data':
+            widget.appointmentData['profile_services_data'],
+      };
+
       // Print the data being submitted
-      print('Data being submitted: ${jsonEncode(widget.appointmentData)}');
+      print('Data being submitted for cancellation: ${jsonEncode(cancelData)}');
 
       final response = await Dio().post(
         Const.API_APPOINTMENT,
-        data: jsonEncode(widget.appointmentData), // Convert to JSON string
+        data: jsonEncode(cancelData), // Convert to JSON string
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -242,15 +305,44 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final profile = widget.appointmentData['profile_services_data'];
-    final addOnServices = _personalCase?.addOn ?? '';
+    // Safe handling of profile services data
+    final profileServicesData = widget.appointmentData['profile_services_data'];
+    Map<String, dynamic> profile;
+
+    if (profileServicesData is Map<String, dynamic>) {
+      profile = profileServicesData;
+    } else if (profileServicesData is String) {
+      try {
+        profile = jsonDecode(profileServicesData) as Map<String, dynamic>;
+      } catch (e) {
+        print('Error parsing profile_services_data: $e');
+        profile = {};
+      }
+    } else {
+      profile = {};
+    }
+
+    final addOnServices = _personalCase?.addOn ?? 'No additional services';
     final serviceCost = 10; // Dummy cost for each service
     final totalCost =
         serviceCost; // Since add_on is a single string, total cost is serviceCost
 
+    // Safe getters for profile data
+    final String profileName =
+        profile['name']?.toString() ?? 'Unknown Provider';
+    final String profileAvatar = profile['avatar']?.toString() ?? '';
+    final String profileLocation =
+        profile['maps_location']?.toString() ?? 'Location not available';
+    final String appointmentStatus =
+        widget.appointmentData['status']?.toString() ?? 'pending';
+    final String appointmentDate =
+        widget.appointmentData['date']?.toString() ?? '';
+    final String appointmentHour =
+        widget.appointmentData['hour']?.toString() ?? '';
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(profile['name']),
+        title: Text(profileName),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -262,7 +354,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   _errorMessage!,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
             Card(
@@ -275,44 +367,78 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        image: DecorationImage(
-                          image: NetworkImage(profile['avatar']),
-                          fit: BoxFit.cover,
-                        ),
+                        color: Colors.grey[300],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: profileAvatar.isNotEmpty &&
+                                !profileAvatar.contains('file:///')
+                            ? Image.network(
+                                profileAvatar,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/images/images_budi.png',
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )
+                            : Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Icon(
+                                  Icons.person,
+                                  size: 25,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          profile['name'],
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            profileName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on, color: Colors.blue),
-                            const SizedBox(width: 4),
-                            Text(profile['maps_location']),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.yellow),
-                            borderRadius: BorderRadius.circular(4),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on, color: Colors.blue),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  profileLocation,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
-                          child: Text(
-                            widget.appointmentData['status'],
-                            style: const TextStyle(color: Colors.orange),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.yellow),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              appointmentStatus,
+                              style: const TextStyle(color: Colors.orange),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -332,8 +458,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                 const Icon(Icons.calendar_today, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text(
-                  _formatDate(
-                      widget.appointmentData['date']), // Use the formatted date
+                  _formatDate(appointmentDate),
                 ),
               ],
             ),
@@ -342,7 +467,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
               children: [
                 const Icon(Icons.access_time, color: Colors.grey),
                 const SizedBox(width: 8),
-                Text(widget.appointmentData['hour']),
+                Text(appointmentHour),
               ],
             ),
             const SizedBox(height: 16),
@@ -364,7 +489,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       child: const Text('Full Name: '),
                     ),
                     Flexible(
-                      child: Text(_profile!.username),
+                      child: Text(_profile?.username ?? 'Unknown'),
                     ),
                   ],
                 ),
@@ -378,7 +503,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       child: const Text('Age: '),
                     ),
                     Flexible(
-                      child: Text(_profile!.age.toString()),
+                      child: Text(_profile?.age.toString() ?? '0'),
                     ),
                   ],
                 ),
@@ -392,7 +517,7 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       child: const Text('Gender: '),
                     ),
                     Flexible(
-                      child: Text(_profile!.gender),
+                      child: Text(_profile?.gender ?? 'Not specified'),
                     ),
                   ],
                 ),
@@ -411,13 +536,15 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                         Flexible(
                           child: Text(
                             _isExpanded
-                                ? '${_personalCase?.description ?? ''} '
-                                : '${_personalCase?.description ?? ''} ',
+                                ? '${_personalCase?.description ?? 'No description available'} '
+                                : '${_personalCase?.description ?? 'No description available'} ',
                           ),
                         ),
                       ],
                     ),
-                    if (!_isExpanded)
+                    if (!_isExpanded &&
+                        _personalCase != null &&
+                        _personalCase!.description.isNotEmpty)
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -441,9 +568,21 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
                       child: const Text('Address: '),
                     ),
                     Flexible(
-                      child: Text(_profile!.homeAddress),
+                      child: Text(
+                          _profile?.homeAddress ?? 'Address not available'),
                     ),
                   ],
+                ),
+              ),
+            ] else ...[
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Loading patient information...',
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
             ],
@@ -635,13 +774,16 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
   }
 }
 
-String _formatDate(String date) {
+String _formatDate(String? date) {
+  if (date == null || date.isEmpty) {
+    return 'Date not specified';
+  }
+
   try {
-    final DateTime parsedDate = DateTime.parse(date); // Parse the date string
-    return DateFormat('EEEE, dd MMMM yyyy')
-        .format(parsedDate); // Format as "Day, Date"
+    final DateTime parsedDate = DateTime.parse(date);
+    return DateFormat('EEEE, dd MMMM yyyy').format(parsedDate);
   } catch (e) {
     print('Error parsing date: $e');
-    return 'Invalid Date'; // Fallback in case of an error
+    return 'Invalid Date';
   }
 }

@@ -15,15 +15,21 @@ class ProfessionalProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure all required fields are not null
-    final String avatar = professional['avatar'] ?? '';
-    final String name = professional['name'] ?? 'Unknown';
-    final String about = professional['about'] ?? 'No information available';
-    final String daysHour = professional['days_hour'] ?? 'Not specified';
+    // Ensure all required fields are not null with proper type checking
+    final String avatar = professional['avatar']?.toString() ?? '';
+    final String name = professional['name']?.toString() ?? 'Unknown';
+    final String about =
+        professional['about']?.toString() ?? 'No information available';
+    final String daysHour =
+        professional['days_hour']?.toString() ?? 'Not specified';
     final String mapsLocation =
-        professional['maps_location'] ?? 'Not specified';
-    final int experience = professional['experience'] ?? 0;
-    final double rating = (professional['rating'] ?? 0.0).toDouble();
+        professional['maps_location']?.toString() ?? 'Not specified';
+
+    // Safe conversion for numeric values
+    final int experience = _safeIntConversion(professional['experience']);
+    final double rating = _safeDoubleConversion(professional['rating']);
+    final int providerId = _safeIntConversion(professional['id']);
+    // final int userId = _safeIntConversion(professional['user_id']);
 
     return Scaffold(
       appBar: AppBar(
@@ -40,15 +46,20 @@ class ProfessionalProfilePage extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        image: DecorationImage(
-                          image: NetworkImage(avatar),
-                          fit: BoxFit.cover,
-                        ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: FadeInImage.assetNetwork(
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        placeholder: 'assets/images/images_budi.png',
+                        image: avatar,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/images_budi.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
                     const Positioned(
@@ -308,36 +319,69 @@ class ProfessionalProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
+            // Create complete provider data including ID and role
+            final providerData = {
+              'id': providerId, // Include provider ID
+              'name': name,
+              'avatar': avatar,
+              'role': role.toLowerCase(), // pharmacist or nurse
+              'provider_type':
+                  role.toLowerCase(), // Ensure provider_type is included
+              'experience': experience,
+              'rating': rating,
+              'about': about,
+              'working_information': professional['working_information'] ?? '',
+              'days_hour': daysHour,
+              'maps_location': mapsLocation,
+              'certification': professional['certification'] ?? '',
+              'user_id': professional['user_id'] ?? 0,
+            };
+
+            print(
+                'Navigating to book appointment with provider data: $providerData');
+
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => BookAppointmentPage(
-                  pharmacist: {
-                    'avatar': avatar,
-                    'name': name,
-                    'role': role,
-                    'about': about,
-                    'days_hour': daysHour,
-                    'maps_location': mapsLocation,
-                    'experience': experience,
-                    'rating': rating,
-                  },
+                  pharmacist: providerData, // Pass complete provider data
                 ),
               ),
             );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF35C5CF),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
           child: const Text(
             'Book Appointment',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+int _safeIntConversion(dynamic value) {
+  if (value == null) return 0;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  if (value is String) return int.tryParse(value) ?? 0;
+  return 0;
+}
+
+double _safeDoubleConversion(dynamic value) {
+  if (value == null) return 0.0;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) return double.tryParse(value) ?? 0.0;
+  return 0.0;
 }
