@@ -93,17 +93,16 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => BlocProvider.value(
-                                      value: context.read<ProfileCubit>(),
-                                      child: EditProfilePage(
-                                          profile: state.profile),
-                                    ),
+                                await context.push(
+                                  AppRoutes.editProfile,
+                                  extra: EditProfilePageArgs(
+                                    profileCubit: context.read<ProfileCubit>(),
+                                    profile: state.profile,
                                   ),
                                 );
-                                context.read<ProfileCubit>().fetchProfile();
+                                if (context.mounted) {
+                                  context.read<ProfileCubit>().fetchProfile();
+                                }
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -199,12 +198,7 @@ class ProfilePage extends StatelessWidget {
                                     Icons.arrow_forward_ios,
                                   ),
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              MedicalRecordsPage()),
-                                    );
+                                    context.push(AppRoutes.medicalRecord);
                                   },
                                 ),
                                 // ListTile(
@@ -226,13 +220,7 @@ class ProfilePage extends StatelessWidget {
                                   title: const Text('Pharmagenomics Profile'),
                                   trailing: const Icon(Icons.arrow_forward_ios),
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            PharmagenomicsProfilePage(),
-                                      ),
-                                    );
+                                    context.push(AppRoutes.pharmagenomics);
                                   },
                                 ),
                                 ListTile(
@@ -300,12 +288,7 @@ class ProfilePage extends StatelessWidget {
                                   title: const Text('All My Appointments'),
                                   trailing: const Icon(Icons.arrow_forward_ios),
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AppointmentPage(),
-                                      ),
-                                    );
+                                    context.go(AppRoutes.appointment);
                                   },
                                 ),
                               ],
@@ -324,17 +307,16 @@ class ProfilePage extends StatelessWidget {
                             IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => BlocProvider.value(
-                                      value: context.read<ProfileCubit>(),
-                                      child: EditProfilePage(
-                                          profile: state.profile),
-                                    ),
+                                await context.push(
+                                  AppRoutes.editProfile,
+                                  extra: EditProfilePageArgs(
+                                    profileCubit: context.read<ProfileCubit>(),
+                                    profile: state.profile,
                                   ),
                                 );
-                                context.read<ProfileCubit>().fetchProfile();
+                                if (context.mounted) {
+                                  context.read<ProfileCubit>().fetchProfile();
+                                }
                               },
                             ),
                           ],
@@ -376,6 +358,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 80)
                       ],
                     ),
                   ),

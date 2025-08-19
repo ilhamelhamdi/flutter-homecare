@@ -33,27 +33,27 @@ class NursingCard extends StatelessWidget {
               children: [
                 Text(
                   '${pharma['title']}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   '${pharma['description']}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400, // Light font weight
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextButton(
                   onPressed: onTap,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(width: 5),
-                      Text(
+                      const SizedBox(width: 5),
+                      const Text(
                         'Book Now',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -61,7 +61,7 @@ class NursingCard extends StatelessWidget {
                           color: Color(0xFF35C5CF),
                         ),
                       ),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       Image.asset(
                         'assets/icons/ic_play.png',
                         width: 20,
@@ -120,10 +120,10 @@ class _NursingState extends State<NursingService> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.translate('nursing'),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
       body: Container(
-        margin: EdgeInsets.fromLTRB(0, 0, 0, 60.0),
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 60.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -176,7 +176,7 @@ class _NursingState extends State<NursingService> {
                             : 1.0),
                   );
                 },
-                separatorBuilder: (context, index) => Divider(height: 1),
+                separatorBuilder: (context, index) => const Divider(height: 1),
               ),
             ),
           ],

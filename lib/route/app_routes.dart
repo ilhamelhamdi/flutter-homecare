@@ -1,17 +1,29 @@
 class AppRoutes {
+  // Core
   static const String home = '/';
   static const String dashboard = home;
   static const String appointment = '/appointment';
   static const String medicalStore = '/medical-store';
   static const String favourite = '/favourite';
   static const String profile = '/profile';
+
+  // Auth
   static const String signIn = '/sign-in';
   static const String signUp = '/sign-up';
 
-  // Dasboard Menus
+  // Dasboard Services
   static const String pharmaServices = '/pharma-services';
   static const String nursingServices = '/nursing-services';
   static const String diabeticCare = '/diabetic-care';
+  static const String homeHealthScreening = '/home-health-screening';
+  static const String remotePatientMonitoring = '/remote-patient-monitoring';
+  static const String secondOpinionMedical = '/second-opinion-medical';
+  static const String precisionNutrition = '/precision-nutrition';
+
+  // Profile Detail
+  static const String medicalRecord = '/medical-record';
+  static const String pharmagenomics = '/pharmagenomics';
+  static const String editProfile = '/edit-profile';
 
   static const String partnership = '/request-partnership';
   static const String partnership_list = '/partnership-list';
