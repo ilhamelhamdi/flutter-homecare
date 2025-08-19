@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m2health/cubit/nursing/pages/nursing_services.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/views/diabetic_care.dart';
 import 'package:m2health/views/home_health_screening.dart';
 import 'package:m2health/views/pharmacist_services.dart';
@@ -181,12 +183,7 @@ class _DashboardState extends State<Dashboard> {
                           const Spacer(),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProfilePage(),
-                                ),
-                              );
+                              context.go(AppRoutes.profile);
                             },
                             child: Container(
                               width: 56,
@@ -310,11 +307,7 @@ class _DashboardState extends State<Dashboard> {
                       RectangularIconWithTitle(
                         onTap: () {
                           // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PharmaServices()),
-                          );
+                          context.push(AppRoutes.pharmaServices);
                         },
                         iconPath:
                             'assets/icons/ic_pharma_service.png', // Replace with your actual image path
@@ -327,11 +320,7 @@ class _DashboardState extends State<Dashboard> {
                       RectangularIconWithTitle(
                         onTap: () {
                           // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NursingService()),
-                          );
+                          context.push(AppRoutes.nursingServices);
                         },
                         iconPath:
                             'assets/icons/ic_nurse.png', // Replace with your actual image path
@@ -344,11 +333,7 @@ class _DashboardState extends State<Dashboard> {
                       RectangularIconWithTitle(
                         onTap: () {
                           // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DiabeticCare()),
-                          );
+                          context.push(AppRoutes.diabeticCare);
                         },
                         iconPath:
                             'assets/icons/ic_diabetic.png', // Replace with your actual image path
@@ -366,12 +351,7 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       RectangularIconWithTitle(
                         onTap: () {
-                          // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeHealth()),
-                          );
+                          context.push(AppRoutes.homeHealthScreening);
                         },
                         iconPath: 'assets/icons/ic_report.png',
                         title: AppLocalizations.of(context)!
@@ -381,22 +361,8 @@ class _DashboardState extends State<Dashboard> {
                         titleColor: Colors.black,
                       ),
                       RectangularIconWithTitle(
-                        // onTap: () {
-                        //   showDialog(
-                        //     context: context,
-                        //     builder: (BuildContext context) {
-                        //       return ComingSoonDialog();
-                        //     },
-                        //   );
-                        // },
                         onTap: () {
-                          // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    RemotePatientMonitoring()),
-                          );
+                          context.push(AppRoutes.remotePatientMonitoring);
                         },
                         iconPath: 'assets/icons/ic_drug.png',
                         title: AppLocalizations.of(context)!
@@ -407,12 +373,7 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       RectangularIconWithTitle(
                         onTap: () {
-                          // navbarVisibility(true);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OpinionMedical()),
-                          );
+                          context.push(AppRoutes.secondOpinionMedical);
                         },
                         iconPath: 'assets/icons/ic_lung.png',
                         title: AppLocalizations.of(context)!
@@ -437,11 +398,7 @@ class _DashboardState extends State<Dashboard> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProfilePage()),
-                              );
+                              context.go(AppRoutes.profile);
                             },
                             child: const Text('View all',
                                 style: TextStyle(
@@ -495,12 +452,7 @@ class _DashboardState extends State<Dashboard> {
                           onTap: () {
                             if (services[index]['name'] ==
                                 'Precision\nNutrition') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        PrecisionNutritionPage()),
-                              );
+                              context.push(AppRoutes.precisionNutrition);
                             } else {
                               showDialog(
                                 context: context,

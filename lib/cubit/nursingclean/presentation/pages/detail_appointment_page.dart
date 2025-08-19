@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/main.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:m2health/cubit/nursingclean/presentation/pages/payment_page.dart';
@@ -270,15 +272,8 @@ class _DetailAppointmentPageState extends State<DetailAppointmentPage> {
   }
 
   void _navigateToAppointmentPage() {
-    Navigator.pop(context);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    ).then((_) {
-      MyApp.showBottomAppBar(context);
-    });
+    context.go(AppRoutes.appointment);
+    MyApp.showBottomAppBar(context);
   }
 
   @override

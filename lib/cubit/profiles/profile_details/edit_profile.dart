@@ -6,6 +6,16 @@ import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+class EditProfilePageArgs {
+  final ProfileCubit profileCubit;
+  final Profile profile;
+
+  EditProfilePageArgs({
+    required this.profileCubit,
+    required this.profile,
+  });
+}
+
 class EditProfilePage extends StatefulWidget {
   final Profile profile;
 
