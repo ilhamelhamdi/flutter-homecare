@@ -26,7 +26,6 @@ class PharmaCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Container(
         width: 357,
-        height: 243,
         padding: const EdgeInsets.all(16.0),
         color:
             color.withOpacity(0.1), // Set the background color with 10% opacity
