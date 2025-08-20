@@ -8,9 +8,28 @@ import 'package:m2health/utils.dart';
 
 import '../views/details/add_on.dart';
 
+enum MobilityStatus {
+  bed('bed', 'Bedbound'),
+  wheelchair('wheelchair', 'Wheelchair Bound'),
+  stand('stand', 'Walking Aid'),
+  walk('walk', 'Mobile Without Aid');
+
+  const MobilityStatus(this.value, this.label);
+
+  final String label;
+  final String value;
+
+  static MobilityStatus fromValue(String? value) {
+    return MobilityStatus.values.firstWhere(
+      (element) => element.value == value,
+      orElse: () => MobilityStatus.walk,
+    );
+  }
+}
+
 class AddIssuePage extends StatefulWidget {
   final Issue? issue;
-  final String serviceType; // Add serviceType parameter
+  final String serviceType;
 
   AddIssuePage({this.issue, required this.serviceType});
 
@@ -19,7 +38,7 @@ class AddIssuePage extends StatefulWidget {
 }
 
 class _AddIssuePageState extends State<AddIssuePage> {
-  late String _mobilityStatus;
+  late MobilityStatus _mobilityStatus;
   late String _selectedStatus;
   List<Map<String, dynamic>> _medicalRecords = [];
   bool isLoading = false;
@@ -27,7 +46,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
   @override
   void initState() {
     super.initState();
-    _mobilityStatus = widget.issue?.mobilityStatus ?? 'bedbound';
+    _mobilityStatus = MobilityStatus.fromValue(widget.issue?.mobilityStatus);
     _selectedStatus = 'Select Status';
     _fetchMedicalRecords();
   }
@@ -72,20 +91,18 @@ class _AddIssuePageState extends State<AddIssuePage> {
     final issue = widget.issue;
     if (issue == null) return;
 
-    print('Mobility Status: $_mobilityStatus');
+    print('Mobility Status: ${_mobilityStatus.value}');
     print('Related Health Record: $_selectedStatus');
 
     try {
       final token = await Utils.getSpString(Const.TOKEN);
-
-      // Find the selected record and extract just its ID
       final selectedRecord = _medicalRecords
           .firstWhere((record) => record['title'] == _selectedStatus);
       final int recordId = selectedRecord['id'];
 
       final data = {
-        'mobility_status': _mobilityStatus,
-        'related_health_record_id': recordId, // Submit just the ID
+        'mobility_status': _mobilityStatus.value,
+        'related_health_record_id': recordId,
       };
 
       print('Data to be submitted: $data');
@@ -118,7 +135,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
       MaterialPageRoute(
         builder: (context) => AddOn(
           issue: issue,
-          serviceType: widget.serviceType, // Pass the required serviceType
+          serviceType: widget.serviceType,
         ),
       ),
     );
@@ -129,7 +146,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.serviceType} - Add Issue', // Dynamic title
+          '${widget.serviceType} - Add Issue',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
@@ -145,52 +162,19 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Column(
-                  children: [
-                    RadioListTile<String>(
-                      title: const Text('Walk'),
-                      value: 'walk',
+                  children: MobilityStatus.values.map((status) {
+                    return RadioListTile<MobilityStatus>(
+                      title: Text(status.label),
+                      value: status,
                       groupValue: _mobilityStatus,
-                      onChanged: (value) {
+                      onChanged: (MobilityStatus? value) {
                         setState(() {
                           _mobilityStatus = value!;
                         });
                       },
                       activeColor: const Color(0xFF35C5CF),
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Stand'),
-                      value: 'stand',
-                      groupValue: _mobilityStatus,
-                      onChanged: (value) {
-                        setState(() {
-                          _mobilityStatus = value!;
-                        });
-                      },
-                      activeColor: const Color(0xFF35C5CF),
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Chair'),
-                      value: 'chair',
-                      groupValue: _mobilityStatus,
-                      onChanged: (value) {
-                        setState(() {
-                          _mobilityStatus = value!;
-                        });
-                      },
-                      activeColor: const Color(0xFF35C5CF),
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Bed'),
-                      value: 'bed',
-                      groupValue: _mobilityStatus,
-                      onChanged: (value) {
-                        setState(() {
-                          _mobilityStatus = value!;
-                        });
-                      },
-                      activeColor: const Color(0xFF35C5CF),
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
                 const SizedBox(height: 20),
                 const Text(
