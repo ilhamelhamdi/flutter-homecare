@@ -15,6 +15,7 @@ class AppointmentLoaded extends AppointmentState {
 
 class AppointmentError extends AppointmentState {
   final String message;
+  final bool needLogin;
 
-  AppointmentError(this.message);
+  AppointmentError(this.message, {this.needLogin = false});
 }
