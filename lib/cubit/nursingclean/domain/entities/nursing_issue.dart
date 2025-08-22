@@ -1,13 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'dart:io';
 
-// NOTE: legacy
-class NursingCase extends Equatable {
+class NursingIssue extends Equatable {
   final String title;
   final String description;
   final List<File> images;
 
-  const NursingCase({
+  const NursingIssue({
     required this.title,
     required this.description,
     required this.images,
