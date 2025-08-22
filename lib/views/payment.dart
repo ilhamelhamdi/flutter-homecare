@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/views/appointment/appointment_detail_page.dart';
@@ -314,7 +316,8 @@ class PaymentSuccessDialog extends StatelessWidget {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                context.go(AppRoutes.home);
+                context.go(AppRoutes.appointment);
+                context.read<AppointmentCubit>().fetchAppointments();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Const.tosca,

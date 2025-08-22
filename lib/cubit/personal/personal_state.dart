@@ -1,20 +1,18 @@
 import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
+import 'package:m2health/cubit/profiles/domain/entities/medical_record.dart';
 
-class Issue {
+class Issue extends Equatable {
   final int id;
   final int userId;
   final String title;
   final String description;
-  // final List<String> images; // Change to list of strings
-  List<String> images; // Change to list of strings
+  List<String> images;
   final String mobilityStatus;
-  // final String relatedHealthRecord;
-  final Map<String, dynamic> relatedHealthRecord; // Changed to Map
+  final MedicalRecord? relatedHealthRecord; // Changed from Map to MedicalRecord
   final String addOn;
   final double estimatedBudget;
-  final String? caseType; // Add case_type field
+  final String? caseType;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -23,15 +21,47 @@ class Issue {
     required this.userId,
     required this.title,
     required this.description,
-    required this.images, // Change to list of strings
+    required this.images,
     required this.mobilityStatus,
-    required this.relatedHealthRecord,
+    this.relatedHealthRecord,
     required this.addOn,
     required this.estimatedBudget,
-    this.caseType, // Add case_type to constructor
+    this.caseType,
     required this.createdAt,
     required this.updatedAt,
   });
+
+  Issue copyWith({
+    int? id,
+    int? userId,
+    String? title,
+    String? description,
+    List<String>? images,
+    String? mobilityStatus,
+    MedicalRecord? relatedHealthRecord,
+    int? relatedHealthRecordId,
+    String? addOn,
+    double? estimatedBudget,
+    String? caseType,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Issue(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      images: images ?? this.images,
+      mobilityStatus: mobilityStatus ?? this.mobilityStatus,
+      relatedHealthRecord: relatedHealthRecord ?? this.relatedHealthRecord,
+      addOn: addOn ?? this.addOn,
+      estimatedBudget: estimatedBudget ?? this.estimatedBudget,
+      caseType: caseType ?? this.caseType,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   factory Issue.fromJson(Map<String, dynamic> json) {
     return Issue(
       id: json['id'] ?? 0,
@@ -40,13 +70,12 @@ class Issue {
       description: json['description'] ?? '',
       images: _parseImages(json['images']),
       mobilityStatus: json['mobility_status'] ?? '',
-      // relatedHealthRecord: json['related_health_record'] ?? '',
-      relatedHealthRecord: json['related_health_record'] is Map
-          ? Map<String, dynamic>.from(json['related_health_record'])
-          : {}, // Convert to
+      relatedHealthRecord: json['related_health_record'] != null
+          ? MedicalRecord.fromJson(json['related_health_record'])
+          : null,
       addOn: json['add_on'] ?? '',
       estimatedBudget: (json['estimated_budget'] as num?)?.toDouble() ?? 0.0,
-      caseType: json['case_type'], // Add case_type parsing
+      caseType: json['case_type'],
       createdAt: DateTime.parse(
           json['created_at'] ?? DateTime.now().toIso8601String()),
       updatedAt: DateTime.parse(
@@ -84,16 +113,32 @@ class Issue {
       'user_id': userId,
       'title': title,
       'description': description,
-      'images': images, // Change to list of strings
+      'images': images,
       'mobility_status': mobilityStatus,
-      'related_health_record': relatedHealthRecord,
+      'related_health_record': relatedHealthRecord?.id, // Only send ID
       'add_on': addOn,
       'estimated_budget': estimatedBudget,
-      'case_type': caseType, // Add case_type to JSON
+      'case_type': caseType,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        userId,
+        title,
+        description,
+        images,
+        mobilityStatus,
+        relatedHealthRecord,
+        addOn,
+        estimatedBudget,
+        caseType,
+        createdAt,
+        updatedAt,
+      ];
 }
 
 abstract class PersonalState extends Equatable {

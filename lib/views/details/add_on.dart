@@ -1,9 +1,35 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
 import 'package:m2health/utils.dart';
-import '../search/search_professional.dart';
+import 'package:equatable/equatable.dart';
+import 'package:m2health/views/search/search_professional.dart';
+
+class AddOnService extends Equatable {
+  final int id;
+  final String title;
+  final double price;
+
+  const AddOnService({
+    required this.id,
+    required this.title,
+    required this.price,
+  });
+
+  factory AddOnService.fromJson(Map<String, dynamic> json) {
+    return AddOnService(
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, title, price];
+}
 
 class AddOn extends StatefulWidget {
   final Issue issue;
@@ -18,8 +44,7 @@ class AddOn extends StatefulWidget {
 class _AddOnState extends State<AddOn> {
   bool isLoading = true;
   late List<bool> _selectedServices;
-  List<Map<String, dynamic>>?
-      serviceData; // Nullable to handle uninitialized state
+  List<AddOnService>? serviceData; // Use the type-safe AddOn model
   double _estimatedBudget = 0.0;
 
   @override
@@ -31,8 +56,6 @@ class _AddOnState extends State<AddOn> {
   Future<void> _fetchServiceTitles() async {
     try {
       final token = await Utils.getSpString(Const.TOKEN);
-
-      // Determine endpoint based on service type
       String endpoint;
       if (widget.serviceType == "Pharma") {
         endpoint = '${Const.URL_API}/service-titles/pharma';
@@ -44,21 +67,18 @@ class _AddOnState extends State<AddOn> {
 
       final response = await Dio().get(
         endpoint,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       if (response.statusCode == 200 && response.data['data'] != null) {
-        final servicesData =
-            List<Map<String, dynamic>>.from(response.data['data']);
+        final services = (response.data['data'] as List)
+            .map((json) => AddOnService.fromJson(json))
+            .toList();
 
         setState(() {
-          serviceData = servicesData;
+          serviceData = services;
           _selectedServices =
-              List<bool>.generate(serviceData!.length, (index) => false);
+              List<bool>.generate(serviceData!.length, (_) => false);
           isLoading = false;
         });
       } else {
@@ -72,126 +92,89 @@ class _AddOnState extends State<AddOn> {
 
   void _initializeDefaultServiceTitles() {
     if (widget.serviceType == "Pharma") {
-      serviceData = [
-        {'id': 1, 'title': 'Medication Review', 'price': 15.0},
-        {'id': 2, 'title': 'Prescription Consultation', 'price': 10.0},
-        {'id': 3, 'title': 'Medication Management Plan', 'price': 25.0},
+      serviceData = const [
+        AddOnService(id: 1, title: 'Medication Review', price: 15.0),
+        AddOnService(id: 2, title: 'Prescription Consultation', price: 10.0),
+        AddOnService(id: 3, title: 'Medication Management Plan', price: 25.0),
       ];
     } else if (widget.serviceType == "Radiologist") {
-      serviceData = [
-        {'id': 1, 'title': 'Image Analysis & Interpretation', 'price': 150.0},
-        {'id': 2, 'title': 'CT Scan Review', 'price': 200.0},
-        {'id': 3, 'title': 'MRI Scan Analysis', 'price': 250.0},
-        {'id': 4, 'title': 'X-Ray Examination', 'price': 100.0},
-        {'id': 5, 'title': 'Ultrasound Analysis', 'price': 120.0},
+      serviceData = const [
+        AddOnService(
+            id: 1, title: 'Image Analysis & Interpretation', price: 150.0),
+        AddOnService(id: 2, title: 'CT Scan Review', price: 200.0),
+        AddOnService(id: 3, title: 'MRI Scan Analysis', price: 250.0),
+        AddOnService(id: 4, title: 'X-Ray Examination', price: 100.0),
+        AddOnService(id: 5, title: 'Ultrasound Analysis', price: 120.0),
       ];
-    } else if (widget.serviceType == "Nurse") {
-      serviceData = [
-        {'id': 1, 'title': 'Medical Escort', 'price': 20.0},
-        {'id': 2, 'title': 'Inject', 'price': 15.0},
-        {'id': 3, 'title': 'Blood Glucose Check', 'price': 10.0},
+    } else {
+      // "Nurse"
+      serviceData = const [
+        AddOnService(id: 1, title: 'Medical Escort', price: 20.0),
+        AddOnService(id: 2, title: 'Inject', price: 15.0),
+        AddOnService(id: 3, title: 'Blood Glucose Check', price: 10.0),
       ];
     }
 
-    _selectedServices =
-        List<bool>.generate(serviceData!.length, (index) => false);
-
     setState(() {
+      _selectedServices =
+          List<bool>.generate(serviceData!.length, (_) => false);
       isLoading = false;
     });
   }
 
   void _updateEstimatedBudget() {
-    _estimatedBudget = 0.0;
-
+    double budget = 0.0;
     for (int i = 0; i < _selectedServices.length; i++) {
       if (_selectedServices[i]) {
-        final price = serviceData![i]['price'];
-        _estimatedBudget += (price is int ? price.toDouble() : price) as double;
+        budget += serviceData![i].price;
       }
     }
+    setState(() {
+      _estimatedBudget = budget;
+    });
   }
 
-  void _submitData() async {
-    final token = await Utils.getSpString(Const.TOKEN);
+  void _submitData() {
+    final String selectedAddOns = _selectedServices
+        .asMap()
+        .entries
+        .where((entry) => entry.value)
+        .map((entry) => serviceData![entry.key].title)
+        .join(', ');
 
-    final data = {
-      "add_on": _selectedServices
-          .asMap()
-          .entries
-          .where((entry) => entry.value)
-          .map((entry) => serviceData![entry.key]['title'])
-          .join(', '),
-      "estimated_budget": _estimatedBudget,
-      "updated_at": DateTime.now().toIso8601String(),
-    };
+    final updatedIssue = widget.issue.copyWith(
+      addOn: selectedAddOns,
+      estimatedBudget: _estimatedBudget,
+    );
 
-    print('Data to be submitted: $data');
+    context.read<PersonalCubit>().updateIssue(updatedIssue);
 
-    try {
-      final response = await Dio().put(
-        '${Const.API_PERSONAL_CASES}/${widget.issue.id}',
-        data: data,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchPage(
+          serviceType: widget.serviceType,
         ),
-      );
-
-      if (response.statusCode == 200) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SearchPage(
-              serviceType: widget.serviceType,
-            ),
-          ),
-        );
-      } else {
-        print('Failed to submit data: ${response.statusMessage}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.serviceType == "Pharma"
-                ? 'Pharmacist Add-On Services'
-                : widget.serviceType == "Radiologist"
-                    ? 'Radiologist Add-On Services'
-                    : 'Nursing Add-On Services',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        appBar: AppBar(title: const Text('Add-On Services')),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
+
     if (serviceData == null || serviceData!.isEmpty) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.serviceType == "Pharma"
-                ? 'Pharmacist Add-On Services'
-                : widget.serviceType == "Radiologist"
-                    ? 'Radiologist Add-On Services'
-                    : 'Nursing Add-On Services',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-        body: const Center(
-          child: Text('No services available'),
-        ),
+        appBar: AppBar(title: const Text('Add-On Services')),
+        body: const Center(child: Text('No services available')),
       );
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -211,39 +194,26 @@ class _AddOnState extends State<AddOn> {
               child: ListView.builder(
                 itemCount: serviceData!.length,
                 itemBuilder: (context, i) {
+                  final service = serviceData![i];
                   return Card(
                     child: ListTile(
-                      leading: GestureDetector(
-                        onTap: () {
+                      leading: Checkbox(
+                        value: _selectedServices[i],
+                        onChanged: (bool? value) {
                           setState(() {
-                            _selectedServices[i] = !_selectedServices[i];
+                            _selectedServices[i] = value ?? false;
                             _updateEstimatedBudget();
                           });
                         },
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: _selectedServices[i]
-                                ? const Color(0xFF35C5CF)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: const Color(0xFF35C5CF)),
-                          ),
-                          child: _selectedServices[i]
-                              ? const Icon(Icons.check,
-                                  color: Colors.white, size: 16)
-                              : null,
-                        ),
+                        activeColor: const Color(0xFF35C5CF),
                       ),
                       title: Text(
-                        serviceData![i]['title'] as String,
+                        service.title,
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.visible,
                       ),
                       subtitle: Text(
-                        '\$${serviceData![i]['price']}',
+                        '\$${service.price}',
                         style: const TextStyle(
                           color: Color(0xFF35C5CF),
                           fontWeight: FontWeight.bold,

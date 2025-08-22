@@ -4,13 +4,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
+import 'package:m2health/cubit/profiles/domain/entities/medical_record.dart';
 import 'package:m2health/utils.dart';
+import 'package:m2health/views/details/add_on.dart';
 
-import '../views/details/add_on.dart';
+enum MobilityStatus {
+  bed('bed', 'Bedbound'),
+  wheelchair('wheelchair', 'Wheelchair Bound'),
+  stand('stand', 'Walking Aid'),
+  walk('walk', 'Mobile Without Aid');
+
+  const MobilityStatus(this.value, this.label);
+
+  final String label;
+  final String value;
+
+  static MobilityStatus fromValue(String? value) {
+    return MobilityStatus.values.firstWhere(
+      (element) => element.value == value,
+      orElse: () => MobilityStatus.walk,
+    );
+  }
+}
 
 class AddIssuePage extends StatefulWidget {
   final Issue? issue;
-  final String serviceType; // Add serviceType parameter
+  final String serviceType;
 
   AddIssuePage({this.issue, required this.serviceType});
 
@@ -19,16 +38,15 @@ class AddIssuePage extends StatefulWidget {
 }
 
 class _AddIssuePageState extends State<AddIssuePage> {
-  late String _mobilityStatus;
-  late String _selectedStatus;
-  List<Map<String, dynamic>> _medicalRecords = [];
+  late MobilityStatus _mobilityStatus;
+  MedicalRecord? _selectedRecord; // Changed from String
+  List<MedicalRecord> _medicalRecords = []; // Changed from List<Map>
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _mobilityStatus = widget.issue?.mobilityStatus ?? 'bedbound';
-    _selectedStatus = 'Select Status';
+    _mobilityStatus = MobilityStatus.fromValue(widget.issue?.mobilityStatus);
     _fetchMedicalRecords();
   }
 
@@ -42,18 +60,17 @@ class _AddIssuePageState extends State<AddIssuePage> {
       final response = await Dio().get(
         Const.API_MEDICAL_RECORDS,
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
+          headers: {'Authorization': 'Bearer $token'},
         ),
       );
 
       if (response.statusCode == 200) {
+        final data = response.data['data'] as List;
         setState(() {
           _medicalRecords =
-              List<Map<String, dynamic>>.from(response.data['data']);
+              data.map((json) => MedicalRecord.fromJson(json)).toList();
           if (_medicalRecords.isNotEmpty) {
-            _selectedStatus = _medicalRecords.first['title'];
+            _selectedRecord = _medicalRecords.first;
           }
         });
       } else {
@@ -68,57 +85,23 @@ class _AddIssuePageState extends State<AddIssuePage> {
     }
   }
 
-  Future<void> _submitData() async {
+  void _submitData() {
     final issue = widget.issue;
     if (issue == null) return;
 
-    print('Mobility Status: $_mobilityStatus');
-    print('Related Health Record: $_selectedStatus');
+    final updatedIssue = issue.copyWith(
+      mobilityStatus: _mobilityStatus.value,
+      relatedHealthRecord: _selectedRecord,
+    );
 
-    try {
-      final token = await Utils.getSpString(Const.TOKEN);
+    context.read<PersonalCubit>().updateIssue(updatedIssue);
 
-      // Find the selected record and extract just its ID
-      final selectedRecord = _medicalRecords
-          .firstWhere((record) => record['title'] == _selectedStatus);
-      final int recordId = selectedRecord['id'];
-
-      final data = {
-        'mobility_status': _mobilityStatus,
-        'related_health_record_id': recordId, // Submit just the ID
-      };
-
-      print('Data to be submitted: $data');
-
-      final url = '${Const.API_PERSONAL_CASES}/${issue.id}';
-      print('Request URL: $url');
-
-      final response = await Dio().put(
-        url,
-        data: data,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        print('Issue updated successfully');
-      } else {
-        print('Failed to update issue: ${response.statusMessage}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-
-    context.read<PersonalCubit>().addIssue(issue);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AddOn(
-          issue: issue,
-          serviceType: widget.serviceType, // Pass the required serviceType
+          issue: updatedIssue,
+          serviceType: widget.serviceType,
         ),
       ),
     );
@@ -129,7 +112,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.serviceType} - Add Issue', // Dynamic title
+          '${widget.serviceType} - Add Issue',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
@@ -145,52 +128,19 @@ class _AddIssuePageState extends State<AddIssuePage> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Column(
-                  children: [
-                    RadioListTile<String>(
-                      title: const Text('Walk'),
-                      value: 'walk',
+                  children: MobilityStatus.values.map((status) {
+                    return RadioListTile<MobilityStatus>(
+                      title: Text(status.label),
+                      value: status,
                       groupValue: _mobilityStatus,
-                      onChanged: (value) {
+                      onChanged: (MobilityStatus? value) {
                         setState(() {
                           _mobilityStatus = value!;
                         });
                       },
                       activeColor: const Color(0xFF35C5CF),
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Stand'),
-                      value: 'stand',
-                      groupValue: _mobilityStatus,
-                      onChanged: (value) {
-                        setState(() {
-                          _mobilityStatus = value!;
-                        });
-                      },
-                      activeColor: const Color(0xFF35C5CF),
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Chair'),
-                      value: 'chair',
-                      groupValue: _mobilityStatus,
-                      onChanged: (value) {
-                        setState(() {
-                          _mobilityStatus = value!;
-                        });
-                      },
-                      activeColor: const Color(0xFF35C5CF),
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Bed'),
-                      value: 'bed',
-                      groupValue: _mobilityStatus,
-                      onChanged: (value) {
-                        setState(() {
-                          _mobilityStatus = value!;
-                        });
-                      },
-                      activeColor: const Color(0xFF35C5CF),
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -209,26 +159,21 @@ class _AddIssuePageState extends State<AddIssuePage> {
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _selectedStatus,
-                        items: [
-                          const DropdownMenuItem<String>(
-                            value: 'Select Status',
-                            child: Text('Select Status'),
-                          ),
-                          ..._medicalRecords.map((record) {
-                            return DropdownMenuItem<String>(
-                              value: record['title'],
-                              child: Text(record['title']),
-                            );
-                          }).toList(),
-                        ],
-                        onChanged: (newValue) {
+                      child: DropdownButton<MedicalRecord>(
+                        value: _selectedRecord,
+                        hint: const Text("Select Status"),
+                        isExpanded: true,
+                        items: _medicalRecords.map((record) {
+                          return DropdownMenuItem<MedicalRecord>(
+                            value: record, // The value is the object itself
+                            child: Text(record.title),
+                          );
+                        }).toList(),
+                        onChanged: (MedicalRecord? newValue) {
                           setState(() {
-                            _selectedStatus = newValue!;
+                            _selectedRecord = newValue;
                           });
                         },
-                        isExpanded: true,
                         icon: const Icon(Icons.arrow_drop_down),
                         iconSize: 24,
                         style: const TextStyle(
@@ -264,7 +209,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
           if (isLoading)
             Container(
               color: Colors.black.withOpacity(0.5),
-              child: Center(
+              child: const Center(
                 child: CircularProgressIndicator(),
               ),
             ),
