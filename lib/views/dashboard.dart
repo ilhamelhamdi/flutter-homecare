@@ -423,9 +423,9 @@ class _DashboardState extends State<Dashboard> {
                           // Padding untuk memberi jarak kiri dan kanan pada garis
                           padding: EdgeInsets.symmetric(horizontal: 24.0),
                           child: Divider(
-                            color: Color(
-                                0xFF232F55), // Anda bisa ganti warna garisnya
-                            thickness: 5, // Anda bisa ganti ketebalan garisnya
+                            color: Color.fromARGB(255, 88, 88,
+                                88), // Anda bisa ganti warna garisnya
+                            thickness: 2, // Anda bisa ganti ketebalan garisnya
                           ),
                         ),
                       ),
