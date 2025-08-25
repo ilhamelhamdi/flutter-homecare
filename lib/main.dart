@@ -9,6 +9,7 @@ import 'package:m2health/cubit/pharmacogenomics/data/repositories/pharmacogenomi
 import 'package:m2health/cubit/pharmacogenomics/data/datasources/pharmacogenomics_remote_datasource_impl.dart';
 import 'package:m2health/cubit/pharmacogenomics/domain/usecases/get_pharmacogenomics.dart';
 import 'package:m2health/cubit/pharmacogenomics/domain/usecases/crud_pharmacogenomics.dart';
+import 'package:m2health/cubit/precision/precision_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -23,15 +24,12 @@ import 'package:go_router/go_router.dart';
 // import 'package:navbar_router/navbar_router.dart';
 
 import 'const.dart';
-import 'cubit/appointment/appointment_page.dart';
-import 'views/medical_store.dart';
 import './AppLanguage.dart';
 import './app_localzations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 
 // nursing module
 import 'package:m2health/cubit/nursingclean/data/datasources/nursing_remote_datasource.dart';
@@ -45,7 +43,6 @@ import 'package:m2health/cubit/nursingclean/domain/usecases/update_nursing_case.
 import 'package:m2health/cubit/nursingclean/domain/usecases/get_professionals.dart';
 import 'package:m2health/cubit/nursingclean/domain/usecases/toggle_favorite.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_bloc.dart';
-import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_services/nursing_services_bloc.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/professional/professional_bloc.dart';
 
 void main() async {
@@ -57,6 +54,9 @@ void main() async {
       providers: [
         Provider<Dio>(
           create: (context) => Dio(),
+        ),
+        BlocProvider<PrecisionCubit>(
+          create: (context) => PrecisionCubit(),
         ),
         BlocProvider(create: (context) => AppointmentCubit(Dio())),
         BlocProvider(create: (context) => ProviderAppointmentCubit(Dio())),

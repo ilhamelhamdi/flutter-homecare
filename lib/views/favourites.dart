@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:m2health/route/app_routes.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/const.dart';
 
@@ -42,6 +44,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
   List<Pharmacist> _pharmacists = [];
   bool _isLoading = true;
   String? _errorMessage;
+  bool _isAuthenticated = true;
 
   @override
   void initState() {
@@ -66,20 +69,28 @@ class _FavouritesPageState extends State<FavouritesPage> {
         ),
       );
 
-      if (response.statusCode == 200 && response.data['data'] != null) {
+      if (response.data['data'] != null) {
         final data = List<Map<String, dynamic>>.from(response.data['data']);
         setState(() {
           _pharmacists = data.map((item) => Pharmacist.fromJson(item)).toList();
           _isLoading = false;
+          _isAuthenticated = true;
         });
       } else {
         throw Exception('Failed to load favorite pharmacists');
       }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Error fetching data: ${e.toString()}';
-      });
+      if (e is DioException && e.response?.statusCode == 401) {
+        setState(() {
+          _isAuthenticated = false;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Error fetching data: ${e.toString()}';
+        });
+      }
     }
   }
 
@@ -168,14 +179,40 @@ class _FavouritesPageState extends State<FavouritesPage> {
           ),
         ),
       ),
-      body: _buildBody(),
+      body: _buildBody(context),
     );
   }
 
   // Builds the body of the scaffold, handling loading, error, and data states.
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
+    }
+    if (!_isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: const Text('Authentication Required'),
+              content: const Text(
+                'Your session has expired or you are not logged in. Please sign in to continue.',
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Sign In'),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    context.go(AppRoutes.signIn);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      });
+      return const SizedBox.shrink();
     }
 
     if (_errorMessage != null) {
