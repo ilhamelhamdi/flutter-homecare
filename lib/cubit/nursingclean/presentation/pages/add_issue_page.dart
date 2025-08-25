@@ -67,7 +67,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
               description: '',
               images: [],
               mobilityStatus: '',
-              relatedHealthRecord: {},
+              relatedHealthRecord: null,
               addOn: '',
               estimatedBudget: 0.0,
               userId: 0,

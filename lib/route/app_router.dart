@@ -1,68 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:m2health/views/appointment/unified_appointment_page.dart';
+import 'package:m2health/route/auth_routes.dart';
+import 'package:m2health/route/core_routes.dart';
+import 'package:m2health/route/dashboard_routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/cubit/locations/location_page.dart';
-import 'package:m2health/cubit/profiles/profile_page.dart';
-import 'package:m2health/cubit/signup/sign_up_page.dart';
-import 'package:m2health/cubit/signin/sign_in_page.dart';
-// import 'package:m2health/cubit/submenu/submenu_page.dart';
 import 'package:m2health/cubit/pharmacist_profile/pharmacist_profile_page.dart';
 import 'package:m2health/cubit/personal/personal_page.dart';
-// import 'package:m2health/cubit/nursing/nursing_page.dart';
-import 'package:m2health/main.dart';
-import 'package:m2health/views/dashboard.dart';
+import 'package:m2health/route/profile_detail_routes.dart';
 import 'app_routes.dart';
 
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final GoRouter router = GoRouter(
+  initialLocation: AppRoutes.dashboard,
+  navigatorKey: _rootNavigatorKey,
   routes: [
-    GoRoute(
-      path: '/',
-      name: 'home',
-      builder: (context, state) => HomePage(),
-    ),
+    ...CoreRoutes.routes, // NavBar Routes
+    ...AuthRoutes.routes,
+    ...DashboardRoutes.routes,
+    ...ProfileDetailRoutes.routes,
 
     GoRoute(
       path: '/locations',
       builder: (context, state) => LocationPage(),
     ),
 
-    // GoRoute(
-    //   path: AppRoutes.partnership,
-    //   builder: (context, state) => RequestPage(),
-    // ),
-    GoRoute(
-      path: AppRoutes.home,
-      builder: (context, state) => HomePage(),
-    ),
-    GoRoute(
-      path: AppRoutes.dashboard,
-      builder: (context, state) => Dashboard(),
-    ),
-    GoRoute(
-      path: AppRoutes.appointment,
-      builder: (context, state) => UnifiedAppointmentPage(),
-    ),
-    // GoRoute(
-    //   path: AppRoutes.submenu,
-    //   builder: (context, state) => SubmenuPage(),
-    // ),
-    GoRoute(
-      path: AppRoutes.signUp,
-      builder: (context, state) => SignUpPage(),
-    ),
-    GoRoute(
-      path: AppRoutes.signIn,
-      builder: (context, state) {
-        return SignInPage();
-      },
-    ),
-
-    GoRoute(
-      path: AppRoutes.profile,
-      builder: (context, state) {
-        return ProfilePage();
-      },
-    ),
     GoRoute(
       path: AppRoutes.pharma_profile,
       builder: (context, state) {
@@ -72,14 +34,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: AppRoutes.personal,
       builder: (context, state) {
-        return PersonalPage(
+        return const PersonalPage(
           title: 'Personal Page',
           serviceType: 'Default Service',
         );
       },
     ),
   ],
-  errorPageBuilder: (context, state) {
-    return MaterialPage(child: HomePage());
-  },
+  // errorPageBuilder: (context, state) {
+  //   return MaterialPage(child: HomePage());
+  // },
 );

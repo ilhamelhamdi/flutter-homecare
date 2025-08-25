@@ -1,80 +1,85 @@
 import 'package:flutter/material.dart';
-import 'package:m2health/cubit/precision/nutrition_assestment.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'precision_cubit.dart';
+import 'screens/main_concern_screen.dart';
 
 class PrecisionNutritionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Precision Nutrition'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Left side - Timeline
-              Container(
-                width: 100,
-                child: const NutritionTimeline(currentStep: 1),
-              ),
-              const SizedBox(width: 16),
-
-              // Right side - Cards
-              Expanded(
-                child: Column(
-                  children: [
-                    // Step 1: Assessment Card
-                    PrecisionNutritionCard(
-                      step: "1",
-                      title: "Precision Nutrition Assessment",
-                      description:
-                          "Start your journey with a deep analysis of your genes, metabolism and lifestyle to understand your body's unique needs.",
-                      buttonText: "Start Now",
-                      imagePath: "assets/illustration/foodies.png",
-                      backgroundColor: const Color(0xFFE8F3FF),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NutritionAssessmentPage()),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Step 2: Plan Card
-                    PrecisionNutritionCard(
-                      step: "2",
-                      title: "Precision Nutrition Plan",
-                      description:
-                          "Receive a personalized nutrition strategy crafted by experts to address your specific health goals and conditions.",
-                      buttonText: "Book Now",
-                      imagePath: "assets/illustration/planning.png",
-                      backgroundColor: const Color(0xFFFFF6E9),
-                      onTap: () => _showComingSoonDialog(context),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Step 3: Implementation Card
-                    PrecisionNutritionCard(
-                      step: "3",
-                      title: "Precision Nutrition Implementation",
-                      description:
-                          "Track progress and adapt your plan through continuous support, biomarker monitoring, and smart digital tools.",
-                      buttonText: "Start Now",
-                      imagePath: "assets/illustration/implement.png",
-                      backgroundColor: const Color(0xFFF8F0FF),
-                      onTap: () => _showComingSoonDialog(context),
-                    ),
-                  ],
+    return BlocProvider(
+      create: (context) => PrecisionCubit(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Precision Nutrition'),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left side - Timeline
+                Container(
+                  width: 100,
+                  child: const NutritionTimeline(currentStep: 1),
                 ),
-              ),
-            ],
+                const SizedBox(width: 16),
+
+                // Right side - Cards
+                Expanded(
+                  child: Column(
+                    children: [
+                      // Step 1: Assessment Card
+                      PrecisionNutritionCard(
+                        step: "1",
+                        title: "Precision Nutrition Assessment",
+                        description:
+                            "Start your journey with a deep analysis of your genes, metabolism and lifestyle to understand your body's unique needs.",
+                        buttonText: "Start Now",
+                        imagePath: "assets/illustration/foodies.png",
+                        backgroundColor: const Color(0xFFE8F3FF),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MainConcernScreen()),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Step 2: Plan Card
+                      PrecisionNutritionCard(
+                        step: "2",
+                        title: "Precision Nutrition Plan",
+                        description:
+                            "Receive a personalized nutrition strategy crafted by experts to address your specific health goals and conditions.",
+                        buttonText: "Book Now",
+                        imagePath: "assets/illustration/planning.png",
+                        backgroundColor: const Color(0xFFFFF6E9),
+                        onTap: () => _showComingSoonDialog(context),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Step 3: Implementation Card
+                      PrecisionNutritionCard(
+                        step: "3",
+                        title: "Precision Nutrition Implementation",
+                        description:
+                            "Track progress and adapt your plan through continuous support, biomarker monitoring, and smart digital tools.",
+                        buttonText: "Start Now",
+                        imagePath: "assets/illustration/implement.png",
+                        backgroundColor: const Color(0xFFF8F0FF),
+                        onTap: () => _showComingSoonDialog(context),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

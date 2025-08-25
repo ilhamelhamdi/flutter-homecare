@@ -104,15 +104,10 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
           ),
         );
       } else {
-        // Create a new appointment
-        final response =
-            await _appointmentService.createAppointment(appointmentData);
-
         print('Appointment created successfully');
 
         // Navigate to appointment detail page
         final detailData = {
-          'id': response['data']?['id'] ?? 0,
           'user_id': appointmentData['user_id'],
           'provider_id': appointmentData['provider_id'],
           'provider_type': appointmentData['provider_type'],
