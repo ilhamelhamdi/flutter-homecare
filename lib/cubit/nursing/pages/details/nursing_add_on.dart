@@ -141,7 +141,7 @@ class _AddOnState extends State<AddOn> {
       );
 
       if (response.statusCode == 200) {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SearchPage(
