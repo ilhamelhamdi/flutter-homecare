@@ -385,36 +385,36 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   ),
                   const SizedBox(height: 30),
-                  Card(
-                    color: Colors.white,
-                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ListTile(
-                      title: const Text('Health Profile',
-                          style: TextStyle(
-                              fontSize: 18, color: Color(0xFF35C5CF))),
-                      subtitle: Text(userName ?? 'User'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              context.go(AppRoutes.profile);
-                            },
-                            child: const Text('View all',
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black)),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.more_vert),
-                            onPressed: () {
-                              // Handle more options action
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                  // Card(
+                  //   color: Colors.white,
+                  //   margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  //   child: ListTile(
+                  //     title: const Text('Health Profile',
+                  //         style: TextStyle(
+                  //             fontSize: 18, color: Color(0xFF35C5CF))),
+                  //     subtitle: Text(userName ?? 'User'),
+                  //     trailing: Row(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         TextButton(
+                  //           onPressed: () {
+                  //             context.go(AppRoutes.profile);
+                  //           },
+                  //           child: const Text('View all',
+                  //               style: TextStyle(
+                  //                   fontSize: 14, color: Colors.black)),
+                  //         ),
+                  //         IconButton(
+                  //           icon: const Icon(Icons.more_vert),
+                  //           onPressed: () {
+                  //             // Handle more options action
+                  //           },
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 20),
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -451,7 +451,7 @@ class _DashboardState extends State<Dashboard> {
                       return GestureDetector(
                           onTap: () {
                             if (services[index]['name'] ==
-                                'Precision\nNutrition') {
+                                'Occupational\nTherapy') {
                               context.push(AppRoutes.precisionNutrition);
                             } else {
                               showDialog(
