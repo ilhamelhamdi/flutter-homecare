@@ -119,45 +119,40 @@ class _DashboardState extends State<Dashboard> {
                     displayName = state.profile.username.isNotEmpty
                         ? state.profile.username
                         : userName ?? 'User';
-                    avatarWidget = state.profile.avatar.isNotEmpty
-                        ? Image.network(
-                            state.profile.avatar,
-                            width: 56,
-                            height: 56,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/icons/ic_avatar.png',
-                                width: 56,
-                                height: 56,
-                                fit: BoxFit.cover,
-                              );
-                            },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Container(
-                                width: 56,
-                                height: 56,
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : Image.asset(
-                            'assets/icons/ic_avatar.png',
-                            width: 56,
-                            height: 56,
-                            fit: BoxFit.cover,
-                          );
+                    avatarWidget = Image.network(
+                      state.profile.avatar,
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 56,
+                          height: 56,
+                          color: Colors.grey.shade200,
+                          child: const Icon(
+                            Icons.person,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          width: 56,
+                          height: 56,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                    );
                   } else {
                     // For Loading, Error, or Unauthenticated states
                     displayName = userName ?? 'User';
