@@ -138,7 +138,7 @@ class _DashboardState extends State<Dashboard> {
                       },
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
-                        return Container(
+                        return SizedBox(
                           width: 56,
                           height: 56,
                           child: Center(
@@ -156,11 +156,15 @@ class _DashboardState extends State<Dashboard> {
                   } else {
                     // For Loading, Error, or Unauthenticated states
                     displayName = userName ?? 'User';
-                    avatarWidget = Image.asset(
-                      'assets/icons/ic_avatar.png',
+                    avatarWidget = Container(
                       width: 56,
                       height: 56,
-                      fit: BoxFit.cover,
+                      color: Colors.grey.shade200,
+                      child: const Icon(
+                        Icons.person,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
                     );
                   }
 
