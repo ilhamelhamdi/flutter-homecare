@@ -23,7 +23,11 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       emit(AppointmentLoaded(appointments));
     } catch (e) {
       print('Error in fetchAppointments: $e');
-      emit(AppointmentError(e.toString()));
+      if (e is DioException && e.response?.statusCode == 401) {
+        emit(AppointmentError('Please sign in.', needLogin: true));
+      } else {
+        emit(AppointmentError(e.toString()));
+      }
     }
   }
 
