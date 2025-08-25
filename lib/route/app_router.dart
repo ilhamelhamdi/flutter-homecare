@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:m2health/cubit/appointment/appointment_module.dart';
+import 'package:m2health/route/appointment_routes.dart';
 import 'package:m2health/route/auth_routes.dart';
 import 'package:m2health/route/core_routes.dart';
 import 'package:m2health/route/dashboard_routes.dart';
@@ -19,14 +19,8 @@ final GoRouter router = GoRouter(
     ...CoreRoutes.routes, // NavBar Routes
     ...AuthRoutes.routes,
     ...DashboardRoutes.routes,
+    ...AppointmentRoutes.routes,
     ...ProfileDetailRoutes.routes,
-
-    GoRoute(
-        path: '${AppRoutes.providerAppointment}/:providerType',
-        builder: (context, state) {
-          final providerType = state.pathParameters['providerType'];
-          return ProviderAppointmentPage(providerType: providerType);
-        }),
 
     GoRoute(
       path: '/locations',

@@ -21,6 +21,7 @@ class AppRoutes {
   static const String precisionNutrition = '/precision-nutrition';
 
   // Appointment
+  static const String appointmentDetail = '/appointment/detail';
   static const String providerAppointment = '/provider-appointment';
 
   // Profile Detail
