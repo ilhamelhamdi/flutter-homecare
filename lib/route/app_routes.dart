@@ -20,6 +20,9 @@ class AppRoutes {
   static const String secondOpinionMedical = '/second-opinion-medical';
   static const String precisionNutrition = '/precision-nutrition';
 
+  // Appointment
+  static const String providerAppointment = '/provider-appointment';
+
   // Profile Detail
   static const String medicalRecord = '/medical-record';
   static const String pharmagenomics = '/pharmagenomics';
