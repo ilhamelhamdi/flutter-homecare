@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:m2health/route/appointment_routes.dart';
 import 'package:m2health/route/auth_routes.dart';
 import 'package:m2health/route/core_routes.dart';
 import 'package:m2health/route/dashboard_routes.dart';
@@ -18,6 +19,7 @@ final GoRouter router = GoRouter(
     ...CoreRoutes.routes, // NavBar Routes
     ...AuthRoutes.routes,
     ...DashboardRoutes.routes,
+    ...AppointmentRoutes.routes,
     ...ProfileDetailRoutes.routes,
 
     GoRoute(

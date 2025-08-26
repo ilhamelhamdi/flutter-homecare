@@ -568,22 +568,18 @@ class __AppointmentListItemState extends State<_AppointmentListItem> {
                                           .id; // Get the appointment ID
                                       final profile =
                                           appointment.profileServiceData;
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              BookAppointmentPage(
-                                            pharmacist: profile,
-                                            appointmentId:
-                                                appointmentId, // Pass the appointment ID
-                                            initialDate: DateTime.parse(
-                                                appointment
-                                                    .date), // Pre-fill date
-                                            initialTime: DateFormat('HH:mm')
-                                                .parse(appointment
-                                                    .hour), // Pre-fill time
-                                          ),
+                                      context.push(
+                                        AppRoutes.bookAppointment,
+                                        extra: BookAppointmentPageData(
+                                          pharmacist: profile,
+                                          appointmentId:
+                                              appointmentId, // Pass the appointment ID
+                                          initialDate: DateTime.parse(
+                                              appointment
+                                                  .date), // Pre-fill date
+                                          initialTime: DateFormat('HH:mm')
+                                              .parse(appointment
+                                                  .hour), // Pre-fill time
                                         ),
                                       );
                                     },
@@ -732,21 +728,18 @@ class __AppointmentListItemState extends State<_AppointmentListItem> {
                                       final profile =
                                           appointment.profileServiceData;
 
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              BookAppointmentPage(
-                                            pharmacist: profile,
-                                            appointmentId:
-                                                appointmentId, // Pass the appointment ID
-                                            initialDate: DateTime.parse(
-                                                appointment
-                                                    .date), // Pre-fill date
-                                            initialTime: DateFormat('HH:mm')
-                                                .parse(appointment
-                                                    .hour), // Pre-fill time
-                                          ),
+                                      context.push(
+                                        AppRoutes.bookAppointment,
+                                        extra: BookAppointmentPageData(
+                                          pharmacist: profile,
+                                          appointmentId:
+                                              appointmentId, // Pass the appointment ID
+                                          initialDate: DateTime.parse(
+                                              appointment
+                                                  .date), // Pre-fill date
+                                          initialTime: DateFormat('HH:mm')
+                                              .parse(appointment
+                                                  .hour), // Pre-fill time
                                         ),
                                       );
                                     },

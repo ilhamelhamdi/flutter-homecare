@@ -344,7 +344,8 @@ class ProfessionalProfilePage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => BookAppointmentPage(
-                  pharmacist: providerData, // Pass complete provider data
+                  data: BookAppointmentPageData(
+                      pharmacist: providerData), // Pass complete provider data
                 ),
               ),
             );

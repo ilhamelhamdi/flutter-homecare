@@ -57,7 +57,7 @@ class _AddIssuePageState extends State<NursingAddIssuePage> {
 
       print('Data to be submitted: $data');
 
-      final url = '${Const.API_PERSONAL_CASES}/${issue.id}';
+      final url = '${Const.API_NURSING_PERSONAL_CASES}/${issue.id}';
       print('Request URL: $url');
 
       final response = await Dio().put(
@@ -79,7 +79,6 @@ class _AddIssuePageState extends State<NursingAddIssuePage> {
       print('Error: $e');
     }
 
-    context.read<NursingPersonalCubit>().addIssue(issue);
     Navigator.push(
       context,
       MaterialPageRoute(
