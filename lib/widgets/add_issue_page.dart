@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
-import 'package:m2health/cubit/profiles/domain/entities/medical_record.dart';
+import 'package:m2health/cubit/medical_record/domain/entities/medical_record.dart';
 import 'package:m2health/utils.dart';
 import 'package:m2health/views/details/add_on.dart';
 
