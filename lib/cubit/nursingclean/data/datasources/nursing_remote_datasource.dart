@@ -1,17 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/nursingclean/data/models/add_on_service_model.dart';
 import 'package:m2health/cubit/nursingclean/data/models/nursing_case.dart';
+import 'package:m2health/cubit/nursingclean/data/models/nursing_personal_case.dart';
 import 'package:m2health/cubit/nursingclean/data/models/nursing_service.dart';
 import 'package:m2health/utils.dart';
 
 abstract class NursingRemoteDataSource {
   Future<List<NursingServiceModel>> getNursingServices();
-  Future<List<NursingCaseModel>> getNursingCases();
-  Future<void> createNursingCase(NursingCaseModel nursingCase);
+  Future<List<NursingPersonalCaseModel>> getNursingPersonalCases();
+  Future<void> createNursingCase(NursingPersonalCaseModel data);
   Future<List<Map<String, dynamic>>> getMedicalRecords();
   Future<void> updateNursingCase(String id, Map<String, dynamic> data);
   Future<List<Map<String, dynamic>>> getProfessionals(String serviceType);
   Future<void> toggleFavorite(int professionalId, bool isFavorite);
+  Future<List<AddOnServiceModel>> getAddOnServices();
 }
 
 class NursingRemoteDataSourceImpl implements NursingRemoteDataSource {
@@ -42,7 +45,7 @@ class NursingRemoteDataSourceImpl implements NursingRemoteDataSource {
   }
 
   @override
-  Future<List<NursingCaseModel>> getNursingCases() async {
+  Future<List<NursingPersonalCaseModel>> getNursingPersonalCases() async {
     final token = await Utils.getSpString(Const.TOKEN);
     final response = await dio.get(
       Const.API_NURSING_PERSONAL_CASES,
@@ -54,8 +57,8 @@ class NursingRemoteDataSourceImpl implements NursingRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      final cases = (response.data['data'] as List)
-          .map((caseData) => NursingCaseModel.fromJson(caseData))
+      final cases = (response.data['data']['data'] as List)
+          .map((caseData) => NursingPersonalCaseModel.fromJson(caseData))
           .toList();
       return cases;
     } else {
@@ -64,7 +67,7 @@ class NursingRemoteDataSourceImpl implements NursingRemoteDataSource {
   }
 
   @override
-  Future<void> createNursingCase(NursingCaseModel nursingCase) async {
+  Future<void> createNursingCase(NursingPersonalCaseModel nursingCase) async {
     // This can be implemented later if needed
     throw UnimplementedError();
   }
@@ -194,6 +197,28 @@ class NursingRemoteDataSourceImpl implements NursingRemoteDataSource {
       if (response.statusCode != 200) {
         throw Exception('Failed to delete favorite');
       }
+    }
+  }
+
+  @override
+  Future<List<AddOnServiceModel>> getAddOnServices() async {
+    final token = await Utils.getSpString(Const.TOKEN);
+    final response = await dio.get(
+      '${Const.URL_API}/service-titles/nurse',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      final services = (response.data['data'] as List)
+          .map((service) => AddOnServiceModel.fromJson(service))
+          .toList();
+      return services;
+    } else {
+      throw Exception('Failed to load add-on services');
     }
   }
 }

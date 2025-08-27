@@ -73,6 +73,7 @@ dependencies:
   bloc: ^8.1.4
   get_it: ^8.2.0
   dartz: ^0.10.1
+  collection: ^1.19.1
 
   # Social Sign-In
   # google_sign_in: ^6.2.1

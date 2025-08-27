@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/medical_record/data/model/medical_record_model.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/personal/personal_state.dart';
 import 'package:m2health/cubit/medical_record/domain/entities/medical_record.dart';
@@ -68,7 +69,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
         final data = response.data['data'] as List;
         setState(() {
           _medicalRecords =
-              data.map((json) => MedicalRecord.fromJson(json)).toList();
+              data.map((json) => MedicalRecordModel.fromJson(json)).toList();
           if (_medicalRecords.isNotEmpty) {
             _selectedRecord = _medicalRecords.first;
           }

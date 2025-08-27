@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/app_localzations.dart';
+import 'package:m2health/cubit/nursingclean/presentation/pages/nursing_case/nursing_concerns_page.dart';
 import 'package:m2health/cubit/personal/personal_page.dart';
 import 'package:m2health/route/app_routes.dart';
 
@@ -141,12 +142,9 @@ class _NursingState extends State<NursingService> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PersonalPage(
-                                title: "Nurse Services Case",
-                                serviceType: "Nurse",
-                                onItemTap: (item) {
-                                  // Handle item tap
-                                },
+                              builder: (context) => const NursingConcernsPage(
+                                title: 'Nurse Service Case',
+                                serviceType: 'PRIMARY',
                               ),
                             ),
                           );
@@ -156,9 +154,10 @@ class _NursingState extends State<NursingService> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => NursingService(
-                                  // item: tender,
-                                  ),
+                              builder: (context) => const NursingConcernsPage(
+                                title: 'Nurse Service Case',
+                                serviceType: 'SPECIALIZED',
+                              ),
                             ),
                           ).then((_) {
                             // Show the bottom navigation bar when returning
