@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/nursingclean/data/models/add_on_service_model.dart';
@@ -9,7 +11,8 @@ import 'package:m2health/utils.dart';
 abstract class NursingRemoteDataSource {
   Future<List<NursingServiceModel>> getNursingServices();
   Future<List<NursingPersonalCaseModel>> getNursingPersonalCases();
-  Future<void> createNursingCase(NursingPersonalCaseModel data);
+  Future<NursingPersonalCaseModel> createNursingCase(
+      NursingPersonalCaseModel data);
   Future<List<Map<String, dynamic>>> getMedicalRecords();
   Future<void> updateNursingCase(String id, Map<String, dynamic> data);
   Future<List<Map<String, dynamic>>> getProfessionals(String serviceType);
@@ -67,9 +70,36 @@ class NursingRemoteDataSourceImpl implements NursingRemoteDataSource {
   }
 
   @override
-  Future<void> createNursingCase(NursingPersonalCaseModel nursingCase) async {
-    // This can be implemented later if needed
-    throw UnimplementedError();
+  Future<NursingPersonalCaseModel> createNursingCase(
+      NursingPersonalCaseModel nursingCase) async {
+    final token = await Utils.getSpString(Const.TOKEN);
+    FormData formData = FormData.fromMap(nursingCase.toJson());
+
+    if (nursingCase.images != null) {
+      for (File image in nursingCase.images!) {
+        formData.files.add(
+          MapEntry(
+            "images[]",
+            await MultipartFile.fromFile(
+              image.path,
+              filename: image.path.split('/').last,
+            ),
+          ),
+        );
+      }
+    }
+
+    final response = await dio.post(
+      Const.API_NURSING_PERSONAL_CASES,
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return NursingPersonalCaseModel.fromJson(response.data['data']);
   }
 
   @override

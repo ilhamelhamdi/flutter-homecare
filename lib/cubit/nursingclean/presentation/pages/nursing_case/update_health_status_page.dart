@@ -99,16 +99,22 @@ class _UpdateHealthStatusPageState extends State<UpdateHealthStatusPage> {
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
+                          child: DropdownButton<int?>(
                             value: nursingCase.relatedHealthRecordId,
                             hint: const Text('Please select a record'),
-                            items: medicalState.medicalRecords
-                                .map((MedicalRecord record) {
-                              return DropdownMenuItem<int>(
-                                value: record.id,
-                                child: Text(record.title),
-                              );
-                            }).toList(),
+                            items: [
+                              const DropdownMenuItem<int?>(
+                                value: null,
+                                child: Text('None'),
+                              ),
+                              ...medicalState.medicalRecords
+                                  .map((MedicalRecord record) {
+                                return DropdownMenuItem<int?>(
+                                  value: record.id,
+                                  child: Text(record.title),
+                                );
+                              })
+                            ],
                             onChanged: (newValue) {
                               if (newValue != null) {
                                 context

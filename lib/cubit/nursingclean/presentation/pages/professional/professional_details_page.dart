@@ -325,10 +325,10 @@ class ProfessionalDetailsPage extends StatelessWidget {
             ),
           ),
           child: const Text(
-            'Book Appointment',
+            'Schedule Appointment',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

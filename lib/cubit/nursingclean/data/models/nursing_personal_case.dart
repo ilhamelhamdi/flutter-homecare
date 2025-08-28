@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:m2health/cubit/nursingclean/domain/entities/add_on_service.dart';
@@ -16,6 +17,7 @@ class NursingPersonalCaseModel {
   final double? estimatedBudget;
   final int? relatedHealthRecordId;
   final List<File>? images;
+  final List<String>? imageUrls;
 
   NursingPersonalCaseModel({
     this.id,
@@ -28,6 +30,7 @@ class NursingPersonalCaseModel {
     this.estimatedBudget,
     this.relatedHealthRecordId,
     this.images,
+    this.imageUrls,
   });
 
   factory NursingPersonalCaseModel.fromJson(Map<String, dynamic> json) {
@@ -41,12 +44,14 @@ class NursingPersonalCaseModel {
       addOn: json['add_on'],
       estimatedBudget: (json['estimated_budget'] ?? 0).toDouble(),
       relatedHealthRecordId: json['related_health_record_id'],
-      images: [], // Images handling can be implemented as needed
+      imageUrls: json['images'] != null
+          ? List<String>.from(jsonDecode(json['images']))
+          : null, 
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final Map<String, dynamic> data = {
       'id': id,
       'appointment_id': appointmentId,
       'title': title,
@@ -57,6 +62,9 @@ class NursingPersonalCaseModel {
       'estimated_budget': estimatedBudget,
       'related_health_record_id': relatedHealthRecordId,
     };
+    data.removeWhere((key, value) => value == null);
+
+    return data;
   }
 
   // Dirty conversion method to transform model to entity

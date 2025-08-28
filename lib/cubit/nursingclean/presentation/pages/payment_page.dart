@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
+import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/cubit/appointment/appointment_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m2health/route/app_routes.dart';
-import 'package:m2health/widgets/bottombar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentPage extends StatefulWidget {
   final int appointmentId;
@@ -312,7 +313,8 @@ class PaymentSuccessDialog extends StatelessWidget {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                context.go(AppRoutes.home);
+                context.read<AppointmentCubit>().fetchAppointments();
+                context.go(AppRoutes.appointment);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Const.tosca,

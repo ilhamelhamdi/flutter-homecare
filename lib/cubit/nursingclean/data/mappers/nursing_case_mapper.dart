@@ -8,7 +8,12 @@ class NursingCaseMapper {
   // Change a list of models from the API into a single domain entity
   NursingCase mapModelsToEntity(List<NursingPersonalCaseModel> models) {
     if (models.isEmpty) {
-      throw Exception('Cannot map empty list of models.');
+      // create a default empty NursingCase if no models are provided
+      return const NursingCase(
+        issues: [],
+        addOnServices: [],
+        estimatedBudget: 0.0,
+      );
     }
 
     final List<NursingIssue> allIssues = models

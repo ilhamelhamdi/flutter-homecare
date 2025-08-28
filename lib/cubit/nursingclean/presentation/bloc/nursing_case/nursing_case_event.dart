@@ -13,6 +13,8 @@ sealed class NursingCaseEvent extends Equatable {
 
 class GetNursingCaseEvent extends NursingCaseEvent {}
 
+class InitializeNursingCaseEvent extends NursingCaseEvent {}
+
 class CreateNursingCaseEvent extends NursingCaseEvent {
   final NursingCase nursingCase;
 

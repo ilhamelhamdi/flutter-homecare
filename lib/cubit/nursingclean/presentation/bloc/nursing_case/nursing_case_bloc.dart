@@ -2,11 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/core/error/failures.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/add_on_service.dart';
+import 'package:m2health/cubit/nursingclean/domain/entities/nursing_case.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/nursing_issue.dart';
 import 'package:m2health/cubit/nursingclean/domain/usecases/create_nursing_case.dart';
 import 'package:m2health/cubit/nursingclean/domain/usecases/get_nursing_add_on_services.dart';
 import 'package:m2health/cubit/nursingclean/domain/usecases/get_nursing_case.dart';
-import 'package:m2health/cubit/nursingclean/domain/usecases/get_medical_records.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/add_on_services_state.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_event.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_state.dart';
@@ -31,6 +31,12 @@ class NursingCaseBloc extends Bloc<NursingCaseEvent, NursingCaseState> {
       );
     });
 
+    on<InitializeNursingCaseEvent>((event, emit) {
+      const nursingCase =
+          NursingCase(issues: [], addOnServices: [], estimatedBudget: 0);
+      emit(const NursingCaseLoaded(nursingCase: nursingCase));
+    });
+
     on<UpdateHealthStatusNursingCaseEvent>((event, emit) async {
       final currentState = state;
       if (currentState is! NursingCaseLoaded) {
@@ -50,7 +56,7 @@ class NursingCaseBloc extends Bloc<NursingCaseEvent, NursingCaseState> {
       final failureOrSuccess = await createNursingCase(event.nursingCase);
       failureOrSuccess.fold(
         (failure) => emit(NursingCaseError(_mapFailureToMessage(failure))),
-        (_) => add(GetNursingCaseEvent()),
+        (_) => add(InitializeNursingCaseEvent()),
       );
     });
 

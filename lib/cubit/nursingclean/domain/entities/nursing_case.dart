@@ -17,7 +17,7 @@ class NursingCase extends Equatable {
 
   const NursingCase({
     this.appointmentId,
-    required this.careType,
+    this.careType,
     required this.issues,
     this.mobilityStatus,
     this.relatedHealthRecordId,

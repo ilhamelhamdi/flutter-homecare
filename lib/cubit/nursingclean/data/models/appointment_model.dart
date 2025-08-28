@@ -1,9 +1,10 @@
 import 'package:m2health/cubit/nursingclean/domain/entities/appointment_entity.dart';
+import 'package:intl/intl.dart';
 
-class AppointmentModel extends AppointmentEntity{
+class AppointmentModel extends AppointmentEntity {
   const AppointmentModel({
-    required super.id,
-    required super.userId,
+    super.id,
+    super.userId,
     required super.type,
     required super.status,
     required super.date,
@@ -13,39 +14,36 @@ class AppointmentModel extends AppointmentEntity{
     required super.profileServicesData,
     required super.createdAt,
     required super.updatedAt,
-    required super.providerId,
-    required super.providerType,
+    super.providerId,
+    super.providerType,
   });
 
-  factory AppointmentModel.fromJSON(Map<String, dynamic> map) {
+  factory AppointmentModel.fromJson(Map<String, dynamic> appointmentJson,
+      {Map<String, dynamic>? providerJson}) {
     return AppointmentModel(
-      id: map['id']?.toInt(),
-      userId: map['user_id']?.toInt(),
-      type: map['type'] ?? '',
-      status: map['status'] ?? '',
-      date: DateTime.parse(map['date']),
-      hour: map['hour'] ?? '',
-      summary: map['summary'] ?? '',
-      payTotal: (map['pay_total'] is int)
-          ? (map['pay_total'] as int).toDouble()
-          : (map['pay_total'] is double)
-              ? map['pay_total']
-              : 0.0,
-      profileServicesData: Map<String, dynamic>.from(map['profile_services_data'] ?? {}),
-      createdAt: DateTime.parse(map['created_at']),
-      updatedAt: DateTime.parse(map['updated_at']),
-      providerId: map['provider_id']?.toInt(),
-      providerType: map['provider_type'],
+      id: appointmentJson['id'],
+      userId: appointmentJson['user_id'],
+      type: appointmentJson['type'],
+      status: appointmentJson['status'],
+      date: DateTime.parse(appointmentJson['date']),
+      hour: appointmentJson['hour'],
+      summary: appointmentJson['summary'] ?? '',
+      payTotal: (appointmentJson['pay_total'] as num).toDouble(),
+      profileServicesData: appointmentJson['profile_services_data'] ?? <String, dynamic>{},
+      createdAt: DateTime.parse(appointmentJson['created_at']),
+      updatedAt: DateTime.parse(appointmentJson['updated_at']),
+      providerId: providerJson?['id'],
+      providerType: providerJson?['type'],
     );
   }
 
-  Map<String, dynamic> toJSON() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'user_id': userId,
       'type': type,
       'status': status,
-      'date': date.toIso8601String(),
+      'date': DateFormat('yyyy-MM-dd').format(date),
       'hour': hour,
       'summary': summary,
       'pay_total': payTotal,
@@ -55,5 +53,23 @@ class AppointmentModel extends AppointmentEntity{
       'provider_id': providerId,
       'provider_type': providerType,
     };
+  }
+
+  factory AppointmentModel.fromEntity(AppointmentEntity entity) {
+    return AppointmentModel(
+      id: entity.id,
+      userId: entity.userId,
+      type: entity.type,
+      status: entity.status,
+      date: entity.date,
+      hour: entity.hour,
+      summary: entity.summary,
+      payTotal: entity.payTotal,
+      profileServicesData: entity.profileServicesData,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+      providerId: entity.providerId,
+      providerType: entity.providerType,
+    );
   }
 }

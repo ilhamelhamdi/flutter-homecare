@@ -17,8 +17,8 @@ class AppointmentEntity extends Equatable {
 
 
   const AppointmentEntity({
-    required this.id,
-    required this.userId,
+    this.id,
+    this.userId,
     required this.type,
     required this.status,
     required this.date,
@@ -28,8 +28,8 @@ class AppointmentEntity extends Equatable {
     required this.profileServicesData,
     required this.createdAt,
     required this.updatedAt,
-    required this.providerId,
-    required this.providerType,
+    this.providerId,
+    this.providerType,
   });
 
   @override

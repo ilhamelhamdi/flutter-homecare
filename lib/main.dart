@@ -2,7 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:m2health/cubit/medical_record/domain/usecases/get_medical_records.dart';
 import 'package:m2health/cubit/medical_record/presentation/bloc/medical_record_bloc.dart';
+import 'package:m2health/cubit/nursingclean/domain/repositories/nursing_appointment_repository.dart';
 import 'package:m2health/cubit/nursingclean/domain/usecases/get_nursing_add_on_services.dart';
+import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_appointment_form/nursing_appointment_form_bloc.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_services/nursing_services_bloc.dart';
 import 'package:m2health/cubit/personal/personal_cubit.dart';
 import 'package:m2health/cubit/nursing/personal/nursing_personal_cubit.dart';
@@ -118,6 +120,12 @@ void main() async {
           create: (context) => ProfessionalBloc(
             getProfessionals: sl<GetProfessionals>(),
             toggleFavorite: sl<ToggleFavorite>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => NursingAppointmentFormBloc(
+            appointmentRepository: sl<NursingAppointmentRepository>(),
+            createNursingCase: sl<CreateNursingCase>(),
           ),
         ),
         // Medical Record Module
