@@ -9,19 +9,32 @@ import 'package:m2health/const.dart';
 import 'package:m2health/widgets/time_slot_grid_view.dart';
 import 'package:m2health/services/appointment_service.dart';
 
-class BookAppointmentPage extends StatefulWidget {
+class BookAppointmentPageData {
   final Map<String, dynamic> pharmacist;
   final int? appointmentId; // Optional appointment ID for rescheduling
   final DateTime? initialDate; // Optional initial date for rescheduling
   final DateTime? initialTime; // Optional initial time for rescheduling
 
-  const BookAppointmentPage({
-    Key? key,
+  const BookAppointmentPageData({
     required this.pharmacist,
     this.appointmentId,
     this.initialDate,
     this.initialTime,
-  }) : super(key: key);
+  });
+
+  @override
+  String toString() {
+    return 'BookAppointmentPageData(pharmacist: $pharmacist, appointmentId: $appointmentId, initialDate: $initialDate, initialTime: $initialTime)';
+  }
+}
+
+class BookAppointmentPage extends StatefulWidget {
+  final BookAppointmentPageData data;
+
+  const BookAppointmentPage({
+    super.key,
+    required this.data,
+  });
 
   @override
   _BookAppointmentPageState createState() => _BookAppointmentPageState();
@@ -38,9 +51,9 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   void initState() {
     super.initState();
     // Use initial values if provided, otherwise default to now
-    _selectedDay = widget.initialDate ?? DateTime.now();
-    _focusedDay = widget.initialDate ?? DateTime.now();
-    selectTime = widget.initialTime ?? DateTime.now();
+    _selectedDay = widget.data.initialDate ?? DateTime.now();
+    _focusedDay = widget.data.initialDate ?? DateTime.now();
+    selectTime = widget.data.initialTime ?? DateTime.now();
     _appointmentService = AppointmentService(context.read<Dio>());
   }
 
@@ -59,12 +72,13 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
       final userId = await Utils.getSpString(Const.USER_ID);
 
       // Extract provider information from pharmacist data
-      final providerId = widget.pharmacist['id'];
-      final providerType = widget.pharmacist['role'] ?? 'pharmacist';
+      final providerId = widget.data.pharmacist['id'];
+      final providerType =
+          widget.data.pharmacist['provider_type'] ?? 'pharmacist';
 
       print('Provider ID: $providerId');
       print('Provider Type: $providerType');
-      print('Pharmacist data: ${widget.pharmacist}');
+      print('Pharmacist data: ${widget.data.pharmacist}');
 
       if (providerId == null) {
         throw Exception(
@@ -80,17 +94,17 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         'date': DateFormat('yyyy-MM-dd').format(_selectedDay),
         'hour': DateFormat('HH:mm').format(selectTime),
         'summary':
-            'Appointment booking with ${widget.pharmacist['name'] ?? 'provider'}',
+            'Appointment booking with ${widget.data.pharmacist['name'] ?? 'provider'}',
         'pay_total': 100.0,
-        'profile_services_data': widget.pharmacist,
+        'profile_services_data': widget.data.pharmacist,
       };
 
       print('Submitting appointment with data: $appointmentData');
 
-      if (widget.appointmentId != null) {
+      if (widget.data.appointmentId != null) {
         // Update existing appointment
         await _appointmentService.updateAppointment(
-          widget.appointmentId!,
+          widget.data.appointmentId!,
           appointmentData,
         );
 
@@ -172,7 +186,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final pharmacist = widget.pharmacist;
+    final pharmacist = widget.data.pharmacist;
 
     return Scaffold(
       appBar: AppBar(
@@ -230,12 +244,13 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                               fontSize: 16,
                             ),
                           ),
-                          Text(pharmacist['role']),
+                          Text(pharmacist['provider_type']),
                           Row(
                             children: [
                               Icon(Icons.location_on, color: Colors.teal),
                               SizedBox(width: 4),
-                              Text(pharmacist['maps_location']),
+                              Text(
+                                  pharmacist['maps_location'] ?? 'No location'),
                             ],
                           ),
                         ],
@@ -365,7 +380,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   ],
                 )
               : Text(
-                  widget.appointmentId != null ? 'Reschedule' : 'Next',
+                  widget.data.appointmentId != null ? 'Reschedule' : 'Next',
                   style: const TextStyle(color: Colors.white),
                 ),
           style: ElevatedButton.styleFrom(
