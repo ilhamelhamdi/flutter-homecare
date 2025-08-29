@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/nursing/pages/details/nursing_add_on.dart';
-import 'package:m2health/cubit/nursing/personal/nursing_personal_cubit.dart';
-import 'package:m2health/cubit/nursingclean/domain/entities/nursing_case.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_bloc.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_event.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_state.dart';
@@ -15,7 +13,7 @@ import 'package:m2health/utils.dart';
 
 class NursingAddIssuePage extends StatefulWidget {
   final NursingIssue? issue;
-  final String serviceType;
+  final String serviceType;nu
 
   NursingAddIssuePage({this.issue, required this.serviceType});
 
@@ -95,7 +93,7 @@ class _AddIssuePageState extends State<NursingAddIssuePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.serviceType} - Add Issue',
+          'Request ${widget.serviceType} Service',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
