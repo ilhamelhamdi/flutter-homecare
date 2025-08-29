@@ -112,7 +112,7 @@ class _AddIssuePageState extends State<AddIssuePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.serviceType} - Add Issue',
+          'Request ${widget.serviceType} Services',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
