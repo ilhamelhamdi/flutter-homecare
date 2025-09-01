@@ -178,7 +178,7 @@ class _AddOnState extends State<AddOn> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.serviceType == "Pharma"
+          widget.serviceType == "Pharmacist"
               ? 'Pharmacist Add-On Services'
               : widget.serviceType == "Radiologist"
                   ? 'Radiologist Add-On Services'
