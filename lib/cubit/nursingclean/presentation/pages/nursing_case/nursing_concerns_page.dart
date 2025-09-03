@@ -6,7 +6,7 @@ import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursi
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_state.dart';
 import 'package:m2health/cubit/nursingclean/presentation/pages/nursing_case/add_concern_page.dart';
 import 'package:m2health/cubit/nursingclean/presentation/pages/nursing_case/nursing_concern_detail_page.dart';
-import 'package:m2health/cubit/nursingclean/presentation/pages/nursing_case/update_health_status_page.dart';
+import 'package:m2health/cubit/nursingclean/presentation/pages/nursing_case/nursing_health_status_page.dart';
 
 class NursingConcernsPage extends StatefulWidget {
   final String title;
@@ -35,7 +35,7 @@ class _NursingConcernsPageState extends State<NursingConcernsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const UpdateHealthStatusPage(),
+        builder: (context) => const NursingHealthStatusPage(),
       ),
     );
   }

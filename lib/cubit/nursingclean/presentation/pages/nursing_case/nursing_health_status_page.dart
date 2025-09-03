@@ -10,14 +10,14 @@ import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursi
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_state.dart';
 import 'package:m2health/cubit/nursingclean/presentation/pages/nursing_case/nursing_addon_page.dart';
 
-class UpdateHealthStatusPage extends StatefulWidget {
-  const UpdateHealthStatusPage({super.key});
+class NursingHealthStatusPage extends StatefulWidget {
+  const NursingHealthStatusPage({super.key});
 
   @override
-  _UpdateHealthStatusPageState createState() => _UpdateHealthStatusPageState();
+  _NursingHealthStatusPageState createState() => _NursingHealthStatusPageState();
 }
 
-class _UpdateHealthStatusPageState extends State<UpdateHealthStatusPage> {
+class _NursingHealthStatusPageState extends State<NursingHealthStatusPage> {
   void _onClickNext() {
     Navigator.push(
       context,
