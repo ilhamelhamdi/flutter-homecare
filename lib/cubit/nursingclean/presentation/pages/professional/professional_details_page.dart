@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/professional_entity.dart';
-import 'package:m2health/cubit/nursingclean/presentation/pages/book_appointment_page.dart';
+import 'package:m2health/cubit/nursingclean/presentation/pages/appointment/book_appointment_page.dart';
 import 'package:m2health/const.dart';
 
 class ProfessionalDetailsPage extends StatelessWidget {

@@ -5,7 +5,7 @@ import 'package:m2health/cubit/nursingclean/domain/entities/professional_entity.
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_appointment_form/nursing_appointment_form_bloc.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_bloc.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_state.dart';
-import 'package:m2health/cubit/nursingclean/presentation/pages/review_appointment_page.dart';
+import 'package:m2health/cubit/nursingclean/presentation/pages/appointment/review_appointment_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:m2health/widgets/time_slot_grid_view.dart';
 
