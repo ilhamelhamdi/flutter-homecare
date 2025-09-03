@@ -6,7 +6,7 @@ import 'package:m2health/cubit/nursingclean/domain/entities/add_on_service.dart'
 import 'package:m2health/cubit/nursingclean/domain/entities/appointment_entity.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/nursing_case.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/professional_entity.dart';
-import 'package:m2health/cubit/nursingclean/presentation/pages/payment_page.dart';
+import 'package:m2health/cubit/nursingclean/presentation/pages/payment/payment_page.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:m2health/models/profile.dart';
@@ -365,20 +365,13 @@ class ReviewAppointmentPage extends StatelessWidget {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                final professionalData = {
-                  'id': professional.id,
-                  'name': professional.name,
-                  'role': professional.role,
-                  'avatar': professional.avatar,
-                  'rating': 4.0, // Placeholder rating
-                  'reviews': 10, // Placeholder reviews count
-                };
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => PaymentPage(
-                      appointmentId: appointment.id!,
-                      profileServiceData: professionalData,
+                      appointment: appointment,
+                      nursingCase: nursingCase,
+                      professional: professional,
                     ),
                   ),
                 );

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
+import 'package:m2health/cubit/nursingclean/domain/entities/add_on_service.dart';
+import 'package:m2health/cubit/nursingclean/domain/entities/appointment_entity.dart';
+import 'package:m2health/cubit/nursingclean/domain/entities/nursing_case.dart';
+import 'package:m2health/cubit/nursingclean/domain/entities/professional_entity.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/cubit/appointment/appointment_page.dart';
 import 'package:go_router/go_router.dart';
@@ -8,10 +12,16 @@ import 'package:m2health/route/app_routes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentPage extends StatefulWidget {
-  final int appointmentId;
-  final Map<String, dynamic> profileServiceData;
+  final AppointmentEntity appointment;
+  final NursingCase nursingCase;
+  final ProfessionalEntity professional;
 
-  PaymentPage({required this.appointmentId, required this.profileServiceData});
+  const PaymentPage({
+    super.key,
+    required this.appointment,
+    required this.nursingCase,
+    required this.professional,
+  });
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
@@ -19,20 +29,12 @@ class PaymentPage extends StatefulWidget {
 
 class _PaymentPageState extends State<PaymentPage> {
   String selectedPaymentMethod = '';
-
-  final List<Map<String, dynamic>> services = [
-    {'name': 'Inject', 'cost': 250},
-    {'name': 'Blood Glucose Check', 'cost': 65},
-  ];
-
-  int get totalCost {
-    return services.fold(0, (sum, service) => sum + service['cost'] as int);
-  }
+  ProfessionalEntity get profile => widget.professional;
+  List<AddOnService> get services => widget.nursingCase.addOnServices;
+  double get totalCost => widget.nursingCase.estimatedBudget;
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> profile = widget.profileServiceData;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -56,7 +58,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
                         child: Image.network(
-                          profile['avatar'],
+                          profile.avatar,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Image.asset(
@@ -72,19 +74,18 @@ class _PaymentPageState extends State<PaymentPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          profile['name'],
+                          profile.name,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        Text(profile['role']),
+                        Text(profile.role),
                         Row(
                           children: [
                             const Icon(Icons.star_half, color: Colors.yellow),
                             const SizedBox(width: 4),
-                            Text(
-                                '${profile['rating']} (${profile['reviews']} reviews)'),
+                            Text('${profile.rating} (${100} reviews)'),
                           ],
                         ),
                       ],
@@ -106,11 +107,11 @@ class _PaymentPageState extends State<PaymentPage> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(service['name']),
-                  Text('\$${service['cost']}'),
+                  Text(service.name),
+                  Text('\$${service.price}'),
                 ],
               );
-            }).toList(),
+            }),
             const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -162,17 +163,21 @@ class _PaymentPageState extends State<PaymentPage> {
               builder: (BuildContext context) {
                 return PaymentSuccessDialog(
                   totalCost: totalCost,
-                  pharmacistName: profile['name'],
+                  pharmacistName: profile.name,
                 );
               },
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Const.tosca,
+            backgroundColor: const Color(0xFF35C5CF),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
           ),
           child: const Text(
             'Confirm',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ),
       ),
@@ -220,7 +225,7 @@ class _PaymentPageState extends State<PaymentPage> {
 }
 
 class PaymentSuccessDialog extends StatelessWidget {
-  final int totalCost;
+  final double totalCost;
   final String pharmacistName;
 
   PaymentSuccessDialog({required this.totalCost, required this.pharmacistName});
