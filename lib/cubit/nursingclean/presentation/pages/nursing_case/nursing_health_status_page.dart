@@ -14,7 +14,8 @@ class NursingHealthStatusPage extends StatefulWidget {
   const NursingHealthStatusPage({super.key});
 
   @override
-  _NursingHealthStatusPageState createState() => _NursingHealthStatusPageState();
+  _NursingHealthStatusPageState createState() =>
+      _NursingHealthStatusPageState();
 }
 
 class _NursingHealthStatusPageState extends State<NursingHealthStatusPage> {
@@ -69,6 +70,8 @@ class _NursingHealthStatusPageState extends State<NursingHealthStatusPage> {
                             .read<NursingCaseBloc>()
                             .add(UpdateHealthStatusNursingCaseEvent(
                               mobilityStatus: value,
+                              relatedHealthRecordId:
+                                  nursingCase.relatedHealthRecordId,
                             ));
                       }
                     },
@@ -116,13 +119,12 @@ class _NursingHealthStatusPageState extends State<NursingHealthStatusPage> {
                               })
                             ],
                             onChanged: (newValue) {
-                              if (newValue != null) {
-                                context
-                                    .read<NursingCaseBloc>()
-                                    .add(UpdateHealthStatusNursingCaseEvent(
-                                      relatedHealthRecordId: newValue,
-                                    ));
-                              }
+                              context
+                                  .read<NursingCaseBloc>()
+                                  .add(UpdateHealthStatusNursingCaseEvent(
+                                    mobilityStatus: nursingCase.mobilityStatus,
+                                    relatedHealthRecordId: newValue,
+                                  ));
                             },
                             isExpanded: true,
                           ),

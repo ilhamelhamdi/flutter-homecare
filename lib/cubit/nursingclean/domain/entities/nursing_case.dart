@@ -50,7 +50,7 @@ class NursingCase extends Equatable {
       careType: careType ?? this.careType,
       issues: issues ?? this.issues,
       mobilityStatus: mobilityStatus ?? this.mobilityStatus,
-      relatedHealthRecordId: relatedHealthRecordId ?? this.relatedHealthRecordId,
+      relatedHealthRecordId: relatedHealthRecordId,
       addOnServices: addOnServices ?? this.addOnServices,
       estimatedBudget: estimatedBudget ?? this.estimatedBudget,
     );
