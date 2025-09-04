@@ -19,7 +19,7 @@ class DashboardRoutes {
     GoRoute(
       path: AppRoutes.nursingServices,
       builder: (context, state) {
-        return NursingService(); // From nursing module
+        return NursingService(); // From nursingclean module
       },
     ),
     GoRoute(

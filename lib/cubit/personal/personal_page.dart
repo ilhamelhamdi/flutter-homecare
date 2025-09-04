@@ -39,11 +39,7 @@ class _PersonalPageState extends State<PersonalPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.serviceType == "Pharma"
-              ? "Pharmacist Services Case"
-              : widget.serviceType == "Radiologist"
-                  ? "Radiologist Services Case"
-                  : "Nurse Services Case",
+          widget.title,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
