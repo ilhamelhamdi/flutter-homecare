@@ -4,6 +4,7 @@ import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/add_on_service.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/appointment_entity.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/nursing_case.dart';
+import 'package:m2health/cubit/nursingclean/domain/entities/payment_method.dart';
 import 'package:m2health/cubit/nursingclean/domain/entities/professional_entity.dart';
 import 'package:m2health/main.dart';
 import 'package:m2health/cubit/appointment/appointment_page.dart';
@@ -28,13 +29,53 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  String selectedPaymentMethod = '';
+  PaymentMethod? selectedPaymentMethod;
+
   ProfessionalEntity get profile => widget.professional;
   List<AddOnService> get services => widget.nursingCase.addOnServices;
   double get totalCost => widget.nursingCase.estimatedBudget;
 
+  List<PaymentMethod> paymentMethods = [
+    PaymentMethod(
+      id: '1',
+      type: 'card',
+      displayName: 'Visa',
+      iconUrl: 'assets/icons/ic_visa.png',
+      accountNumber: '**** **** **** 1234',
+      expiryDate: '12/26',
+    ),
+    PaymentMethod(
+      id: '2',
+      type: 'card',
+      displayName: 'MasterCard',
+      iconUrl: 'assets/icons/mastercard.png',
+      accountNumber: '**** **** **** 5678',
+      expiryDate: '11/25',
+    ),
+    PaymentMethod(
+      id: '3',
+      type: 'alipay',
+      displayName: 'Alipay',
+      iconUrl: 'assets/icons/ic_alipay.png',
+    ),
+    PaymentMethod(
+      id: '4',
+      type: 'paynow',
+      displayName: 'PayNow',
+      iconUrl: 'assets/icons/ic_paynow.jpg',
+    ),
+    PaymentMethod(
+      id: '5',
+      type: 'cash',
+      displayName: 'Cash',
+      iconUrl: 'assets/icons/cash.png',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final isButtonEnabled = selectedPaymentMethod != null;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -52,22 +93,10 @@ class _PaymentPageState extends State<PaymentPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network(
-                          profile.avatar,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              'assets/images/images_budi.png',
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
-                      ),
+                    CircleAvatar(
+                      radius: 25,
+                      backgroundImage: NetworkImage(profile.avatar),
+                      onBackgroundImageError: (_, __) {},
                     ),
                     const SizedBox(width: 16),
                     Column(
@@ -141,35 +170,28 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
             const SizedBox(height: 8),
-            _buildPaymentMethodCard('Visa', '**** **** **** 1234', '12/26',
-                'assets/icons/ic_visa.png'),
-            _buildPaymentMethodCard('MasterCard', '**** **** **** 5678',
-                '11/25', 'assets/icons/mastercard.png'),
-            _buildPaymentMethodCard('Alipay', '**** **** **** 9012', '10/24',
-                'assets/icons/ic_alipay.png'),
-            _buildPaymentMethodCard('PayNow', '**** **** **** 9012', '10/24',
-                'assets/icons/ic_paynow.jpg'),
-            _buildPaymentMethodCard(
-                'Cash', ' ', '12/26', 'assets/icons/cash.png'),
+            ...paymentMethods.map((method) => _buildPaymentMethodCard(method))
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return PaymentSuccessDialog(
-                  totalCost: totalCost,
-                  pharmacistName: profile.name,
-                );
-              },
-            );
-          },
+          onPressed: isButtonEnabled
+              ? () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => PaymentSuccessDialog(
+                      totalCost: totalCost,
+                      pharmacistName: profile.name,
+                    ),
+                  );
+                }
+              : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF35C5CF),
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: const Color(0xFFB2B9C4),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -184,35 +206,44 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  Widget _buildPaymentMethodCard(
-      String method, String accountNumber, String expiryDate, String iconPath) {
+  Widget _buildPaymentMethodCard(PaymentMethod paymentMethod) {
+    void toggleSelection(PaymentMethod newPaymentMethod) {
+      setState(() {
+        if (selectedPaymentMethod == newPaymentMethod) {
+          selectedPaymentMethod = null;
+        } else {
+          selectedPaymentMethod = newPaymentMethod;
+        }
+      });
+    }
+
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedPaymentMethod = method;
-        });
+        toggleSelection(paymentMethod);
       },
       child: Card(
-        color: selectedPaymentMethod == method ? Colors.blue[50] : Colors.white,
+        color: selectedPaymentMethod == paymentMethod
+            ? Colors.blue[50]
+            : Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              Image.asset(iconPath, width: 40, height: 40),
+              Image.asset(paymentMethod.iconUrl, width: 40, height: 40),
               const SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    method,
+                    paymentMethod.displayName,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-                  if (accountNumber.isNotEmpty) ...[
-                    Text(accountNumber),
-                    Text('Expired: $expiryDate'),
+                  if (paymentMethod.accountNumber != null) ...[
+                    Text(paymentMethod.accountNumber!),
+                    Text('Expired: ${paymentMethod.expiryDate}'),
                   ],
                 ],
               ),
@@ -228,7 +259,7 @@ class PaymentSuccessDialog extends StatelessWidget {
   final double totalCost;
   final String pharmacistName;
 
-  PaymentSuccessDialog({required this.totalCost, required this.pharmacistName});
+  const PaymentSuccessDialog({super.key, required this.totalCost, required this.pharmacistName});
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +374,7 @@ class PaymentSuccessDialog extends StatelessWidget {
 class FeedbackForm extends StatefulWidget {
   final String pharmacistName;
 
-  FeedbackForm({required this.pharmacistName});
+  const FeedbackForm({super.key, required this.pharmacistName});
 
   @override
   _FeedbackFormState createState() => _FeedbackFormState();
@@ -463,7 +494,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => FeedbackDetails()),
+                          builder: (context) => const FeedbackDetails()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -487,7 +518,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => FeedbackDetails()),
+                          builder: (context) => const FeedbackDetails()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -543,6 +574,8 @@ class _FeedbackFormState extends State<FeedbackForm> {
 }
 
 class FeedbackDetails extends StatelessWidget {
+  const FeedbackDetails({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
