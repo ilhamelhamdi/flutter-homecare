@@ -89,6 +89,14 @@ class PersonalCaseDetailPage extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       color: const Color(0xffeef9fe),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(
+          color: Color(0xFFBFE8FF),
+          width: 2,
+        ),
+      ),
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
