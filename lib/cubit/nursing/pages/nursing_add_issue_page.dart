@@ -13,7 +13,7 @@ import 'package:m2health/utils.dart';
 
 class NursingAddIssuePage extends StatefulWidget {
   final NursingIssue? issue;
-  final String serviceType;nu
+  final String serviceType;
 
   NursingAddIssuePage({this.issue, required this.serviceType});
 
