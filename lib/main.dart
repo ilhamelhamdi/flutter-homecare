@@ -11,11 +11,10 @@ import 'package:m2health/cubit/pharmacogenomics/domain/usecases/get_pharmacogeno
 import 'package:m2health/cubit/pharmacogenomics/domain/usecases/crud_pharmacogenomics.dart';
 import 'package:m2health/cubit/precision/precision_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
-import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:m2health/route/app_router.dart';
-import 'package:m2health/views/dashboard.dart';
-import 'package:m2health/views/favourites.dart';
+// import 'package:m2health/views/dashboard.dart';
+// import 'package:m2health/views/favourites.dart';
 import 'package:m2health/cubit/appointment/appointment_cubit.dart';
 import 'package:m2health/cubit/appointment/provider_appointment_cubit.dart';
 import 'package:dio/dio.dart';
@@ -252,6 +251,16 @@ class _MyAppState extends State<MyApp> {
             title: 'm2health',
             theme: ThemeData(
               fontFamily: 'Poppins', // Set Poppins as the default font
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.transparent,
+                foregroundColor: Colors.black,
+                elevation: 0,
+              ),
+              cardTheme: const CardThemeData(
+                color: Colors.white,
+                surfaceTintColor: Colors.transparent,
+              ),
               textTheme: const TextTheme(
                 displayLarge: TextStyle(fontFamily: 'Poppins'),
                 displayMedium: TextStyle(fontFamily: 'Poppins'),
@@ -269,6 +278,7 @@ class _MyAppState extends State<MyApp> {
                 labelMedium: TextStyle(fontFamily: 'Poppins'),
                 labelSmall: TextStyle(fontFamily: 'Poppins'),
               ),
+              scaffoldBackgroundColor: Colors.white,
               colorScheme:
                   ColorScheme.fromSeed(seedColor: Const.colorDashboard),
               useMaterial3: true,
