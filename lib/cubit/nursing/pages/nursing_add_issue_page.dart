@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
 import 'package:m2health/cubit/nursing/pages/details/nursing_add_on.dart';
-import 'package:m2health/cubit/nursing/personal/nursing_personal_cubit.dart';
-import 'package:m2health/cubit/nursingclean/domain/entities/nursing_case.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_bloc.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_event.dart';
 import 'package:m2health/cubit/nursingclean/presentation/bloc/nursing_case/nursing_case_state.dart';
@@ -57,7 +55,7 @@ class _AddIssuePageState extends State<NursingAddIssuePage> {
 
       print('Data to be submitted: $data');
 
-      final url = '${Const.API_PERSONAL_CASES}/${issue.id}';
+      final url = '${Const.API_NURSING_PERSONAL_CASES}/${issue.id}';
       print('Request URL: $url');
 
       final response = await Dio().put(
@@ -79,7 +77,6 @@ class _AddIssuePageState extends State<NursingAddIssuePage> {
       print('Error: $e');
     }
 
-    context.read<NursingPersonalCubit>().addIssue(issue);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -96,7 +93,7 @@ class _AddIssuePageState extends State<NursingAddIssuePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.serviceType} - Add Issue',
+          'Request ${widget.serviceType} Service',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),

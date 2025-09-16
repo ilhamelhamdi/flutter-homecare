@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:m2health/const.dart';
@@ -106,50 +107,46 @@ class ProfilePage extends StatelessWidget {
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
-                                child: state.profile.avatar.isNotEmpty
-                                    ? Image.network(
-                                        state.profile.avatar,
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          // Fallback to default avatar if network image fails
-                                          return Image.asset(
-                                            'assets/icons/ic_avatar.png',
-                                            width: 100,
-                                            height: 100,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                        loadingBuilder:
-                                            (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
-                                            return child;
-                                          return Container(
-                                            width: 100,
-                                            height: 100,
-                                            child: Center(
-                                              child: CircularProgressIndicator(
-                                                value: loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      )
-                                    : Image.asset(
-                                        'assets/icons/ic_avatar.png',
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
+                                child: Image.network(
+                                  state.profile.avatar,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 100,
+                                      height: 100,
+                                      color: Colors.grey.shade200,
+                                      child: const Icon(
+                                        Icons.person,
+                                        size: 80,
+                                        color: Colors.grey,
                                       ),
+                                    );
+                                  },
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    }
+                                    return Container(
+                                      width: 100,
+                                      height: 100,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                             const SizedBox(width: 16),

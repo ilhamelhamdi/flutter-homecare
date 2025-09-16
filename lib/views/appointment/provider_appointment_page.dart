@@ -8,7 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:m2health/utils.dart';
 
 class ProviderAppointmentPage extends StatefulWidget {
-  final String providerType;
+  final String? providerType;
 
   const ProviderAppointmentPage({Key? key, required this.providerType})
       : super(key: key);
@@ -42,12 +42,12 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.providerType.toUpperCase()} Appointments',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          '${widget.providerType?.toUpperCase() ?? "Provider"} Appointments',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: () {
               context
                   .read<ProviderAppointmentCubit>()
@@ -72,7 +72,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
             // Check if we just successfully updated an appointment
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Row(
                   children: [
                     Icon(Icons.check, color: Colors.white),
@@ -90,13 +90,13 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
               SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.error, color: Colors.white),
-                    SizedBox(width: 8),
+                    const Icon(Icons.error, color: Colors.white),
+                    const SizedBox(width: 8),
                     Expanded(child: Text(state.message)),
                   ],
                 ),
                 backgroundColor: Colors.red,
-                duration: Duration(seconds: 5),
+                duration: const Duration(seconds: 5),
                 action: SnackBarAction(
                   label: 'Retry',
                   textColor: Colors.white,
@@ -113,7 +113,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
         child: BlocBuilder<ProviderAppointmentCubit, ProviderAppointmentState>(
           builder: (context, state) {
             if (state is ProviderAppointmentLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (state is ProviderAppointmentLoaded) {
               return TabBarView(
                 controller: _tabController,
@@ -130,23 +130,24 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, size: 64, color: Colors.red),
-                    SizedBox(height: 16),
+                    const Icon(Icons.error_outline,
+                        size: 64, color: Colors.red),
+                    const SizedBox(height: 16),
                     Text('Error: ${state.message}'),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
                         context
                             .read<ProviderAppointmentCubit>()
                             .fetchProviderAppointments(widget.providerType);
                       },
-                      child: Text('Retry'),
+                      child: const Text('Retry'),
                     ),
                   ],
                 ),
               );
             }
-            return Center(child: Text('No appointments found'));
+            return const Center(child: Text('No appointments found'));
           },
         ),
       ),
@@ -166,7 +167,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.event_busy, size: 64, color: Colors.grey[400]),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'No ${status.toLowerCase()} appointments found',
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
@@ -183,7 +184,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
             .fetchProviderAppointments(widget.providerType);
       },
       child: ListView.builder(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         itemCount: filteredAppointments.length,
         itemBuilder: (context, index) {
           final appointment = filteredAppointments[index];
@@ -236,7 +237,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                             fontSize: 16,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
                             Text(
@@ -246,7 +247,8 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                                 fontSize: 14,
                               ),
                             ),
-                            Text(' | ', style: TextStyle(color: Colors.grey)),
+                            const Text(' | ',
+                                style: TextStyle(color: Colors.grey)),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
@@ -266,12 +268,12 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                             ),
                           ],
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
                             Icon(Icons.calendar_today,
                                 size: 16, color: Colors.grey[600]),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Text(
                               '${DateFormat('EEEE, dd MMMM yyyy').format(DateTime.parse(appointment.date))}',
                               style: TextStyle(
@@ -281,12 +283,12 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                             ),
                           ],
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Row(
                           children: [
                             Icon(Icons.access_time,
                                 size: 16, color: Colors.grey[600]),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Text(
                               appointment.hour,
                               style: TextStyle(
@@ -302,10 +304,10 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                 ],
               ),
               if (appointment.summary.isNotEmpty) ...[
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(8),
@@ -313,29 +315,29 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Summary:',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         appointment.summary,
-                        style: TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14),
                       ),
                     ],
                   ),
                 ),
               ],
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Total: \$${appointment.payTotal.toStringAsFixed(2)}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       color: Color(0xFF35C5CF),
@@ -349,19 +351,19 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                             foregroundColor: Colors.white,
-                            minimumSize: Size(80, 36),
+                            minimumSize: const Size(80, 36),
                           ),
-                          child: Text('Reject'),
+                          child: const Text('Reject'),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         ElevatedButton(
                           onPressed: () => _acceptAppointment(appointment.id),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF35C5CF),
+                            backgroundColor: const Color(0xFF35C5CF),
                             foregroundColor: Colors.white,
-                            minimumSize: Size(80, 36),
+                            minimumSize: const Size(80, 36),
                           ),
-                          child: Text('Accept'),
+                          child: const Text('Accept'),
                         ),
                       ],
                     ),
@@ -372,7 +374,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                         backgroundColor: Colors.green,
                         foregroundColor: Colors.white,
                       ),
-                      child: Text('Mark Complete'),
+                      child: const Text('Mark Complete'),
                     ),
                 ],
               ),
@@ -402,12 +404,13 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Accept Appointment'),
-          content: Text('Are you sure you want to accept this appointment?'),
+          title: const Text('Accept Appointment'),
+          content:
+              const Text('Are you sure you want to accept this appointment?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -416,7 +419,8 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                     .read<ProviderAppointmentCubit>()
                     .acceptAppointment(appointmentId);
               },
-              child: Text('Accept', style: TextStyle(color: Colors.green)),
+              child:
+                  const Text('Accept', style: TextStyle(color: Colors.green)),
             ),
           ],
         );
@@ -432,7 +436,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Row(
+          title: const Row(
             children: [
               Icon(Icons.cancel, color: Colors.red),
               SizedBox(width: 8),
@@ -443,8 +447,8 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Are you sure you want to reject this appointment?'),
-              SizedBox(height: 8),
+              const Text('Are you sure you want to reject this appointment?'),
+              const SizedBox(height: 8),
               Text(
                 'Appointment ID: $appointmentId',
                 style: TextStyle(
@@ -452,7 +456,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                   color: Colors.grey[600],
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'This action cannot be undone.',
                 style: TextStyle(
@@ -469,7 +473,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                 print('Reject appointment cancelled by user');
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -478,7 +482,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
 
                 // Show loading indicator
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Row(
                       children: [
                         SizedBox(
@@ -509,7 +513,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: Text('Reject'),
+              child: const Text('Reject'),
             ),
           ],
         );
@@ -522,12 +526,12 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Complete Appointment'),
-          content: Text('Mark this appointment as completed?'),
+          title: const Text('Complete Appointment'),
+          content: const Text('Mark this appointment as completed?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -536,7 +540,8 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                     .read<ProviderAppointmentCubit>()
                     .completeAppointment(appointmentId);
               },
-              child: Text('Complete', style: TextStyle(color: Colors.green)),
+              child:
+                  const Text('Complete', style: TextStyle(color: Colors.green)),
             ),
           ],
         );
@@ -548,7 +553,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => DraggableScrollableSheet(
@@ -558,7 +563,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
         expand: false,
         builder: (context, scrollController) {
           return Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -572,15 +577,15 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   'Appointment Details',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Expanded(
                   child: SingleChildScrollView(
                     controller: scrollController,
@@ -602,18 +607,18 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                         _buildDetailRow('Total',
                             '\$${appointment.payTotal.toStringAsFixed(2)}'),
                         if (appointment.summary.isNotEmpty) ...[
-                          SizedBox(height: 16),
-                          Text(
+                          const SizedBox(height: 16),
+                          const Text(
                             'Summary:',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Colors.grey[100],
                               borderRadius: BorderRadius.circular(8),
@@ -621,25 +626,26 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                             child: Text(appointment.summary),
                           ),
                         ],
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Related Medical Record Section
-                        Text(
+                        const Text(
                           'Related Medical Record:',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         FutureBuilder<Map<String, dynamic>?>(
                           future: _fetchRelatedMedicalRecord(appointment.id),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             } else if (snapshot.hasError) {
                               return Container(
-                                padding: EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: Colors.red[50],
                                   borderRadius: BorderRadius.circular(8),
@@ -652,12 +658,12 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                             } else if (!snapshot.hasData ||
                                 snapshot.data == null) {
                               return Container(
-                                padding: EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: Colors.grey[100],
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Text(
+                                child: const Text(
                                     'No related medical record found for this appointment'),
                               );
                             } else {
@@ -665,7 +671,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                             }
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         if (appointment.status.toLowerCase() == 'pending') ...[
                           Row(
                             children: [
@@ -678,12 +684,13 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
                                   ),
-                                  child: Text('Reject'),
+                                  child: const Text('Reject'),
                                 ),
                               ),
-                              SizedBox(width: 12),
+                              const SizedBox(width: 12),
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
@@ -691,11 +698,12 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                                     _acceptAppointment(appointment.id);
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFF35C5CF),
+                                    backgroundColor: const Color(0xFF35C5CF),
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
                                   ),
-                                  child: Text('Accept'),
+                                  child: const Text('Accept'),
                                 ),
                               ),
                             ],
@@ -712,9 +720,10 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
                                 foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                               ),
-                              child: Text('Mark as Complete'),
+                              child: const Text('Mark as Complete'),
                             ),
                           ),
                         ],
@@ -732,7 +741,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -749,7 +758,7 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
           Expanded(
             child: Text(
               value,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
           ),
         ],
@@ -1006,20 +1015,20 @@ class _ProviderAppointmentPageState extends State<ProviderAppointmentPage>
 
   Widget _buildMedicalRecordCard(Map<String, dynamic> record) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               record['title'] ?? 'Medical Record',
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             _buildDetailRow('Disease Name', record['disease_name'] ?? 'N/A'),
             _buildDetailRow(
                 'Disease History', record['disease_history'] ?? 'N/A'),

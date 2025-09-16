@@ -16,13 +16,18 @@ class ProviderAppointmentCubit extends Cubit<ProviderAppointmentState> {
     _appointmentService = AppointmentService(_dio);
   }
 
-  Future<void> fetchProviderAppointments(String providerType) async {
+  Future<void> fetchProviderAppointments(String? providerType) async {
     try {
       emit(ProviderAppointmentLoading());
 
       final token = await Utils.getSpString(Const.TOKEN);
+      var queryParam = <String, dynamic>{};
+      if (providerType != null) {
+        queryParam['provider_type'] = providerType;
+      }
       final response = await Dio().get(
-        '${Const.API_PROVIDER_APPOINTMENTS}?provider_type=$providerType',
+        Const.API_PROVIDER_APPOINTMENTS,
+        queryParameters: queryParam,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
