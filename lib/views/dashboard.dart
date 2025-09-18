@@ -63,9 +63,9 @@ class _DashboardState extends State<Dashboard> {
       'image': 'assets/icons/ilu_ocuTherapy.png',
       'name': 'Occupational\nTherapy'
     },
+    {'image': 'assets/icons/ilu_sleep.png', 'name': 'Sleep & Mental\nHealth'},
     {'image': 'assets/icons/ilu_health.png', 'name': 'Health Risk\nAssessment'},
     {'image': 'assets/icons/ilu_dietitian.jpg', 'name': 'Dietitian Services'},
-    {'image': 'assets/icons/ilu_sleep.png', 'name': 'Sleep & Mental\nHealth'},
   ];
 
   @override
