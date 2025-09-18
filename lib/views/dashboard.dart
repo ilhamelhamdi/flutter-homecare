@@ -356,7 +356,7 @@ class _DashboardState extends State<Dashboard> {
                               onTap: () {
                                 context.push(AppRoutes.secondOpinionMedical);
                               },
-                              iconPath: 'assets/icons/ic_lung.png',
+                              iconPath: 'assets/icons/ic_2nd_opinion.png',
                               title: AppLocalizations.of(context)!
                                   .translate('2nd_opinion'),
                               backgroundColor:
