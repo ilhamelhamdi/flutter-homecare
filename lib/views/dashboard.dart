@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:m2health/cubit/nursing/pages/nursing_services.dart';
-import 'package:m2health/cubit/profiles/profile_page.dart';
 import 'package:m2health/route/app_routes.dart';
-import 'package:m2health/views/diabetic_care.dart';
-import 'package:m2health/views/home_health_screening.dart';
-import 'package:m2health/views/pharmacist_services.dart';
-import 'package:m2health/views/remote_patient_monitoring.dart';
-import 'package:m2health/views/second_opinion.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../const.dart';
 import '../AppLanguage.dart';
@@ -16,12 +9,11 @@ import 'package:provider/provider.dart';
 import 'package:m2health/cubit/profiles/profile_cubit.dart';
 import 'package:m2health/cubit/profiles/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:m2health/cubit/precision/precision_page.dart';
 
 class Dashboard extends StatefulWidget {
-  Dashboard({
-    Key? key,
-  }) : super(key: key);
+  const Dashboard({
+    super.key,
+  });
   @override
   _DashboardState createState() => _DashboardState();
 }
@@ -538,7 +530,8 @@ class CircularIconWithTitle extends StatelessWidget {
   final Color titleColor;
   final VoidCallback onTap;
 
-  CircularIconWithTitle({
+  const CircularIconWithTitle({
+    super.key,
     required this.iconPath,
     required this.title,
     required this.backgroundColor,
@@ -587,7 +580,8 @@ class RectangularIconWithTitle extends StatelessWidget {
   final Color titleColor;
   final VoidCallback onTap;
 
-  RectangularIconWithTitle({
+  const RectangularIconWithTitle({
+    super.key,
     required this.iconPath,
     required this.title,
     required this.backgroundColor,
@@ -641,6 +635,8 @@ class RectangularIconWithTitle extends StatelessWidget {
 }
 
 class SearchInputBox extends StatefulWidget {
+  const SearchInputBox({super.key});
+
   @override
   _SearchInputBoxState createState() => _SearchInputBoxState();
 }
